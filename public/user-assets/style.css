@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,500&display=swap');
+
+.logoheading {
+    font-family: 'Assistant', sans-serif;
+    font-size: small;
+    font-weight: bold;
+}
+
+.subheading {
+    font-family: 'Caveat', sans-serif;
+}
+
+/*login page  => start */
+
+.card {
+    width: 30rem;
+    background: white;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 15px 25px, rgba(0, 0, 0, 0.05) 0px 5px 10px
+}
+
+.sentenceofin {
+    font-family: 'Roboto Flex', sans-serif;
+    letter-spacing: 2px;
+
+}
+
+
+/*signup page  => start */
+
+.otp {
+    background-color: rgb(7, 207, 11);
+    color: beige;
+}
