@@ -19,7 +19,7 @@
     
 
     <h2 class="text-center py-5 mt-3">VERIFY OTP</h2>
-
+    <form action="otpPage" method="post">
     <div class="form-group d-flex justify-content-center mb-3">
         <input itemid="otpverify" type="number" style="width: 300px;" class="form-control" name="otp" id="regOtp">
     </div>
@@ -28,6 +28,7 @@
         <p><div id="error1" style="display: none;" class="mt-15 err text-danger"></div></p>
         <button type="submit" class="btn btn-primary btn-block btn-secondary">VERIFY OTP</button>
     </div>
+    </form>
 
     <div class="mt-3 text-center">
         <span id="countdownTimer" class="ms-2"></span>
@@ -38,7 +39,7 @@
 </html>
 
 
-<script>
+<!-- <script>
     const error = document.getElementById('error');
     const regOtp = document.getElementById('regOtp');
     const error1 = document.getElementById('error1');
@@ -77,7 +78,7 @@
         }
     });
 
-</script>
+</script> -->
 
 <script>
 
