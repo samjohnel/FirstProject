@@ -86,6 +86,7 @@ const registerPost = async (req, res) => {
             mobile: req.body.phone, // Assuming the phone field corresponds to mobile
             email: req.body.email,
             password: req.body.password,
+            cpassword: req.body.cpassword,
             isActive: 0,
         };
 
@@ -94,8 +95,15 @@ const registerPost = async (req, res) => {
 
         // Create a new user document using the User model
        
+        if (password !== cpassword) {
+            res.redirect("/signup?error=Passwords don't match");
+        }
+        
+
         // Redirect to a success page or handle success response
         res.redirect('/success-page'); // Redirect to a success page
+
+        
 
     } catch (error) {
         // Handle error
@@ -105,6 +113,30 @@ const registerPost = async (req, res) => {
     }
 };
 
+const loginPost = async (req, res) => {
+
+    const logemail = req.body.email;
+    const logpassword = req.body.password;
+
+    try {
+      
+            let userInfo = await user.findOne({email: logemail});
+            console.log(userInfo);
+            if(userInfo.password === logpassword) {
+                res.send("home");
+            } else {
+                res.send("error");
+            }
+
+
+        } 
+
+     catch (error) {
+        console.log(error);
+    }
+
+}
+
 module.exports = {
-    userLogin, getUserSignUp, otpRedirect, getOtpPage, otpPost, registerPost
+    userLogin, getUserSignUp, otpRedirect, getOtpPage, otpPost, registerPost, loginPost
 }

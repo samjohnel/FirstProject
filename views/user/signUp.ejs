@@ -14,6 +14,7 @@
 </head>
 
 <body>
+    
     <div class="col-sm-12">
         <div class=" logoheading text-center mt-5">
             <h2>Shan Apparels</h2>
@@ -23,11 +24,21 @@
         </div>
 
         <div class="d-flex justify-content-center mt-5 pb-5">
-            <div class="card" style="border-radius: 2rem;">
+            <div class="card" style="border-radius: 2rem; width: 550px;">
                 <div class="card-body">
-                    <div style="text-align: center;">
+                    <div style="text-align: center;" >
                         <h2 class="card-title">Sign up</h2>
                     </div>
+                    
+                    <div>
+                        <% if (locals.error) { %>
+                            <div id="error" class="text-center">
+                                <p class="text-danger"><%= locals.error %></p>
+                            </div>
+                        <% } %>
+                    </div>
+                    
+
 
                     <form id="logform" class="form-signup" method="post" action="/signUp">
                         <div style="text-align: center;">
@@ -37,80 +48,60 @@
                             <p id="emailnoti"></p>
                         </div>
                         <% if (locals.message) { %>
-                            <span class="text-center w-50 mx-auto" style="color: red; display: block;">
-                                <%=message %>
+                            <span class="text-center w-50 mx-auto text-danger" style="display: block;">
+                                <%= message %>
                             </span>
-
-                            <% } %>
-
-                                <div class="form-group">
-                                    <div class="row mt-2  ">
-                                        <div class="form-group mt-2">
-                                            <input type="text" name="name" placeholder="full name" class="form-control"
-                                                id="typeNamex" required style="border-radius: 3rem;" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <p>
-                                <div id="error1" style="display: none;" class="alert alert-danger err"></div>
-                                </p>
-
-                                <div class="form-group mt-2 row">
-                                    <div class="col-md-8">
-                                        <input type="email" name="email" placeholder="Enter your email"
-                                            class="form-control w-70" id="email" required
-                                            style="border-radius: 3rem;" />
-                                    </div>
-                                    <!-- <div class="col-md-4">
-                                        <button type="button" class="btn otp" onclick="sendOtp()">Send OTP</button>
-                                    </div> -->
-                                </div>
-
-
-                                <p>
-                                <div id="error2" style="display: none;" class="alert alert-danger err"></div>
-                                </p>
-
-                                <!-- <div class="form-group mt-2 row">
-                                    <div class="col-6">
-                                        <input type="number" name="otp" id="otp" placeholder="Enter OTP"
-                                            class="form-control w-70" required style="border-radius: 3rem;" />
-                                    </div>
-                                    <div class="col-6">
-                                        <button type="button" id="verifybtn" onclick="verifyOtp()"
-                                            class="btn btn-primary">Verify</button>
-                                        <span id="countdownTimer" class="ms-2"></span> 
-                                    </div>
-                                </div> -->
-
-
-                                <div class="form-group mt-3">
-                                    <input type="number" name="mobile" placeholder="   Phone number" class="form-control"
-                                        id="typeMobileX" required style="border-radius: 3rem;" />
-                                </div>
-                                <p>
-                                <div id="error3" style="display: none;" class="alert alert-danger err"></div>
-                                </p>
-
+                        <% } %>
+                    
+                        <div class="form-group">
+                            <div class="row mt-2">
                                 <div class="form-group mt-2">
-                                    <input type="password" name="password" placeholder="  Password" class="form-control"
-                                        id="typePasswordX" required style="border-radius: 3rem;" />
+                                    <input type="text" name="name" placeholder="Full name" class="form-control" id="name" required style="border-radius: 3rem;" />
                                 </div>
-
-                                <p>
-                                <div id="error4" style="display: none;" class="alert alert-danger err"></div>
-                                </p>
-                                <div class="form-group mt-2">
-                                    <input type="password" name="confpassword" placeholder=" Confirm Password"
-                                        class="form-control" id="typePasswordX" required style="border-radius: 3rem;" />
-                                </div>
-
-                                <div class="form-group mt-4">
-                                    <input type="submit" class="form-control btn btn-primary btn-block btn-lg"
-                                        value="Register" />
-                                </div>
-
+                            </div>
+                        </div>
+                        <p>
+                            <div id="error1" style="display: none;" class="text-danger"></div>
+                        </p>
+                    
+                        <div class="form-group mt-2 row">
+                            <div>
+                                <input type="email" name="email" placeholder="Enter your email" class="form-control" id="email" required style="border-radius: 3rem;" />
+                            </div>
+                        </div>
+                    
+                        <p>
+                            <div id="error2" style="display: none;" class="text-danger"></div>
+                        </p>
+                    
+                        <div class="form-group mt-3">
+                            <input type="number" name="mobile" placeholder="Phone number" class="form-control" id="mobile" required style="border-radius: 3rem;" />
+                        </div>
+                        <p>
+                            <div id="error3" style="display: none;" class="text-danger"></div>
+                        </p>
+                    
+                        <div class="form-group mt-2">
+                            <input type="password" name="password" placeholder="Password" class="form-control" id="password" required style="border-radius: 3rem;" />
+                        </div>
+                    
+                        <p>
+                            <div id="error4" style="display: none;" class="text-danger"></div>
+                        </p>
+                    
+                        <div class="form-group mt-2">
+                            <input type="password" name="confpassword" placeholder="Confirm Password" class="form-control" id="cPassword" required style="border-radius: 3rem;" />
+                        </div>
+                    
+                        <p>
+                            <div id="error5" style="display: none;" class="text-danger"></div>
+                        </p>
+                    
+                        <div class="form-group mt-4">
+                            <input type="submit" class="form-control btn btn-primary btn-block btn-lg" value="Register" />
+                        </div>
                     </form>
+                    
                     <div class="d-flex justify-content-center mt-2">
                         <p>Already have an account? <a href="/login" class="text-dark-50 fw-bold"
                                 style="text-decoration: none;">Login</a></p>
@@ -131,6 +122,201 @@
         crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> 
 
-</body>
+    <script>
 
+
+    
+    const nameId = document.getElementById("name");
+    const mailId = document.getElementById("email");
+    const mobileId = document.getElementById("mobile");
+    const passwordId = document.getElementById("password");
+    const cPasswordId = document.getElementById("cPassword"); // Corrected variable name
+    const formId = document.getElementById("logform");
+    const error1 = document.getElementById("error1");
+    const error2 = document.getElementById("error2");
+    const error3 = document.getElementById("error3");
+    const error4 = document.getElementById("error4");
+    const error5 = document.getElementById("error5");
+
+
+    let nameValidate = () => {
+    const nameValid = nameId.value;
+    if (nameValid.trim() === "") { // Corrected method call
+        error1.style.display = "block";
+        error1.innerHTML = "Please enter a valid name";
+
+        setTimeout(()=> {
+            error1.style.display = "none";
+            error1.innerHTML = "";
+        }, 3000);
+        return false;
+    } else if (/^\d+$/.test(nameValid)) { // Check for numbers
+        error1.style.display = "block";
+        error1.innerHTML = "Name cannot contain only numbers";
+
+        setTimeout(() => {
+            error1.style.display = "none";
+            error1.innerHTML = "";
+        }, 3000);
+        return false;
+    } else if (/^-/.test(nameValid)) { // Check for negative numbers
+        error1.style.display = "block";
+        error1.innerHTML = "Name cannot be negative";
+
+        setTimeout(() => {
+            error1.style.display = "none";
+            error1.innerHTML = "";
+        }, 3000);
+        return false;
+    } else if (/\*/.test(nameValid)) { // Check for asterisks
+        error1.style.display = "block";
+        error1.innerHTML = "Name cannot contain asterisks (*)";
+
+        setTimeout(() => {
+            error1.style.display = "none";
+            error1.innerHTML = "";
+        }, 3000);
+        return false;
+    } else {
+        error1.style.display = "none";
+        error1.innerHTML = "";
+    }
+    return true;
+}
+
+
+
+
+    let emailValidate = () => {
+        const emailValid = mailId.value;
+        const emailPattern = /^([a-zA-Z0-9._-]+)@([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,5})$/; // Corrected email pattern
+        if (!emailPattern.test(emailValid)) { // Corrected: Use ! to check if it doesn't match
+            error2.style.display = "block";
+            error2.innerHTML = "Please enter a valid email";
+
+            setTimeout(() => {
+                error2.style.display = "none";
+                error2.innerHTML = "";
+            }, 3000);
+            return false;
+        } else {
+            error2.style.display = "none";
+            error2.innerHTML = "";
+        }
+        return true;
+    }
+
+    let mobileValidate = () => {
+        const mobileValid = mobileId.value;
+        if (mobileValid.trim() === "") { // Corrected: Added parentheses after trim
+            error3.style.display = "block";
+            error3.innerHTML = "Please enter a valid number";
+
+            setTimeout(() => {
+                error3.style.display = "none";
+                error3.innerHTML = "";
+            }, 3000);
+            return false;
+        } else if(mobileValid.length < 10 || mobileValid.length > 10)
+    {
+        error3.style.display = "block";
+        error3.innerHTML = "Please enter exactly 10 digits"
+
+        setTimeout(() => {
+            error3.style.display = "none";
+            error3.innerHTML = "";
+        }, 3000);
+        return false;
+    } else {
+            error3.style.display = "none";
+            error3.innerHTML = "";
+        }
+        return true;
+    }
+
+       let passwordValidate = () => {
+        const passwordValid = passwordId.value;
+        const alpha =  /[a-zA-Z]/;
+        const digit = /\d/;
+        if(passwordValid.length < 8) {
+            error4.style.display = "block";
+            error4.innerHTML = "Please enter a valid password";
+
+            setTimeout(()=> {
+                error4.style.display = "none";
+                error4.innerHTML = "";
+            }, 3000);
+            return false;
+        } else if(!alpha.test(passwordValid) || !digit.test(passwordValid))
+    {
+        error4.style.display = "block"
+        error4.innerHTML = "Should contain number and alphabets !!"
+
+        setTimeout(() => {
+            error4.style.display = "none";
+            error4.innerHTML = "";
+        }, 3000);
+        return false;
+    } 
+        else {
+            error4.style.display = "none";
+            error4.innerHTML = "";
+        }
+        return true;
+       }
+
+       
+       let cpasswordValidate = () => {
+        const cpasswordValid = cPasswordId.value; // Corrected ID
+        if (cpasswordValid.length < 8) {
+            error5.style.display = "block";
+            error5.innerHTML = "Please enter a valid password";
+
+            setTimeout(() => {
+                error5.style.display = "none";
+                error5.innerHTML = "";
+            }, 3000);
+            return false;
+        } else if(!alpha.test(cpasswordValid) || !digit.test(cpasswordValid))
+    {
+        error4.style.display = "block"
+        error4.innerHTML = "Should contain number and alphabets !!"
+
+        setTimeout(() => {
+            error4.style.display = "none";
+            error4.innerHTML = "";
+        }, 3000);
+        return false;
+    }
+        else {
+            error5.style.display = "none";
+            error5.innerHTML = "";
+        }
+        return true;
+    }
+
+       nameId.addEventListener("blur", nameValidate);
+       mailId.addEventListener("blur", emailValidate);
+       mobileId.addEventListener("blur", mobileValidate);
+       passwordId.addEventListener("blur", passwordValidate);
+       cPasswordId.addEventListener("blur", cpasswordValidate);
+       
+
+    formId.addEventListener('submit', function(e){
+        let email = emailValidate();
+        let name = nameValidate();
+        let mobile = mobileValidate();
+        let password = passwordValidate();
+        let cpassword = cpasswordValidate();
+
+        if(!email || !name || !mobile || !password || !cpassword) {
+            e.preventDefault();
+        }
+    });
+   
+ 
+    </script>
+
+</body>
+      
 </html>
