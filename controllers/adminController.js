@@ -1,11 +1,4 @@
 
-
-
-
-
-
-
-
 const loadLogin = (req, res) => {
     try {
         res.render("adminLogin")
@@ -17,3 +10,5 @@ const loadLogin = (req, res) => {
 module.exports = {
     loadLogin
 }
+
+                    

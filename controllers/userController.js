@@ -2,6 +2,8 @@ const { name } = require("ejs");
 const otpHelper = require("../helper/otpHelper");
 const user = require("../models/userModel");
 const User = require("../models/userModel");
+const flash = require('express-flash');
+const session = require('express-session');
 
 const userLogin = (req, res) => {
     try {
@@ -36,13 +38,17 @@ const otpRedirect = async (req, res) => {
     }
 }
 
+
 const getOtpPage = (req, res) => {
     try {
-        res.render("otpPage");
+        const message = req.flash('message');
+        res.render("otpPage", { message, layout: false });
     } catch (error) {
        console.log(error); 
     } 
 }
+
+
 
 const otpPost = async (req, res) => {
     try {
@@ -56,18 +62,21 @@ const otpPost = async (req, res) => {
         const storedOtp = req.session.otp;
 
         // Compare the user-entered OTP with the stored OTP
-        if (userEnteredOtp === storedOtp) {
+        if (userEnteredOtp === storedOtp && Date.now() < req.session.otpExpiryTime){
             // Create a new user using the session data
             const newUser = await User.create(userData);
             console.log('New user created:', newUser);
+            res.redirect('/login');
         } else {
+            req.flash('message', 'Invalid OTP');
             // Handle invalid OTP
             console.log('Invalid OTP');
             // You may want to redirect the user to a different page or show an error message
+            res.redirect('/otpPage');
         }
 
         // Redirect the user after OTP verification
-        res.redirect('/login');
+        
     } catch (error) {
         console.log('Error:', error);
         // Handle the error appropriately, such as displaying an error page or message
@@ -123,7 +132,9 @@ const loginPost = async (req, res) => {
             let userInfo = await user.findOne({email: logemail});
             console.log(userInfo);
             if(userInfo.password === logpassword) {
-                res.send("home");
+                req.session.user = userInfo._id; 
+                console.log(req.session.user);
+                res.redirect("/userhome");
             } else {
                 res.send("error");
             }
@@ -137,6 +148,67 @@ const loginPost = async (req, res) => {
 
 }
 
+// const homePage = (req, res) => {
+//     try {
+//         res.render("homepage");
+//     } catch (error) {
+//         console.log(error);
+//     }
+// }
+
+const verifyCredentials = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Find the user with the given email
+        const userInfo = await User.findOne({ email });
+
+        if (!userInfo) {
+            // User not found
+            res.send("User not found");
+            return;
+        }
+
+        // Compare the password with the stored password
+        if (userInfo.password === password) {
+            // Passwords match, authentication successful
+            redirectToHomePage(req, res);
+        } else {
+            // Passwords don't match
+            res.send("Invalid password");
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
+const userHome = (req, res) => {
+    try {
+        res.render("homepage");
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const logout = (req, res) => {
+    try {
+        if (req.session.user) {
+           req.session.destroy();
+           res.redirect("/login");
+        }
+        else {
+            res.redirect("/userhome");
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+
+
+
 module.exports = {
-    userLogin, getUserSignUp, otpRedirect, getOtpPage, otpPost, registerPost, loginPost
+    userLogin, getUserSignUp, otpRedirect, getOtpPage, otpPost, registerPost, loginPost, verifyCredentials, userHome, logout
 }
