@@ -7,49 +7,40 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
     <!-- <link rel="stylesheet" href="/public/user-assets/style.css" /> -->
-    
-    
-      
-      
 </head>
 
 <body>
-
     <div class="col-sm-12">
-        <div class=" logoheading text-center mt-5">
+        <div class="logoheading text-center mt-5">
             <h2>Shan Apparels</h2>
         </div>
-        <div class=" subheading text-center ">
-            <h4> Threaded Elegance </h4>
+        <div class="subheading text-center">
+            <h4>Threaded Elegance</h4>
         </div>
-        <div class="d-flex justify-content-center mt-5 pb-5 " id="full">
-            <div class="card  p-3 mb-5 bg-white" style="border-radius: 5rem;">
+        <div class="d-flex justify-content-center mt-5 pb-5" id="full">
+            <div class="card p-3 mb-5 bg-white" style="border-radius: 5rem;">
                 <div class="card-body">
                     <div style="text-align: center">
-                        <h2 class="card-title">/h2>
+                        <h2 class="card-title"></h2>
                     </div>
                     <form class="form-signup" method="post" action="/login" id='logform'>
                         <div style="text-align: center">
                             <h6 class="sentenceofin">For Amazing Shopping</h6>
                             <% if (locals.message) { %>
-                                <span style="color: red;">
-                                    <%= message %>
-                                </span>
-                                    <% } %>
+                            <span style="color: red;">
+                                <%= message %>
+                            </span>
+                            <% } %>
                         </div>
-
                         <div class="form-group mt-2">
                             <input type="email" name="email" placeholder="Enter your email" class="form-control"
                                 id="typeEmailX" required style="border-radius: 3rem;" />
                         </div>
                         <p>
-                    <div id="error2" style="display: none;" class="alert alert-danger err"></div>
+                            <div id="error2" style="display: none;" class="alert alert-danger err"></div>
                         </p>
-
-
-
-                       di</div>viv class="form-group mt-2">
-                            <input type="password" name="password" placeholder=" Enter password" class="form-control"
+                        <div class="form-group mt-2">
+                            <input type="password" name="password" placeholder="Enter password" class="form-control"
                                 id="typePasswordX" required style="border-radius: 3rem;" />
                         </div>
                         <br>
@@ -57,45 +48,12 @@
                             <a href="" style="text-decoration: none; color: rgb(120, 118, 118);">Forgot Password?</a>
                         </p>
                         <p>
-                        <a href="" style="text-decoration: none; color: rgb(120, 118, 118);">Forgot Password?</a>
+                            <div id="error1passlogin" style="display: none;" class="alert alert-danger err"></div>
                         </p>
-
-
-                        <p>
-                        <div id="error1passlogin" style="display: none;" class="alert alert-danger err"></div>
-                        </p>
-
-
-
                         <div class="form-group mt-4">
-                            <input type="submit" class="form-control btn btn-primary btn-block btn-lg" value="login" />
+                            <input type="submit" class="form-control btn btn-primary btn-block btn-lg" value="Login" />
                         </div>
-                        <div style="v                 display: flex;                  flex-direction: column;
-                align-items: center;
-                justify-content: center;
-              ">
-                            <p class="mt-4 text-center">
-                                Don't have an account?
-                                <a href="/signUp" class="text-50 fw-bold" style="text-decoration: none;">Sign Up</a>
-                            </p>
-                        </div>
-                    </form>
-                </div>
-            </div>               flex-direction: column;
-                align-items: center;
-                justify-content: center;
-              ">
-                            <p class="mt-4 text-center">
-                                Don't have an account?
-                                <a href="/signUp" class="text-50 fw-bold" style="text-decoration: none;">Sign Up</a>
-                            </p>
-                        </div>
-                        <div style="
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-              ">
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <p class="mt-4 text-center">
                                 Don't have an account?
                                 <a href="/signUp" class="text-50 fw-bold" style="text-decoration: none;">Sign Up</a>

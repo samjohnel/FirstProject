@@ -15,7 +15,7 @@ mongoose.connection.on("connected", (req, res) => {
     console.log("connected to mongodb");
 })
 
-app.use("/", adminRoute);
+
 app.use("/public", express.static(path.join(__dirname,"/public")));
 app.use(bodyParser.json());
 
@@ -33,11 +33,13 @@ app.use((req, res, next) => {
     next();
 })
 
-app.use(express.urlencoded({extended : true}))
+app.use(express.urlencoded({extended : true}));
+app.use(express.json());
 app.set("view engine", "ejs");
 app.set("views", [path.join(__dirname, "views/user"), path.join(__dirname, "views/admin")])
+app.use("/", adminRoute);
 
 app.use("/", userRoute)
 app.listen(port, () => {
-    console.log("Server Started on http://localhost:2002/login");
+    console.log("Server Started on http://localhost:2002/login and admin on http://localhost:2002/adminLogin");
 })
