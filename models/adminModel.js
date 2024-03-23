@@ -3,9 +3,9 @@ const adminSchema = new mongoose.Schema({
     email: {
         type: String,
         reqired: true
-    }, 
+    },  
     password: {
-        type: String,
+        type: String, 
         required: true
     }
 })

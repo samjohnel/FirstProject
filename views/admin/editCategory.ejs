@@ -1,0 +1,99 @@
+<%- include('../layouts/adminLayout/admin-header') %>
+  <!-- SweetAlert CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css" />
+
+  <section class="content-main">
+    <div class="content-header">
+      <div>
+        <h2 class="content-title card-title">Edit Category</h2>
+        <p>Edit Your Categories</p>
+      </div>
+      <div>
+        <input type="text" placeholder="Search Categories" class="form-control bg-white" />
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-3">
+            <form action="/editCategory/<%= details._id %>?_method=PUT" method="POST" id="myForm">
+              <input type="hidden" value="PUT" name="_method" >
+              <div class="mb-2">
+                <label for="product_name" class="form-label">Name</label>
+                <input type="text" placeholder="Type here" name="categoryName" class="form-control" id="category" value="<%= details.categoryName %>"/>
+              </div>
+              <span id="error1" class="text-danger mt-0" style="display: none"></span>
+              <div class="mb-4">
+                <label class="form-label">Description</label>
+                <input type="text" placeholder="Type here" name="categoryDescription" class="form-control"
+                  id="categoryDescription" value="<%= details.description %>" />
+              </div>
+              <span id="error2" class="text-danger text-center" style="display: none"></span>
+              <div class="d-grid">
+                <button class="btn btn-primary" style="background-color: black;" type="submit">
+                  Edit category
+                </button>
+              </div>
+            </form>
+          </div>
+        
+          <!-- .col// -->
+        </div>
+        <!-- .row // -->
+      </div>
+      <!-- card body .// -->
+    </div>
+    <!-- card .// -->
+  </section>
+  <!-- content-main end// -->
+
+  <!-- jQuery CDN -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha384-Kyknw4N7ia1rB4MPl1+Ttw6C2l8LhEZv7YVkIdkyyPyaSX8r+trFb/R7I4C13ycY"
+    crossorigin="anonymous"></script>
+
+  <!-- SweetAlert CDN -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script> -->
+
+  <script>
+    const category = document.getElementById("category");
+    const categoryDescription = document.getElementById("categoryDescription");
+    const error1 = document.getElementById("error1");
+    const myForm = document.getElementById("myForm");
+    function namevalidate(e) {
+
+      const nameval = category.value;
+      const nameRegex = /^[A-Za-z]+([- ]?[A-Za-z]+)*$/;
+      if (nameval.trim() === "") {
+        error1.style.display = "block";
+        error1.style.marginLeft = "18px";
+        error1.innerHTML = "Please Enter a valid Name.";
+        return false;
+      } else if (!nameRegex.test(nameval)) {
+        error1.style.display = "block";
+        error1.innerHTML = "Name contains Numbers";
+        return false;
+      } else {
+        error1.style.display = "none";
+        error1.innerHTML = "";
+        return false;
+      }
+      return true;
+    }
+    category.addEventListener("blur", namevalidate);
+    myForm.addEventListener("submit", (e) => {
+
+      const nameval = namevalidate(e);
+      if (nameval) {
+     
+        e.preventDefault();
+      }
+    })
+
+  </script>
+
+ 
+
+  
+
+  <%- include('../layouts/adminLayout/admin-footer') %>

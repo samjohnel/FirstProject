@@ -1,7 +1,7 @@
 const { name } = require("ejs");
-const otpHelper = require("../helper/otpHelper");
-const user = require("../models/userModel");
-const User = require("../models/userModel");
+const otpHelper = require("../../helper/otpHelper");
+const user = require("../../models/userModel");
+const User = require("../../models/userModel");
 const flash = require('express-flash');
 const session = require('express-session');
 
@@ -194,7 +194,8 @@ const userHome = (req, res) => {
 const logout = (req, res) => {
     try {
         if (req.session.user) {
-           req.session.destroy();
+           //req.session.destroy();
+           req.session.user = null;
            res.redirect("/login");
         }
         else {

@@ -1,5 +1,6 @@
-const admin = require("../models/adminModel");
-const users = require("../models/userModel");
+const admin = require("../../models/adminModel");
+const users = require("../../models/userModel");
+
 
 const loadLogin = (req, res) => {
     try {
@@ -15,7 +16,7 @@ const loadLogins = (req, res) => {
         res.render("adminHome");
     } catch (error) {
         console.log(error);
-    }
+    }    
 }
 
 const loginAdmin = async (req, res) => {
@@ -34,12 +35,12 @@ const loginAdmin = async (req, res) => {
         const adminData = await admin.findOne({ email: logemail });
         if (adminData) {
             if (adminData.password === req.body.password) {
-                return res.redirect("/adminLogins");
+                 res.redirect("/admin/adminLogins");
             } else {
                 // Invalid credentials
                 // req.flash("error", "Invalid credentials");
                 // return res.render("adminLogin");
-                res.redirect("/adminLogin?error=Invalid credentials")
+                res.redirect("/admin/adminLogin?error=Invalid credentials")
             }
         } else {
             // Admin not found
@@ -62,21 +63,13 @@ const userList = async (req, res) => {
     }
 }
 
-const category = (req, res) => {
-    try {
-        res.render("category");
-        
-    } catch (error) {
-        console.log(error);
-    }
-}
 
 
 
 
 
 module.exports = {
-    loadLogin, loginAdmin, loadLogins, userList, category
+    loadLogin, loginAdmin, loadLogins, userList
 }
 
 
