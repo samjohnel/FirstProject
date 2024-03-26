@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 const flash = require("express-flash");
 const noCache = require("nocache");
 const nocache = require("nocache");
+const methodOverride = require("method-override");
 const app = express();
 let port = 2002;
 
@@ -16,7 +17,7 @@ mongoose.connect("mongodb://localhost:27017/SHANAPPARELS");
 mongoose.connection.on("connected", (req, res) => {
     console.log("connected to mongodb");
 })
-
+app.use(methodOverride("_method"));
 
 app.use("/public", express.static(path.join(__dirname,"/public")));
 app.use(bodyParser.json());

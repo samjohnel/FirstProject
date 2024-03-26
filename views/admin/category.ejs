@@ -21,7 +21,7 @@
       <div class="card-body">
         <div class="row">
           <div class="col-md-3">
-            <form action="/addCategory" method="post" id="myForm">
+            <form action="/admin/addCategory" method="post" id="myForm">
               <div class="mb-2">
                 <label for="product_name" class="form-label">Name</label>
                 <input type="text" placeholder="Type here" name="categoryName" class="form-control" id="category" />
@@ -80,7 +80,7 @@
                             <% } %>
                       </td>
                       <td>
-                        <a href="/editCategory?catId=<%= categories[i]._id %>"
+                        <a href="/admin/editCategory?catId=<%= categories[i]._id %>"
                           id="editCategory<%= categories[i]._id %>" class="btn btn-sm btn-dark rounded font-sm mt-15"
                           value="Edit">Edit</a>
 
@@ -219,42 +219,42 @@
 
   <script>
 
-    $(document).ready(function () {
-      $("#myForm").submit(function (event) {
-        if (!namevalidate()) {
-          console.log("false");
-          return false;
-        }
-        event.preventDefault();
-        var formData = $(this).serialize();
-        $.ajax({
-          type: "POST",
-          url: "/addCategory",
-          data: formData,
-          success: function (response) {
-            if (response.status) {
-              Swal.fire({
-                position: "center",
-                icon: "success",
-                title: "Category added",
-                showConfirmButton: false,
-                timer: 1600,
-              }).then(function () {
-                window.location.reload();
-              });
-            } else {
-              Swal.fire({
-                icon: "warning",
-                title: "Category already exists",
-              });
-            }
-          },
-          error: function (xhr, status, error) {
-            console.error(error);
-          },
-        });
-      });
-    });
+    // $(document).ready(function () {
+    //   $("#myForm").submit(function (event) {
+    //     if (!namevalidate()) {
+    //       console.log("false");
+    //       return false;
+    //     }
+    //     event.preventDefault();
+    //     var formData = $(this).serialize();
+    //     $.ajax({
+    //       type: "POST",
+    //       url: "/admin/addCategory",
+    //       data: formData,
+    //       success: function (response) {
+    //         if (response.status) {
+    //           Swal.fire({
+    //             position: "center",
+    //             icon: "success",
+    //             title: "Category added",
+    //             showConfirmButton: false,
+    //             timer: 1600,
+    //           }).then(function () {
+    //             window.location.reload();
+    //           });
+    //         } else {
+    //           Swal.fire({
+    //             icon: "warning",
+    //             title: "Category already exists",
+    //           });
+    //         }
+    //       },
+    //       error: function (xhr, status, error) {
+    //         console.error(error);
+    //       },
+    //     });
+    //   });
+    // });
 
     function namevalidate(e) {
 

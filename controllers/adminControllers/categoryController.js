@@ -19,28 +19,29 @@ const category = async(req, res) => {
 }
 
 const addCategory = async(req, res) => {
+  
     await categoryHelper.addCategory(req.body).then((response) => {
-        if (req.body.name.length > 3) {
-          res.flash("The lenght of the name should be greater than 3");
-       }
-       if(req.body.description > 10){
-          res.flash("The length of the description should be greater than 10");
-       }
-        res.json(response);
+      console.log("reached here")
+       res.redirect("/admin/category")
+       // res.json(response);
       });
 }
 
 const editCategoryLoad = async (req, res) => {
+  console.log("helloos");
     const catId = req.query.catId;
     const catDetails = await categoryModel.findById({ _id: catId });
+    console.log(catDetails);
     res.render("editCategory", { details: catDetails });
   };
 
 const editCategory = async (req, res) => {
+    console.log(req.body);
     const check = await categoryModel.findOne({
       categoryName: req.body.categoryName,
     });
-  
+    
+  console.log(check);
     const checks = await categoryModel.findOne({ _id: req.params.id });
   
     if (!check) {
@@ -48,19 +49,22 @@ const editCategory = async (req, res) => {
       checks.description = req.body.categoryDescription;
       await checks.save();
   
-      res.redirect("/category");
-    } else if (req.params.id == check._id) {
+      res.redirect("/admin/category");
+    } else if (req.params.id === check._id) {
       check.categoryName = req.body.categoryName;
       check.description = req.body.categoryDescription;
+     
       await check.save();
   
-      res.redirect("/category");
+      res.redirect("/admin/category");
     } else {
       req.flash("message", "Category already Exists");
       console.log("Hi");
-      res.redirect("/category");
+      res.redirect("/admin/category");
     }
   };
+
+ 
 
 // const changeCategoryStatus = async (req, res) => {
 //     console.log("controller called")

@@ -8,9 +8,9 @@ router.get("/adminLogins", adminController.loadLogins);
 router.post("/adminLogin", adminController.loginAdmin);
 router.get("/userList", adminController.userList);
 router.get("/category", categoryController.loadCategory);
-router.post("/addcategory", categoryController.addCategory);
+router.post("/addCategory", categoryController.addCategory);
 router.get("/editCategory", categoryController.editCategoryLoad);
-router.post("/editCategory/:id", categoryController.editCategory);
-// router.post("/categorychange",categoryController.changeCategoryStatus);
+router.put("/editCategory/:id", categoryController.editCategory);
+router.post("/categorychange",categoryController.changeCategoryStatus);
 
 module.exports = router;    
