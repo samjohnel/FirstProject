@@ -28,7 +28,7 @@ const addCategory = (body) => {
     });
   };
 
-  const getAllcategory = () => {
+  const getAllCategory = () => {
     return new Promise(async (resolve, reject) => {
       await categoryModel.find().then((result) => {
         resolve(result);
@@ -36,4 +36,28 @@ const addCategory = (body) => {
     });
   };
 
-  module.exports = { addCategory, getAllcategory };
+  
+  const softDeleteCategory = async (categoryId) => {
+    try {
+      let category = await categoryModel.findById(categoryId);
+  
+      if (!category) {
+        throw new Error("Category not found");
+      }
+  
+      // Toggle the status field
+      category.status = !category.status;
+  
+      // Save the changes
+      await category.save();
+  
+      // Resolve with the updated category
+      return category;
+    } catch (error) {
+      console.error("Error soft deleting category:", error);
+      throw error;
+    }
+  };
+  
+
+  module.exports = { addCategory, getAllCategory, softDeleteCategory };

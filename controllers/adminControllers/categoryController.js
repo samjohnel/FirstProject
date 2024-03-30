@@ -2,7 +2,7 @@ const categoryModel = require("../../models/categoryModel");
 const categoryHelper = require("../../helper/categoryHelper");
 
 const loadCategory = (req, res) => {
-    categoryHelper.getAllcategory().then((response) => {
+    categoryHelper.getAllCategory().then((response) => {
       const message = req.flash("message");
       res.render("category", { categories: response, message: message });
     });
@@ -18,14 +18,20 @@ const category = async(req, res) => {
     }
 }
 
-const addCategory = async(req, res) => {
-  
-    await categoryHelper.addCategory(req.body).then((response) => {
-      console.log("reached here")
-       res.redirect("/admin/category")
-       // res.json(response);
-      });
-}
+const addCategory = async (req, res) => {
+  try {
+    const result = await categoryHelper.addCategory(req.body);
+    req.flash('success', 'Category added successfully');
+    res.redirect("/admin/category");
+  } catch (error) {
+    console.error("Error adding category:", error);
+    req.flash('error', 'Category name and description are required');
+    res.redirect("/admin/category");
+  }
+};
+
+
+
 
 const editCategoryLoad = async (req, res) => {
   console.log("helloos");
@@ -66,22 +72,23 @@ const editCategory = async (req, res) => {
 
  
 
-// const changeCategoryStatus = async (req, res) => {
-//     console.log("controller called")
-//     const {id,status}= req.query
-//     if(status==="listed"){
-//         const category = await categoryModel.findByIdAndUpdate({_id: id}, {$set: {status:false}} );
-//         res.json({listed:false,message:"Category status changed successfully"})
-
-//     }else{
-
-//         const category = await categoryModel.findByIdAndUpdate({_id: id}, {$set: {status:true}} );
-//         res.json({listed:true,message:"Category status changed successfully"})
-
-//     }
-// }
+  const deleteCategory = async (req, res) => {
+    const categoryId = req.params.id;
+    console.log(categoryId);
+    await categoryHelper.softDeleteCategory(categoryId).then((response) => {
+      if (response.status) {
+        res.json({ error: false, message: "Category is listed", listed: true });
+      } else {
+        res.json({
+          error: false,
+          message: "Category is Unlisted",
+          listed: false,
+        });
+      }
+    });
+  };
     
      
 
 
-module.exports = { category, addCategory, loadCategory, editCategoryLoad, editCategory};
+module.exports = { category, addCategory, loadCategory, editCategoryLoad, editCategory, deleteCategory };

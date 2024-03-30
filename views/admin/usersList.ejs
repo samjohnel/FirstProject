@@ -92,7 +92,7 @@
                 console.log(response);
                 if (response.isConfirmed) {
                     $.ajax({
-                        url: '/admin/blockUnblockUser/' + userId,
+                        url: `/admin/blockUnblockUser/${userId}`,
                         type: 'PATCH'
                     }).done(response => {
                         Swal.fire("Successfull", `Status Updated`, "success").then(() => {

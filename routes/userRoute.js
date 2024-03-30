@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userControllers/userController");
-const userAuth= require("../middleware/userAuth")
+const productController = require("../controllers/userControllers/productControllers");
+const userAuth= require("../middleware/userAuth");
 
 
 router.get("/login", userAuth.islogin ,userController.userLogin);
@@ -14,5 +15,6 @@ router.post("/otpPage", userController.otpPost);
 router.post("/verifyCredentials", userController.verifyCredentials);
 router.get("/userHome",userAuth.isAuthenticated ,userController.userHome);
 router.get("/logout", userController.logout);
+router.get("/userHome/productView/:id", productController.productViewLoad);
 
 module.exports = router;

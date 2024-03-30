@@ -154,8 +154,8 @@
         if (response.isConfirmed) {
           console.log("ajax call")
           $.ajax({
-              url: `/admin/categorychange`,
-            type: "POST",
+              url: `/admin/deleteCategory/${categoryId}`,
+            type: "PATCH",
             contentType:"application/json",
 
           }).done(response => {
@@ -219,42 +219,44 @@
 
   <script>
 
-    // $(document).ready(function () {
-    //   $("#myForm").submit(function (event) {
-    //     if (!namevalidate()) {
-    //       console.log("false");
-    //       return false;
-    //     }
-    //     event.preventDefault();
-    //     var formData = $(this).serialize();
-    //     $.ajax({
-    //       type: "POST",
-    //       url: "/admin/addCategory",
-    //       data: formData,
-    //       success: function (response) {
-    //         if (response.status) {
-    //           Swal.fire({
-    //             position: "center",
-    //             icon: "success",
-    //             title: "Category added",
-    //             showConfirmButton: false,
-    //             timer: 1600,
-    //           }).then(function () {
-    //             window.location.reload();
-    //           });
-    //         } else {
-    //           Swal.fire({
-    //             icon: "warning",
-    //             title: "Category already exists",
-    //           });
-    //         }
-    //       },
-    //       error: function (xhr, status, error) {
-    //         console.error(error);
-    //       },
-    //     });
-    //   });
-    // });
+    $(document).ready(function () {
+      $("#myForm").submit(function (event) {
+        if (!namevalidate()) {
+          console.log("false");
+          return false;
+        }
+        event.preventDefault();
+        var formData = $(this).serialize();
+        $.ajax({
+          type: "POST",
+          url: "/admin/addCategory",
+          data: formData,
+          success: function (response) {
+            if (response.status) {
+              Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Category added",
+                showConfirmButton: false,
+                timer: 1600,
+              }).then(function () {
+                window.location.reload();
+              });
+            
+            } else {
+              // Swal.fire({
+              //   icon: "warning",
+              //   title: "Category already exists",
+              // });
+              location.reload()
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error(error);
+          },
+        });
+      });
+    });
 
     function namevalidate(e) {
 
@@ -277,3 +279,5 @@
   </script>
 
   <%- include('../layouts/adminLayout/admin-footer') %>
+
+  
