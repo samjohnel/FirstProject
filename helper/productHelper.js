@@ -48,6 +48,8 @@ const addProduct = (data, files) => {
             },
         ];
 
+        console.log(resizedImageUrls)
+
         await productModel
         .create({
             productName: data.name,
@@ -57,7 +59,7 @@ const addProduct = (data, files) => {
             productQuantity: productQuantity,
             productDiscount: data.discount,
             totalQuantity: totalQuantity,
-            image: resizedImageUrls.map((path) => path.substring(2)),
+            image: resizedImageUrls.map((path) => path.substring()),
         })
         .then((result) => {
             resolve(result);
@@ -108,6 +110,16 @@ const checkDuplicateFunction = (body, productId) => {
       }
     });
   };
+
+
+  const productListUnlist = (id) => {
+    return new Promise(async (resolve, reject) => {
+      const result = await productModel.findOne({ _id: id });
+      result.productStatus = !result.productStatus;
+      result.save();
+      resolve(result);
+    });
+  };
             
 
-module.exports = { getAllProducts, addProduct, checkDuplicateFunction, editImages };
+module.exports = { getAllProducts, addProduct, checkDuplicateFunction, editImages, productListUnlist };

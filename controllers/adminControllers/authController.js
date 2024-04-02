@@ -31,9 +31,9 @@ const adminLogout = (req, res) => {
     if (req.session.admin) {
         delete req.session.admin;
         req.flash('message', 'Logged out successfully');
-        res.redirect('/admin/adminLogin');
+        res.redirect('/admin');
     } else {
-        res.redirect('/admin/adminLogin');
+        res.redirect('/admin');
     }
 }
 

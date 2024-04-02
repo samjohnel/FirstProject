@@ -11,7 +11,7 @@ const sharp = require("../middleware/sharp");
 router.get("/", adminAuth.isLogin, authContoller.adminLoginLoad);
 // router.get("/adminLogins", adminController.loadLogins);
 router.post("/", authContoller.adminLoginPost);
-router.get("/logout", authContoller.adminLogout, adminAuth.isLogout)
+router.get("/logout", adminAuth.isLogout, authContoller.adminLogout)
 router.get("/userList", adminController.userList);
 router.patch("/blockUnblockUser/:id", adminController.blockUnblockUser);
 router.get("/category", categoryController.loadCategory);
@@ -23,8 +23,10 @@ router.get("/productList", productController.productListLoad);
 router.get("/addProduct", productController.addProductLoad);
 router.post("/addProduct", multer.productUpload.array("images"), sharp.resizeImages, productController.addProductPost);
 router.get("/editProduct/:id", productController.editProductLoad);
-router.put("/editProduct/:id",multer.productUpload.array("images"),sharp.resizeImages,productController.editProductPost
-  );
+router.put("/editProduct/:id",multer.productUpload.array("images"),sharp.resizeImages,productController.editProductPost);
+router.patch("/deleteproduct/:id", productController.deleteProduct);
+
+
   
   
 

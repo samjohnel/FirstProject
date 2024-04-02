@@ -21,8 +21,10 @@ const category = async(req, res) => {
 const addCategory = async (req, res) => {
   try {
     const result = await categoryHelper.addCategory(req.body);
-    req.flash('success', 'Category added successfully');
-    res.redirect("/admin/category");
+    if (!result.status) {
+      req.json({ status: false });
+    }
+    res.json({status: true});
   } catch (error) {
     console.error("Error adding category:", error);
     req.flash('error', 'Category name and description are required');

@@ -244,11 +244,11 @@
               });
             
             } else {
-              // Swal.fire({
-              //   icon: "warning",
-              //   title: "Category already exists",
-              // });
-              location.reload()
+              Swal.fire({
+                icon: "warning",
+                title: "Category already exists",
+              });
+              //location.reload()
             }
           },
           error: function (xhr, status, error) {

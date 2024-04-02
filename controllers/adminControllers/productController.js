@@ -113,5 +113,22 @@ const editProductLoad = async (req, res) => {
   };
 
 
+  const deleteProduct = (req, res) => {
+    const id = req.params.id;
+    productHelper
+      .productListUnlist(id)
+      .then((response) => {
+        if (response.productStatus) {
+          res.json({ message: "Listed Successfuly" });
+        } else {
+          res.json({ message: "Unlisted Succesfuly" });
+        }
+      })
+      .catch((error) => {
+        res.json({ error: "Failed" });
+      });
+  };
 
-module.exports = { productListLoad, addProductLoad, addProductPost, editProductLoad, editProductPost };
+
+
+module.exports = { productListLoad, addProductLoad, addProductPost, editProductLoad, editProductPost, deleteProduct };
