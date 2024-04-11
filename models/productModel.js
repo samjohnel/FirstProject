@@ -17,29 +17,29 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    // productQuantity: [
-    //     {
-    //         size: {
-    //             type: String,
-    //             enum: ['S', 'M', 'L'], 
-    //             },
-    //         quantity: {
-    //             type: Number,
-    //             default: 0,
-    //         },
-    //     },
-    // ],
+    productQuantity: [
+        {
+            size: {
+                type: String,
+                enum: ['S', 'M', 'L'], 
+                },
+            quantity: {
+                type: Number,
+                default: 0,
+            },
+        },
+    ],
 
-    productQuantity: [{
-        size: {
-            type: String,
-            enum: ['small', 'medium', 'large'] // Define valid enum values here
-        },
-        quantity: {
-            type: Number,
-            default: 0,
-        },
-    }],
+    // productQuantity: [{
+    //     size: {
+    //         type: String,
+    //         enum: ['small', 'medium', 'large'] // Define valid enum values here
+    //     },
+    //     quantity: {
+    //         type: Number,
+    //         default: 0,
+    //     },
+    // }],
 
     productDiscount: {
         type: Number,

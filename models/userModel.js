@@ -19,7 +19,32 @@ const userSchema = new mongoose.Schema({
     isActive: {
         type: Boolean,
         default: true
-    }
+    },
+    address:[
+        {
+            housename:{
+                type:String
+            },
+            streetname:{
+                type:String
+            },
+            areaname:{
+                type:String
+            },
+            districtname:{
+                type:String
+            },
+            statename:{
+                type:String
+            },
+            countryname:{
+                type:String
+            },
+            pin:{
+                type:Number
+            }
+        }
+    ],
 })
 
 const User = mongoose.model("User", userSchema);

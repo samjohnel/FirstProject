@@ -20,5 +20,17 @@ const isAuthenticated = (req, res, next) => {
 };
 
 
+const isLogout = (req, res, next) => {
+    try {
+        if (req.session.user) {
+            next();
+        } else {
+            res.redirect('/login');
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}
 
-module.exports = {islogin, isAuthenticated}
+
+module.exports = {islogin, isAuthenticated, isLogout}

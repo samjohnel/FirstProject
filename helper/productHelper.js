@@ -15,7 +15,6 @@ const getAllProducts = () => {
             },
         ])
         .then((result) => {
-            console.log(result);
             resolve(result);
         })
         .catch((error) => {
@@ -25,49 +24,116 @@ const getAllProducts = () => {
                     
 };
 
-const addProduct = (data, files) => {
-    return new Promise(async (resolve, reject) => {
-        const resizedImageUrls = files.map((file) => file.path);
-        let totalQuantity = 
-            parseInt(data.smallQuantity) +
-            parseInt(data.mediumQuantity) +
-            parseInt(data.largeQuantity);
+// const getAllActiveProducts = () => {
+//   return new Promise(async (resolve, reject) => {
+//     try {
 
-        const productQuantity = [
-            {
-                size: "small",
-                quantity: data.smallQuantity,
-            },
-            {
-                size: "medium",
-                quantity: data.mediumQuantity,
-            },
-            {
-                size: "large",
-                quantity: data.largeQuantity,
-            },
-        ];
+//       const result = await productModel.aggregate([
+//         {
+//           $lookup: {
+//             from: "Category",
+//             localField: "productCategory",
+//             foreignField: "_id",
+//             as: "category",
+//           },
+//         },
+//         {
+//           $match: {
+//             productStatus: true,
+//             "category.isListed": true,
+//           },
+//         },
+//       ]);
+//       console.log("This is the result", result);
 
-        console.log(resizedImageUrls)
+//       resolve(result);
+//     } catch (error) {
+//       console.error(error);
+//       reject(error);
+//     }
+//   });
+// };
 
-        await productModel
-        .create({
-            productName: data.name,
-            productDescription: data.description,
-            productCategory: data.productCategory,
-            productPrice: data.price,
-            productQuantity: productQuantity,
-            productDiscount: data.discount,
-            totalQuantity: totalQuantity,
-            image: resizedImageUrls.map((path) => path.substring()),
-        })
-        .then((result) => {
-            resolve(result);
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    });
+
+const getAllActiveProducts = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const result = await productModel.aggregate([
+        {
+          $lookup: {
+            from: "categories", // Corrected collection name
+            localField: "productCategory",
+            foreignField: "_id",
+            as: "category",
+          },
+        },
+        {
+          $match: {
+            productStatus: true,
+            "category": { $ne: [] } // Check if category array is not empty
+          },
+        },
+      ]);
+      resolve(result);
+    } catch (error) {
+      console.error(error);
+      reject(error);
+    }
+  });
+};
+
+
+
+
+const addProduct = (data, files,req,res) => {
+
+
+  return new Promise(async (resolve, reject) => {
+   
+    let images=[]
+    for(const file of files){
+        images.push(file.filename)
+        console.log("hgytvvf");
+        console.log(files);
+    }
+    let totalQuantity =
+      parseInt(data.smallQuantity) +
+      parseInt(data.mediumQuantity) +
+      parseInt(data.largeQuantity);
+
+    const productQuantity = [
+      {
+        size: "S",
+        quantity:parseInt(data.smallQuantity),
+      },
+      {
+        size: "M",
+        quantity:parseInt(data.mediumQuantity),
+      },
+      {
+        size: "L",
+        quantity:parseInt(data.largeQuantity),
+      },
+    ];
+
+    await productModel
+      .create({
+        productName: data.name,
+        productDescription: data.description,
+        productCategory: data.productCategory,
+        productPrice: data.price,
+        productQuantity: productQuantity,
+        productDiscount: data.discount,
+        totalQuantity: totalQuantity,
+        image: images,
+      })
+      .then((result) => {
+        resolve(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  });
 };
 
 const checkDuplicateFunction = (body, productId) => {
@@ -87,13 +153,16 @@ const checkDuplicateFunction = (body, productId) => {
     });
   };
 
+
   const editImages = async (oldImages, newImages) => {
     return new Promise((resolve, reject) => {
       if (newImages && newImages.length > 0) {
         // if new files are uploaded
-        const resizedImageUrls = newImages.map((file) => file.path);
-  
-        // delete old images
+        let filenames = [];
+        for (let i = 0; i < newImages.length; i++) {
+          filenames.push(newImages[i].filename);
+        }
+        // delete old images if they exist
         if (oldImages && oldImages.length > 0) {
           for (let i = 0; i < oldImages.length; i++) {
             fs.unlink("public/uploads/" + oldImages[i], (err) => {
@@ -103,13 +172,13 @@ const checkDuplicateFunction = (body, productId) => {
             });
           }
         }
-        resolve(resizedImageUrls, { status: true });
+        resolve(filenames);
       } else {
-        // using old images
-        resolve(oldImages, { status: false });
+        // use old images if new images are not uploaded
+        resolve(oldImages);
       }
     });
-  };
+  }
 
 
   const productListUnlist = (id) => {
@@ -120,6 +189,80 @@ const checkDuplicateFunction = (body, productId) => {
       resolve(result);
     });
   };
+
+  const editProductPost = async (req, res) => {
+    try {
+      const product = await productModel.findById(req.params.id);
+      if (!product) {
+        res.redirect("/admin/productList");
+      }
+     
+      const totalAmount =
+        parseInt(req.body.smallQuantity) +
+        parseInt(req.body.mediumQuantity) +
+        parseInt(req.body.largeQuantity);
+      console.log(totalAmount);
+      const check = await checkDuplicateFunction(
+        req.body,
+        req.params.id
+      );
+      const productQuantity = [
+        {
+          size:"S",
+          quantity:req.body.smallQuantity
+        },
+        {
+          size:"M",
+          quantity:req.body.mediumQuantity
+        },
+        {
+          size:"L",
+          quantity:req.body.largeQuantity
+        }
+      ]
+      switch (check.status) {
+        case 1:
+          product.productName = req.body.productName;
+          product.productDescription = req.body.description;
+          product.productPrice = req.body.productPrice;
+          product.productQuantity = productQuantity;
+          product.totalQuantity = totalAmount;
+          product.Category = req.body.productCategory;
+          product.productDiscount = req.body.productDiscount;
+          break;
+        case 2:
+          product.productName = req.body.productName;
+          product.productDescription = req.body.description;
+          product.productPrice = req.body.productPrice;
+          product.productQuantity = productQuantity;
+          product.totalQuantity = totalAmount;
+          product.Category = req.body.productCategory;
+          product.productDiscount = req.body.productDiscount;
+          break;
+        case 3:
+          console.log("Product already Exists");
+          break;
+        default:
+          console.log("error");
+          break;
+      }
+      if (req.files) {
+        const filenames = await editImages(
+          product.image,
+          req.files
+        );
+        if (filenames.status) {
+          product.image = filenames;
+        } else {
+          product.image = filenames;
+        }
+      }
+      await product.save();
+      res.redirect("/admin/productList");
+    } catch (err) {
+      console.log(err);
+    }
+  };
             
 
-module.exports = { getAllProducts, addProduct, checkDuplicateFunction, editImages, productListUnlist };
+module.exports = { getAllProducts, addProduct, checkDuplicateFunction, editImages, productListUnlist, editProductPost, getAllActiveProducts};

@@ -1,9 +1,13 @@
 const { name } = require("ejs");
 const otpHelper = require("../../helper/otpHelper");
 const user = require("../../models/userModel");
-const User = require("../../models/userModel");
 const flash = require('express-flash');
 const session = require('express-session');
+const productModel = require('../../models/productModel');
+const userHelper = require('../../helper/userHelper');
+const categoryHelper = require('../../helper/categoryHelper');
+const productHelper = require('../../helper/productHelper');
+const cartHelper = require('../../helper/cartHelper');
 
 const userLogin = (req, res) => {
     try {
@@ -130,10 +134,8 @@ const loginPost = async (req, res) => {
     try {
       
             let userInfo = await user.findOne({email: logemail});
-            console.log(userInfo);
             if(userInfo.password === logpassword) {
                 req.session.user = userInfo._id; 
-                console.log(req.session.user);
                 res.redirect("/userhome");
             } else {
                 res.send("error");
@@ -183,9 +185,13 @@ const verifyCredentials = async (req, res) => {
     }
 };
 
-const userHome = (req, res) => {
+const userHome =async(req, res) => {
     try {
-        res.render("homepage");
+        const products = await productModel
+        .find().populate("productCategory")
+       .lean();
+
+        res.render("homepage",{products});
     } catch (error) {
         console.log(error);
     }
@@ -206,10 +212,231 @@ const logout = (req, res) => {
     }
 }
 
+const accountView = async (req, res) => {
+    try {
+        
+        const userId = req.session.user
+        console.log(userId)
+        const userData = await user.findOne({_id:userId})
+           console.log(userData)
+        
+        res.render("userAccount",{
+          userData
+        })
+    } catch (error) {
+        console.log(error);
+    }
+}
 
+const addAddress = async (req, res) => {
+    console.log("getting in");
+    const body = req.body;
+    const userId = req.session.user;
+    console.log(userId);
+    const result = await userHelper.addAddress(body, userId);
+    if (result) {
+      res.json({ status: true });
+    }
+  };
 
+  const addressEditModal = async (req, res) => {
+    try {
+      console.log("entered in Add edit modal");
+      const userId = req.params.userId;
+      const addressId = req.params.addressId;
+  
+      // Assuming you have a User model
+      const userData = await user.findById(userId);
+      console.log(userId)
+      if (userData) {
+        
+        const address = userData.address.id(addressId);
+        
+        if (address) {
+          console.log(address);
+          res.json({ address });
+        } else {
+          res.status(404).json({ message: 'Address not found' });
+        }
+      } else {
+        res.status(404).json({ message: 'User not found' });
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
 
+  const editAddress = async (req,res,next)=>{
+    try {
+      console.log("entered into editAddress controller");
+      const userId = req.session.user;
+      console.log(userId);
+      const addressId = req.params.id;
+      const body = req.body;
+      const result = await userHelper.editAddressHelper(userId,addressId,body)
+      if(result){
+        console.log(result);
+        res.json(result)
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const deleteAddress=async(req,res,next)=>{
+    try {
+        console.log('entered in to delete address');
+        const userId=req.session.user
+        console.log(userId);
+        const addressId=req.params.id
+        const result=await userHelper.deleteAddressHelper(userId,addressId)
+        if(result){
+            console.log(result);
+            res.json(result)
+        }
+    } catch (error) {
+        console.log(error);
+    }
+  }
+
+  const updateUser=async(req,res,next)=>{
+    try {
+        console.log("entered in to update user");
+        const userId=req.session.user
+        console.log("User ID:", userId);
+        const userDetails=req.body;
+        const result=await userHelper.updateUserDetails(userId,userDetails)
+        console.log("Update result:", result);
+        res.json(result)
+    } catch (error) {
+        console.log(error);
+    }
+   }
+
+   const loadShop = async(req,res)=>{
+    try {
+      const users = req.session.user;
+      const categories = await categoryHelper.getAllCategory();
+      let products = await productHelper.getAllActiveProducts();
+  
+  
+      if (users) {
+        res.render("userShop", {
+          products: products,
+          categories,
+          users
+  
+        });
+      } else {
+        res.render("homepage", {
+          products: products,
+          categories
+  
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const LoadUserProduct = async (req, res) => {
+    const id=req.params.id
+    const userData=req.session.user
+    const categories=await categoryHelper.getAllCategory()
+    const product = await productModel
+    .findById({_id:id})
+    .populate("productCategory")
+    .lean()
+
+    const categoryId= product.productCategory;
+    
+    const products = await productModel.find({productCategory:categoryId}) 
+    .populate("productCategory")
+    .lean()
+      
+        res.render('detailProductPage', {
+         product,products,
+         userData,categories })
+   
+}
+
+const userCartLoad = async (req, res) => {
+    try {
+      const userData = req.session.user;
+  
+      const cartItems = await cartHelper.getAllCartItems(userData._id);
+  
+      const cartCount = await cartHelper.getCartCount(userData._id);
+  
+      const wishListCount = await wishlistHelper.getWishListCount(userData._id);
+  
+      let totalandSubTotal = await cartHelper.totalSubtotal(
+        userData._id,
+        cartItems
+      );
+  
+      let totalAmountOfEachProduct = [];
+      for (i = 0; i < cartItems.length; i++) {
+        let total =
+          cartItems[i].quantity * parseInt(cartItems[i].product.productPrice);
+        total = currencyFormatter(total);
+        totalAmountOfEachProduct.push(total);
+      }
+  
+      totalandSubTotal = currencyFormatter(totalandSubTotal);
+      for (i = 0; i < cartItems.length; i++) {
+        cartItems[i].product.productPrice = currencyFormatter(
+          cartItems[i].product.productPrice
+        );
+      }
+      console.log(cartItems);
+  
+      res.render("user/userCart", {
+        userData: req.session.user,
+        cartItems,
+        cartCount,
+        wishListCount,
+        totalAmount: totalandSubTotal,
+        totalAmountOfEachProduct,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+  const addToCart = async (req, res) => {
+    const userId = req.session.user._id;
+    const productId = req.params.id;
+  
+    const result = await cartHelper.addToCart(userId, productId);
+  
+    if (result) {
+      res.json({ status: true });
+    } else {
+      res.json({ status: false });
+    }
+  };
 
 module.exports = {
-    userLogin, getUserSignUp, otpRedirect, getOtpPage, otpPost, registerPost, loginPost, verifyCredentials, userHome, logout
+    userLogin, 
+    getUserSignUp, 
+    otpRedirect, 
+    getOtpPage, 
+    otpPost, 
+    registerPost, 
+    loginPost, 
+    verifyCredentials, 
+    userHome, 
+    logout, 
+    accountView, 
+    addAddress, 
+    addressEditModal,
+    editAddress, 
+    deleteAddress,
+    updateUser,
+    loadShop,
+    LoadUserProduct,
+    userCartLoad,
+    addToCart,
 }

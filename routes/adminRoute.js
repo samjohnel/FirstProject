@@ -5,6 +5,7 @@ const authContoller = require("../controllers/adminControllers/authController");
 const adminAuth = require("../middleware/adminAuth");
 const categoryController = require("../controllers/adminControllers/categoryController")
 const productController = require("../controllers/adminControllers/productController")
+const productHelper = require("../helper/productHelper");
 const multer = require("../middleware/multer");
 const sharp = require("../middleware/sharp");
 
@@ -21,9 +22,18 @@ router.put("/editCategory/:id", categoryController.editCategory);
 router.patch("/deleteCategory/:id",categoryController.deleteCategory);
 router.get("/productList", productController.productListLoad);
 router.get("/addProduct", productController.addProductLoad);
-router.post("/addProduct", multer.productUpload.array("images"), sharp.resizeImages, productController.addProductPost);
+
+// router.post("/addProduct", multer.productUpload.array("images"), productController.addProductPost);
+
+router.post('/addproduct', multer.productUpload.array("images"), productController.addProductPost);
+
 router.get("/editProduct/:id", productController.editProductLoad);
-router.put("/editProduct/:id",multer.productUpload.array("images"),sharp.resizeImages,productController.editProductPost);
+
+router.put("/editProduct/:id", multer.productUpload.array("images"), productHelper.editProductPost);
+
+//router.put("/editProduct/:id",multer.productUpload.array("images"), productController.editProductPost);
+
+
 router.patch("/deleteproduct/:id", productController.deleteProduct);
 
 
