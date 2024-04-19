@@ -8,6 +8,8 @@ const userHelper = require('../../helper/userHelper');
 const categoryHelper = require('../../helper/categoryHelper');
 const productHelper = require('../../helper/productHelper');
 const cartHelper = require('../../helper/cartHelper');
+const cartModel = require('../../models/cartModel');
+const ObjectId = require("mongoose").Types.ObjectId;
 
 const userLogin = (req, res) => {
     try {
@@ -365,14 +367,14 @@ const userCartLoad = async (req, res) => {
     try {
       const userData = req.session.user;
   
-      const cartItems = await cartHelper.getAllCartItems(userData._id);
+      const cartItems = await cartHelper.getAllCartItems(userData);
   
       const cartCount = await cartHelper.getCartCount(userData._id);
   
-      const wishListCount = await wishlistHelper.getWishListCount(userData._id);
+    //   const wishListCount = await wishlistHelper.getWishListCount(userData._id);
   
       let totalandSubTotal = await cartHelper.totalSubtotal(
-        userData._id,
+        userData,
         cartItems
       );
   
@@ -380,23 +382,23 @@ const userCartLoad = async (req, res) => {
       for (i = 0; i < cartItems.length; i++) {
         let total =
           cartItems[i].quantity * parseInt(cartItems[i].product.productPrice);
-        total = currencyFormatter(total);
+        total = total;
         totalAmountOfEachProduct.push(total);
       }
   
-      totalandSubTotal = currencyFormatter(totalandSubTotal);
+      totalandSubTotal = totalandSubTotal;
       for (i = 0; i < cartItems.length; i++) {
-        cartItems[i].product.productPrice = currencyFormatter(
+        cartItems[i].product.productPrice = 
           cartItems[i].product.productPrice
-        );
+        
       }
-      console.log(cartItems);
+
+      //add wishlist count when you do the wishlist here 
   
-      res.render("user/userCart", {
+      res.render("userCart", {
         userData: req.session.user,
         cartItems,
         cartCount,
-        wishListCount,
         totalAmount: totalandSubTotal,
         totalAmountOfEachProduct,
       });
@@ -406,10 +408,11 @@ const userCartLoad = async (req, res) => {
   };
   
   const addToCart = async (req, res) => {
-    const userId = req.session.user._id;
+    const userId = req.session.user;
     const productId = req.params.id;
+    const size=req.params.size
   
-    const result = await cartHelper.addToCart(userId, productId);
+    const result = await cartHelper.addToCart(userId, productId,size);
   
     if (result) {
       res.json({ status: true });
@@ -417,6 +420,71 @@ const userCartLoad = async (req, res) => {
       res.json({ status: false });
     }
   };
+
+  const updateCartQuantity = async (req, res) => {
+    const productId = req.query.productId;
+    const quantity = req.query.quantity;
+    const userId = req.session.user;
+    const operation = req.query.operation; // 'increment' or 'decrement'
+    
+    const update = await cartHelper.incDecProductQuantity(
+      userId,
+      productId,
+      quantity,
+      operation
+    );
+    
+    if (update) {
+      res.json({ status: true, quantity, total: update });
+    } else {
+      res.json({ status: false });
+    }
+  };
+
+  const removeCartItem = async (req, res) => {
+    try {
+      const userId = req.session.user;
+      const productId = req.params.id;
+      console.log(userId, productId);
+      const result = await cartHelper.removeItemFromCart(userId, productId);
+      console.log(result);
+      if (result) {
+        res.json({ status: true });
+      } else {
+        res.json({ status: false });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }; 
+  
+  const checkoutPage = async (req, res) => {
+    try {
+      const userId = req.session.user;
+      const userData = await user.findById({ _id: userId })
+      let cartItems = await cartHelper.getAllCartItems(userId);
+      console.log("This is checkout",cartItems);
+      let totalandSubTotal = await cartHelper.totalSubtotal(userId, cartItems);
+     
+  
+     
+  
+        let totalAmountOfEachProduct = [];
+        for (i = 0; i < cartItems.products.length; i++) {
+          let total = cartItems.products[i].quantity * parseInt(cartItems.products[i].price);
+          totalAmountOfEachProduct.push(total);
+        }
+        res.render("checkout", {
+          userData,
+          cartItems,
+          totalandSubTotal,
+          totalAmountOfEachProduct
+        })
+     
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
 module.exports = {
     userLogin, 
@@ -439,4 +507,7 @@ module.exports = {
     LoadUserProduct,
     userCartLoad,
     addToCart,
+    updateCartQuantity,
+    removeCartItem,
+    checkoutPage,
 }

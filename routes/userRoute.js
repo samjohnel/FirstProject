@@ -25,5 +25,9 @@ router.put("/updateUser",userController.updateUser);//update user details
 router.get("/userShop",userMiddleware.isLogout,userController.loadShop);
 router.get('/detailProductPage/:id',userMiddleware.isLogout,userController.LoadUserProduct);
 router.get("/cart",userAuth.isLogout, userController.userCartLoad);
+router.post("/addToCart/:id/:size", userController.addToCart);
+router.patch("/updateCartQuantity", userController.updateCartQuantity);
+router.delete("/removeCart/:id", userController.removeCartItem);
+router.get("/checkout", userController.checkoutPage)
 
 module.exports = router;

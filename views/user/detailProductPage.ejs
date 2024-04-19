@@ -563,7 +563,7 @@
                                         <div class="bt-1 border-color-1 mt-15 mb-15"></div>
                                         <div class="short-desc mb-30">
                                             <p>
-                                                <%= product.description %>
+                                                <%= product.productDescription %>
                                             </p>
                                         </div>
                                         <div class="product_sort_info font-xs mb-30">
@@ -596,6 +596,32 @@
                                                 <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
                                             </div>
                                         </div> -->
+
+                                        <!-- Cart functionality -->
+
+                                        <div class="detail-extralink">
+
+                                            <div class="product-extra-link2">
+                                              <% if (product.cartStatus) { %> 
+                                                <button type="button" class="btn button-add-to-cart" style="background-color: #088178;"
+                                                  onclick="viewCart()"> View in cart</button>
+                      
+                                                <% } else { %>
+                                                  <button type="submit" class="button button-add-to-cart" style="background-color: #088178;"
+                                                    onclick="addToCart('<%=product._id%>')">Add to cart</button>
+                                                  <% } %>
+                                                    <!-- <% if (product.wishlistStatus) { %>
+                                                      <a aria-label="Remove from wishlist" class="action-btn hover-up"
+                                                        onclick="removeFromWishlist('<%=product._id%>')"><i class="fi-rs-heart"
+                                                          style="background-color: red;"></i></a>
+                                                      <% } else { %>
+                                                        <a aria-label="Add To Wishlist" class="action-btn hover-up"
+                                                          onclick="addTowishlist('<%=product._id%>')"><i class="fi-rs-heart"></i></a>
+                                                        <% } %> -->
+                      
+                                            </div>
+                                          </div>
+
                                         <ul class="product-meta font-xs color-grey mt-50">
                                             <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
                                             <li class="mb-5">Tags: <a href="#" rel="tag">Cloth</a>, <a href="#" rel="tag">Women</a>, <a href="#" rel="tag">Dress</a> </li>
@@ -614,7 +640,7 @@
                                         </ul>
                                     </div>
                                     <br>
-                                    <button type="submit" class="btn-btn-fill-out-submit" value="submit"  onclick="addToCart('<%=product._id%>')"> <i class="fas fa-shopping-bag"></i>Add to Cart</button>
+                                    
                                     <!-- Detail Info -->
                                 </div>
                             </div>
@@ -1159,6 +1185,8 @@
       }
       console.log(productId);
       if (quantity > 0) {
+
+        // alert(size)
        
         $.ajax({
           url: `/addToCart/${productId}/${size}`,
@@ -1215,6 +1243,8 @@
 
     };
   </script>
+
+  
     <script src="/public/user-assets/js/vendor/modernizr-3.6.0.min.js"></script>
     <script src="/public/user-assets/js/vendor/jquery-3.6.0.min.js"></script>
     <script src="/public/user-assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>

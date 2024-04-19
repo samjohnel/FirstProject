@@ -10,20 +10,28 @@ const cartSchema= new mongoose.Schema({
         {
             productItemId:{
                 type:mongoose.Schema.Types.ObjectId,
-                ref:'products',
+                ref:'Product',
                 required:true
+            },
+            size:{
+                type: String,
+                require:true
             },
             quantity: {
                 type: Number,
                 required: true,
                 default: 1,
               },
+              subTotal:{
+                type: Number,
+                required:true
+              }
         }
     ],
-    coupon:{
-        type:String,
-        default:null  
-    },
+    // coupon:{
+    //     type:String,
+    //     default:null  
+    // },
     totalAmount:{
         type:Number,
         required:true
