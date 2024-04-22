@@ -43,7 +43,7 @@
                                     </a>
                                 </div>
                                 <div class="header-action-icon-2">
-                                    <a class="mini-cart-icon" href="shop-cart.html">
+                                    <a class="mini-cart-icon" href="/cart">
                                         <img alt="Evara" src="/public/user-assets/imgs/theme/icons/icon-cart.svg">
                                     </a>
                                 </div>
@@ -98,7 +98,7 @@
                                 </a>
                             </div>
                             <div class="header-action-icon-2">
-                                <a class="mini-cart-icon" href="shop-cart.html">
+                                <a class="mini-cart-icon" href="/cart">
                                     <img alt="Evara" src="/public/user-assets/imgs/theme/icons/icon-cart.svg">
                                     <span class="pro-count white">2</span>
                                 </a>
@@ -372,10 +372,10 @@
                                             <%= element.streetname %> ,<%= element.areaname %>,<br> <%= element.districtname %> <%= element.statename %><br>
                                             <%= element.countryname %><br>Pincode: <%=element.pin %>
                                         </p>
-                                        <input type="radio" class="form-check-input" style="border-color: black; outline: none;"
+                                        <input type="radio" class="form-check-input" style="border-color: #088178; outline: none;"
                                         name="address" id="address-1" value="<%= element._id %>" checked>
                                         <label for="address-1" class="form-check-label">Select this address</label>
-                                        <button class="btn-small" onclick="editAddress('<%= userData._id%>','<%= element._id %>')" style="background-color: #2B1754; color: white;">Edit</button>
+                                        <button class="btn-small" onclick="editAddress('<%= userData._id%>','<%= element._id %>')" style="background-color: #088178; color: white;">Edit</button>
                                     </div>
                                 </div>
                               </div>
@@ -389,6 +389,7 @@
                                 <h4>Your Orders</h4>
                             </div>
                             <div class="table-responsive order_table text-center">
+
                                 <table class="table">
                                     <thead>
                                         <tr>
@@ -397,45 +398,41 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <% for( let i=0; i < cartItems.products.length; i++ ) { %>
-                                          <tr>
-                                            <td class="image product-thumbnail"><img src="/public/uploads/<%= cartItems.products[i].productId.productImage[0] %>" alt="#">
-                                            </td>
-                                            <td>
-                                              <h5><a href="#" class="text-dark">
-                                                  <%= cartItems.products[i].productId.productName %>
-                                                </a></h5> <span class="product-qty">x <%= cartItems.products[i].quantity %></span>
-                                            </td>
-                                            <td>
-                                              <%=totalAmountOfEachProduct[i]%>
-                                            </td>
-                                          </tr>
-                                          <% } %>
-                   
-                   
+                                        <% for (let i = 0; i < cartItems.length; i++) { %>
                                             <tr>
-                                              <th>SubTotal</th>
-                                              <td class="product-subtotal" colspan="2" class="text-dark">
-                                                    <span>
-                                                      <%=totalandSubTotal%>
-                                                    </span>
-                                           
-                   
-                                              </td>
+                                                <td class="image product-thumbnail">
+                                                    <img src="/public/uploads/<%= cartItems[i].product.image[0] %>" alt="#">
+                                                </td>
+                                                <td>
+                                                    <h5><a href="#" class="text-dark">
+                                                            <%= cartItems[i].product.productName %>
+                                                        </a></h5> 
+                                                    <span class="product-qty">x <%= cartItems[i].quantity %></span>
+                                                </td>
+                                                <td>
+                                                    <%= totalAmountOfEachProduct[i] %>
+                                                </td>
                                             </tr>
-                                            <tr>
-                                              <!-- <th>Coupon Discount</th> -->
-                                             
-                                            </tr>
-                                            <tr>
-                                              <th>Total</th>
-                                              <td colspan="2" class="product-subtotal"><span class="font-xl text-dark fw-900"
-                                                  id="totalAmount">
-                                                   <%=totalandSubTotal%>
-                                                </span></td>
-                                            </tr>
-                                      </tbody>
+                                        <% } %>
+                                        <tr>
+                                            <th>SubTotal</th>
+                                            <td class="product-subtotal" colspan="2" class="text-dark">
+                                                <span>
+                                                    <%= totalandSubTotal %>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Total</th>
+                                            <td colspan="2" class="product-subtotal">
+                                                <span class="font-xl text-dark fw-900" id="totalAmount">
+                                                    <%= totalandSubTotal %>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
                                 </table>
+                                
                             </div>
                             <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                             <div class="payment_method">
@@ -581,6 +578,64 @@
             </div>
         </div>
     </footer>
+
+    <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editCategoryModalLabel">Edit Address</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="editAddressForm">
+                                <input class="form-control square" name="addressid" type="text" id="addressid1" hidden>
+                                <div class="form-group col-md-12">
+                                    <label>House Name/No.<span class="required">*</span></label>
+                                    <input class="form-control square" name="housename" type="text" id="housename1">
+                                    <span id="house-error" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Street Name <span class="required">*</span></label>
+                                    <input class="form-control square" name="streetname" type="text" id="streetname1">
+                                    <span id="street-error" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Area/Locality<span class="required">*</span></label>
+                                    <input class="form-control square" name="areaname" type="text" id="areaname1">
+                                    <span id="area-error" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>District<span class="required">*</span></label>
+                                    <input class="form-control square" name="districtname" type="text" id="districtname1">
+                                    <span id="district-error" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>State<span class="required">*</span></label>
+                                    <input class="form-control square" name="statename" type="text" id="statename1">
+                                    <span id="state-error" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Country<span class="required">*</span></label>
+                                    <input class="form-control square" name="countryname" type="text" id="countryname1">
+                                    <span id="country-error" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>PIN <span class="required">*</span></label>
+                                    <input class="form-control square" name="pin" type="text" id="pin1">
+                                    <span id="pin-error" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-fill-out submit" >Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+    </div>
+
+
     <!-- Preloader Start -->
     <div id="preloader-active">
         <div class="preloader d-flex align-items-center justify-content-center">
@@ -665,32 +720,32 @@
       </script>
 
 <script>////////MODAL////////////////
-    function editAddress(userId,addressId) {
-        console.log("clicked addressEdit", userId,addressId);
-        $.ajax({
-            url: "/addressEditor/" + userId + "/" + addressId,
-            method: 'GET',
-        })
-            .done((response) => {
-                console.log("this is ajax for edit address in modal",response);
-                if (response) {
-                    document.getElementById('addressid1').value = response.addressData._id;
-                    document.getElementById('housename1').value = response.addressData.housename;
-                    document.getElementById('streetname1').value = response.addressData.streetname;
-                    document.getElementById('areaname1').value = response.addressData.areaname;
-                    document.getElementById('districtname1').value = response.addressData.districtname;
-                    document.getElementById('statename1').value = response.addressData.statename;
-                    document.getElementById('countryname1').value = response.addressData.countryname;
-                    document.getElementById('pin1').value = response.addressData.pin;
-                    $("#editAddressModal").modal("show");
+   function editAddress(userId,addressId) {
+    console.log("clicked addressEdit", userId,addressId);
+    $.ajax({
+        url: "/addressEditor/" + userId + "/" + addressId,
+        method: 'GET',
+    })
+    .done((response) => {
+        console.log("this is ajax for edit address in modal",response);
+        if (response && response.address) {
+            console.log("Address Data:", response.address);
+            document.getElementById('addressid1').value = response.address._id;
+            document.getElementById('housename1').value = response.address.housename;
+            document.getElementById('streetname1').value = response.address.streetname;
+            document.getElementById('areaname1').value = response.address.areaname;
+            document.getElementById('districtname1').value = response.address.districtname;
+            document.getElementById('statename1').value = response.address.statename;
+            document.getElementById('countryname1').value = response.address.countryname;
+            document.getElementById('pin1').value = response.address.pin;
+            $("#editAddressModal").modal("show");
+        }
+    })
+    .fail((error) => {
+        console.log(error);
+    });
+}
 
-                }
-            })
-            .fail((error) => {
-                console.log(error);
-            })
-
-    }
 
 
 </script>
@@ -698,41 +753,41 @@
 <script>
     ///////////////////EDIT-IN-MODAL////////////////////
     document.getElementById("editAddressForm").addEventListener("submit", function (event) {
-        event.preventDefault();
-        console.log("Submiting Edit modal form")
-        const valid = validateForm4()
-        console.log("This is validation:",valid)
-        if(valid){
-            let formdata = $(this).serialize();
-            let addressId = $(this).find('input[name="addressid"]').val();
-            console.log("address id :",addressId)
-            $.ajax({
-                url: "/editAddress/" + addressId,
-                method: "PUT",
-                data: formdata,
-                success: (response) => {
-                    console.log(response);
-                    Toastify({
-                        text: "Address Updated",
-                        duration: 3000, // 3 seconds
-                        gravity: "top", // Display at the top of the screen
-                        position: "center", // Centered horizontally
-                        backgroundColor: "green", // Set the background color to green
-                    }).showToast();
-                    // Handle success, e.g., close the modal and refresh the page
-                    $("#editAddressModal").modal("hide");
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
+    event.preventDefault();
+    console.log("Submiting Edit modal form")
+    const valid = validateForm4()
+    console.log("This is validation:",valid)
+    if(valid){
+        let formdata = $(this).serialize();
+        let addressId = $(this).find('input[name="addressid"]').val();
+        console.log("address id :",addressId)
+        $.ajax({
+            url: "/editAddress/" + addressId,
+            method: "PUT",
+            data: formdata,
+            success: (response) => {
+                console.log(response);
+                Toastify({
+                    text: "Address Updated",
+                    duration: 3000, // 3 seconds
+                    gravity: "top", // Display at the top of the screen
+                    position: "center", // Centered horizontally
+                    backgroundColor: "green", // Set the background color to green
+                }).showToast();
+                // Handle success, e.g., close the modal and refresh the page
+                $("#editAddressModal").modal("hide");
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
 
-                },
-                error: (xhr, status, error) => {
-                    console.log(error);
-                    // Handle the error and provide user feedback if necessary
-                }
-            });
-        }
-    })
+            },
+            error: (xhr, status, error) => {
+                console.log(error);
+                // Handle the error and provide user feedback if necessary
+            }
+        });
+    }
+});
 </script>
 
 <script>/////////////////add address VALIDATION//////////////////////////

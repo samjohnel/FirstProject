@@ -1,4 +1,4 @@
-const cartModel = require("../models/cartModel");
+  const cartModel = require("../models/cartModel");
 const ObjectId = require("mongoose").Types.ObjectId;
 const product=require("../models/productModel")
 
@@ -10,7 +10,6 @@ const findProduct= await product.findById({_id:productId})
    
 
     if(userInCart){
-      console.log("user in cart");
       let pro=false
       let insidePro=[]
       // console.log(productId);
@@ -24,7 +23,6 @@ const findProduct= await product.findById({_id:productId})
       }
 
       if(pro){
-        console.log("product in cart");
         let sizeIn=false
         for(let i=0;i<insidePro.length;i++){
           if(size===insidePro[i].size){
@@ -33,7 +31,6 @@ const findProduct= await product.findById({_id:productId})
         }
         
         if(sizeIn===false){
-          console.log("inside size in");
           const cart = await cartModel.updateOne(
             { user: userId },
             { $push: { products: { productItemId: productId, quantity: 1 ,size:size,subTotal:findProduct.productPrice} } ,$inc:{totalAmount:findProduct.productPrice}},
@@ -45,7 +42,6 @@ const findProduct= await product.findById({_id:productId})
 
       }else{
 
-        console.log("product with out cart");
     const cart = await cartModel.updateOne(
       { user: userId },
       { $push: { products: { productItemId: productId, quantity: 1 ,size:size,subTotal:findProduct.productPrice} } ,$inc:{totalAmount:findProduct.productPrice}},
@@ -54,7 +50,6 @@ const findProduct= await product.findById({_id:productId})
       }
 
     }else{
-      console.log("user not cart");
       const newCart=new cartModel({
         user:userId,
         products:[{
@@ -112,7 +107,6 @@ const totalSubtotal = (userId, cartItems) => {
     } else {
       resolve(total);
     }
-    console.log(total);
   });
 };
 
@@ -216,7 +210,6 @@ const incDecProductQuantity = async (userId, productId, quantity, operation) => 
 
 
 const removeItemFromCart = (userId, productId) => {
-  console.log("reached helper")
   return new Promise(async (resolve, reject) => {
     cartModel
       .updateOne(
@@ -247,6 +240,13 @@ const clearTheCart = (userId) => {
   });
 };
 
+const clearAllCartItems = (userId) => {
+  return new Promise(async (resolve, reject) => {
+    const result = await cartModel.deleteOne({ user: userId });
+    resolve(result);
+  });
+};
+
 module.exports = {
   addToCart,
   getCartCount,
@@ -256,4 +256,5 @@ module.exports = {
   incDecProductQuantity,
   removeItemFromCart,
   clearTheCart,
+  clearAllCartItems,
 };

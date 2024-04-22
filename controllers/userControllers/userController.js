@@ -9,7 +9,9 @@ const categoryHelper = require('../../helper/categoryHelper');
 const productHelper = require('../../helper/productHelper');
 const cartHelper = require('../../helper/cartHelper');
 const cartModel = require('../../models/cartModel');
+const orderHelper = require('../../helper/orderHelper')
 const ObjectId = require("mongoose").Types.ObjectId;
+const moment = require("moment")
 
 const userLogin = (req, res) => {
     try {
@@ -152,13 +154,6 @@ const loginPost = async (req, res) => {
 
 }
 
-// const homePage = (req, res) => {
-//     try {
-//         res.render("homepage");
-//     } catch (error) {
-//         console.log(error);
-//     }
-// }
 
 const verifyCredentials = async (req, res) => {
     try {
@@ -214,27 +209,38 @@ const logout = (req, res) => {
     }
 }
 
-const accountView = async (req, res) => {
-    try {
-        
-        const userId = req.session.user
-        console.log(userId)
-        const userData = await user.findOne({_id:userId})
-           console.log(userData)
-        
-        res.render("userAccount",{
-          userData
-        })
-    } catch (error) {
-        console.log(error);
+
+const accountView = async(req,res)=>{
+  try {
+    const userId = req.session.user;
+
+    const userData = await user.findOne({_id:userId})
+
+    const orderDetails = await orderHelper.getOrderDetails(userId);
+    for (const order of orderDetails) {
+      const dateString = order.orderedOn;
+      order.formattedDate = moment(dateString).format("MMMM Do, YYYY");
+      order.formattedTotal = order.totalAmount;
+      let quantity = 0;
+      for (const product of order.products) {
+        quantity += Number(product.quantity);
+      }
+      order.quantity = quantity;
+      quantity = 0;
     }
+    console.log("orderDetails is ", orderDetails);
+    res.render("userAccount",{
+      userData,
+      orderDetails
+    })
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 const addAddress = async (req, res) => {
-    console.log("getting in");
     const body = req.body;
     const userId = req.session.user;
-    console.log(userId);
     const result = await userHelper.addAddress(body, userId);
     if (result) {
       res.json({ status: true });
@@ -271,9 +277,7 @@ const addAddress = async (req, res) => {
 
   const editAddress = async (req,res,next)=>{
     try {
-      console.log("entered into editAddress controller");
       const userId = req.session.user;
-      console.log(userId);
       const addressId = req.params.id;
       const body = req.body;
       const result = await userHelper.editAddressHelper(userId,addressId,body)
@@ -288,9 +292,7 @@ const addAddress = async (req, res) => {
 
   const deleteAddress=async(req,res,next)=>{
     try {
-        console.log('entered in to delete address');
         const userId=req.session.user
-        console.log(userId);
         const addressId=req.params.id
         const result=await userHelper.deleteAddressHelper(userId,addressId)
         if(result){
@@ -304,12 +306,9 @@ const addAddress = async (req, res) => {
 
   const updateUser=async(req,res,next)=>{
     try {
-        console.log("entered in to update user");
         const userId=req.session.user
-        console.log("User ID:", userId);
         const userDetails=req.body;
-        const result=await userHelper.updateUserDetails(userId,userDetails)
-        console.log("Update result:", result);
+        const result=await userHelper.updateUserDetails(userId,userDetails);
         res.json(result)
     } catch (error) {
         console.log(error);
@@ -445,9 +444,7 @@ const userCartLoad = async (req, res) => {
     try {
       const userId = req.session.user;
       const productId = req.params.id;
-      console.log(userId, productId);
       const result = await cartHelper.removeItemFromCart(userId, productId);
-      console.log(result);
       if (result) {
         res.json({ status: true });
       } else {
@@ -458,33 +455,36 @@ const userCartLoad = async (req, res) => {
     }
   }; 
   
+
   const checkoutPage = async (req, res) => {
     try {
       const userId = req.session.user;
-      const userData = await user.findById({ _id: userId })
+      const userData = await user.findById({ _id: userId });
       let cartItems = await cartHelper.getAllCartItems(userId);
-      console.log("This is checkout",cartItems);
+  
+      // Calculate total amount for each product
+      let totalAmountOfEachProduct = [];
+      for (let i = 0; i < cartItems.length; i++) {
+        const product = cartItems[i].product;
+        const quantity = cartItems[i].quantity;
+        const total = product.productPrice * quantity;
+        totalAmountOfEachProduct.push(total);
+      }
+  
+      // Calculate total and subtotal
       let totalandSubTotal = await cartHelper.totalSubtotal(userId, cartItems);
-     
   
-     
-  
-        let totalAmountOfEachProduct = [];
-        for (i = 0; i < cartItems.products.length; i++) {
-          let total = cartItems.products[i].quantity * parseInt(cartItems.products[i].price);
-          totalAmountOfEachProduct.push(total);
-        }
-        res.render("checkout", {
-          userData,
-          cartItems,
-          totalandSubTotal,
-          totalAmountOfEachProduct
-        })
-     
+      res.render("checkout", {
+        userData,
+        cartItems,
+        totalandSubTotal,
+        totalAmountOfEachProduct
+      });
     } catch (error) {
       console.log(error);
     }
-  }
+  };
+
 
 module.exports = {
     userLogin, 
@@ -510,4 +510,5 @@ module.exports = {
     updateCartQuantity,
     removeCartItem,
     checkoutPage,
+    addressEditModal,
 }

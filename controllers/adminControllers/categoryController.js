@@ -67,7 +67,6 @@ const editCategory = async (req, res) => {
       res.redirect("/admin/category");
     } else {
       req.flash("message", "Category already Exists");
-      console.log("Hi");
       res.redirect("/admin/category");
     }
   };
