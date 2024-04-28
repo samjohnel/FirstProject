@@ -49,8 +49,25 @@ const placeOrder = async (req, res) => {
     }
   };
 
+  const cancelSingleOrder = async (req, res) => {
+    try {
+      const orderId = req.query.orderId;
+      const singleOrderId = req.query.singleOrderId;
+      const price = req.query.price;
+      const result = await orderHelper.cancelSingleOrder(orderId, singleOrderId, price);
+      if (result) {
+        res.json({ status: true });
+      } else {
+        res.json({ status: false });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   module.exports = {
     placeOrder,
     orderSuccessPageLoad,
     orderDetails,
+    cancelSingleOrder,
   }

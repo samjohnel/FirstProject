@@ -228,7 +228,7 @@ const accountView = async(req,res)=>{
       order.quantity = quantity;
       quantity = 0;
     }
-    console.log("orderDetails is ", orderDetails);
+    console.log(userData);
     res.render("userAccount",{
       userData,
       orderDetails
@@ -239,11 +239,12 @@ const accountView = async(req,res)=>{
 }
 
 const addAddress = async (req, res) => {
+  console.log("Code reached addAddress")
     const body = req.body;
     const userId = req.session.user;
     const result = await userHelper.addAddress(body, userId);
     if (result) {
-      res.json({ status: true });
+      res.redirect("/accountView")
     }
   };
 
@@ -412,7 +413,7 @@ const userCartLoad = async (req, res) => {
     const size=req.params.size
   
     const result = await cartHelper.addToCart(userId, productId,size);
-  
+    console.log("result is ",result )
     if (result) {
       res.json({ status: true });
     } else {

@@ -1,30 +1,31 @@
-  const cartModel = require("../models/cartModel");
+const cartModel = require("../models/cartModel");
 const ObjectId = require("mongoose").Types.ObjectId;
 const product=require("../models/productModel")
 
 const addToCart = async(userId, productId,size) => {
 const findProduct= await product.findById({_id:productId})
+console.log("This is finProduct", findProduct);
+
 
   return new Promise(async (resolve, reject) => {
-    const userInCart=await cartModel.findOne({user:userId})
+    const userInCart = await cartModel.findOne({user:userId})
+    console.log("This is user in cart", userInCart)
    
 
-    if(userInCart){
+    if(userInCart){ 
       let pro=false
       let insidePro=[]
-      // console.log(productId);
 
       for(let i=0;i<userInCart.products.length;i++){
-        // console.log(userInCart.products[i].productItemId.toString());
-        if(productId.toString()==userInCart.products[i].productItemId.toString()){
-          pro=true
+        if(productId.toString() == userInCart.products[i].productItemId.toString()){
+          pro = true
           insidePro.push(userInCart.products[i])
         }
       }
-
+      
       if(pro){
-        let sizeIn=false
-        for(let i=0;i<insidePro.length;i++){
+        let sizeIn = false;
+        for(let i=0; i < insidePro.length; i++){
           if(size===insidePro[i].size){
             sizeIn=true
           }
@@ -37,6 +38,9 @@ const findProduct= await product.findById({_id:productId})
             { upsert: true }
           );
             }else{
+              console.log("This is supposed to happen")
+              resolve(false);
+              
               ///  size true  
             }
 
@@ -48,9 +52,11 @@ const findProduct= await product.findById({_id:productId})
       { upsert: true }
     );
       }
-
-    }else{
-      const newCart=new cartModel({
+      resolve(true)
+    } 
+    
+    else {
+      const newCart = new cartModel({
         user:userId,
         products:[{
           productItemId:productId,
@@ -66,11 +72,6 @@ const findProduct= await product.findById({_id:productId})
 
     }
   
-
-
-    // console.log(cart);
-
-    // resolve(cart);
   });
 };
 
@@ -177,6 +178,12 @@ const isAProductInCart = (userId, productId) => {
 const incDecProductQuantity = async (userId, productId, quantity, operation) => {
   return new Promise(async (resolve, reject) => {
     const findPro = await product.findById({ _id: productId });
+    //const findCart = await cartModel.findOne({user: userId});
+    // const product = findCart.products.find((items) => {
+    //   return items._id.toString() == productId
+    // })
+    // console.log(product);
+
 
     let updateQuery = {};
 
@@ -189,7 +196,7 @@ const incDecProductQuantity = async (userId, productId, quantity, operation) => 
         }
       };
     } else if (operation === "decrement") {
-      updateQuery = {
+      updateQuery = { 
         $inc: {
           "products.$.quantity": -1,
           "products.$.subTotal": -findPro.productPrice,

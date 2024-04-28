@@ -11,7 +11,7 @@ router.get("/login", userAuth.islogin ,userController.userLogin);
 router.post("/login", userController.loginPost);
 
 
-router.get("/signUp", userController.getUserSignUp);
+router.get("/signUp", userController.getUserSignUp);//This is fine
 router.post("/signUp", userController.registerPost);
 router.post("/signUp", userController.otpRedirect);
 router.get("/otpPage", userController.getOtpPage);
@@ -23,22 +23,23 @@ router.get("/logout", userController.logout);
 
 
 router.get("/userHome",userAuth.isAuthenticated ,userController.userHome);
-router.get("/accountView", userController.accountView);
-router.patch("/addAddress", userController.addAddress);
-router.get("/addressEditor/:userId/:addressId",userController.addressEditModal);
-router.put("/editAddress/:id",userController.editAddress);
-router.put('/deleteAddress/:id',userController.deleteAddress);
-router.put("/updateUser",userController.updateUser);//update user details
-router.get("/userShop",userMiddleware.isLogout,userController.loadShop);
+router.get("/accountView", userMiddleware.isLogout, userController.accountView);
+router.post("/addAddress", userMiddleware.isLogout, userController.addAddress);
+router.get("/addressEditor/:userId/:addressId", userMiddleware.isLogout, userController.addressEditModal);
+router.put("/editAddress/:id", userMiddleware.isLogout, userController.editAddress);
+router.put('/deleteAddress/:id', userMiddleware.isLogout, userController.deleteAddress);
+router.put("/updateUser", userMiddleware.isLogout, userController.updateUser);//update user details
+router.get("/userShop", userMiddleware.isLogout, userController.loadShop);
 router.get('/detailProductPage/:id',userMiddleware.isLogout,userController.LoadUserProduct);
-router.get("/cart",userAuth.isLogout, userController.userCartLoad);
-router.post("/addToCart/:id/:size", userController.addToCart);
+router.get("/cart", userMiddleware.isLogout, userController.userCartLoad);
+router.post("/addToCart/:id/:size", userMiddleware.isLogout, userController.addToCart);
 router.patch("/updateCartQuantity", userController.updateCartQuantity);
-router.delete("/removeCart/:id", userController.removeCartItem);
-router.get("/checkout", userController.checkoutPage);
-router.get("/addressEditor/:userId/:addressId",userController.addressEditModal);
-router.post("/placeOrder", orderController.placeOrder);
+router.delete("/removeCart/:id", userMiddleware.isLogout, userController.removeCartItem);
+router.get("/checkout", userMiddleware.isLogout, userController.checkoutPage);
+router.get("/addressEditor/:userId/:addressId",userMiddleware.isLogout, userController.addressEditModal);
+router.post("/placeOrder", userMiddleware.isLogout, orderController.placeOrder);
 router.get("/orderSuccessPage",userMiddleware.isLogout,orderController.orderSuccessPageLoad);
-router.get("/orderDetails/:id",orderController.orderDetails);
+router.get("/orderDetails/:id", userMiddleware.isLogout, orderController.orderDetails);
+router.patch("/cancelSingleOrder", userMiddleware.isLogout, orderController.cancelSingleOrder);
 
 module.exports = router;

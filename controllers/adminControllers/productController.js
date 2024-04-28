@@ -28,8 +28,6 @@ const addProductLoad = (req, res) => {
 const addProductPost=(req,res)=>{
   const body=req.body
   const files=req.files
-  console.log("hjdidiei")
-  console.log(files);
   productHelper
   .addProduct(body,files)
   .then((response)=>{

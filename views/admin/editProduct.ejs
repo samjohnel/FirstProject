@@ -83,6 +83,7 @@
                     <div class="card-body">
                         <div class="input-upload">
                             <label class="form-label">Image</label>
+
                             <% if(typeof product.image==='string' ) { %>
                                 <img src="/public/uploads/<%= product.image %>"
                                     style="width: 100px; height: 72px;" alt="">
@@ -218,6 +219,33 @@
             }
         })
 
+    </script>
+
+<script>
+    document.getElementById('imageUpload').addEventListener('change', function() {
+        var files = this.files;
+        var errorMessage = document.getElementById('errorMessage');
+        var allowedTypes = ['image/jpeg', 'image/png', 'image/gif']; 
+        var containsNonImage = false;
+    
+        for (var i = 0; i < files.length; i++) {
+            if (!allowedTypes.includes(files[i].type)) {
+                containsNonImage = true;
+                break;
+            }
+        }
+    
+        if (containsNonImage) {
+            errorMessage.style.display = 'block';
+            this.value = ''; 
+
+            setTimeout(function() {
+            errorMessage.style.display = 'none';
+        }, 3000);
+        } else {
+            errorMessage.style.display = 'none';
+        }
+    });
     </script>
 
     <%- include('../layouts/adminLayout/admin-footer') %>

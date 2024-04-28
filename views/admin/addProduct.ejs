@@ -85,7 +85,9 @@
                     <div class="card-body">
                         <div class="input-upload">
                             <label class="form-label">Image</label>
-                            <input class="form-control" id="fileInput" type="file" name="images" multiple>
+                            <div id="previewContainer" class="row"></div>
+                                <input id="imageUpload" class="form-control" type="file" name="images"  multiple>
+                                <div id="errorMessage" style="color: red; display: none;">Only images are allowed.</div>
                         </div>
                     </div>
                 </div>
@@ -116,7 +118,7 @@
                 </div>
                 <div>
                     <button type="submit" class="btn ms-auto d-block btn-md rounded font-sm hover-up"
-                        style="background-color: black;">Add
+                        style="background-color: #088178;">Add
                         Product</button>
                 </div>
             </div>
@@ -260,5 +262,34 @@
         });
 
     </script>
+
+<script>
+    document.getElementById('imageUpload').addEventListener('change', function() {
+        var files = this.files;
+        var errorMessage = document.getElementById('errorMessage');
+        var allowedTypes = ['image/jpeg', 'image/png', 'image/gif']; 
+        var containsNonImage = false;
+    
+        for (var i = 0; i < files.length; i++) {
+            if (!allowedTypes.includes(files[i].type)) {
+                containsNonImage = true;
+                break;
+            }
+        }
+    
+        if (containsNonImage) {
+            errorMessage.style.display = 'block';
+            this.value = ''; 
+
+            setTimeout(function() {
+            errorMessage.style.display = 'none';
+        }, 3000);
+        } else {
+            errorMessage.style.display = 'none';
+        }
+    });
+    </script>
+
+
 
     <%- include('../layouts/adminLayout/admin-footer') %>

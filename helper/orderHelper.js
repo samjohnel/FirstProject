@@ -3,6 +3,7 @@ const userModel = require('../models/userModel');
 const productModel = require("../models/productModel");
 const orderModel = require("../models/orderModel");
 const ObjectId = require("mongoose").Types.ObjectId;
+// const { Types: { ObjectId } } = require("mongoose");
 const mongoose = require("mongoose");
 
 
@@ -33,18 +34,21 @@ const placeOrder = (body, userId) => {
             productPrice: product.price,
             status: status,
           });
-  
+
           
-  
           let changeStock = await productModel.updateOne(
-            { _id: product.productId, "productQuantity.size": product.size },
+            { 
+              "_id": product.productItemId, 
+              "productQuantity.size": product.size 
+            },
             {
               $inc: {
                 "productQuantity.$.quantity": -product.quantity,
-                totalQuantity: -product.quantity,
+                "totalQuantity": -product.quantity,
               },
             }
           );
+          
         }
 
   
@@ -208,6 +212,85 @@ const placeOrder = (body, userId) => {
     });
   };
 
+  const cancelSingleOrder = (orderId, singleOrderId, price) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // const cancelled = await orderModel.findOneAndUpdate(
+        //   {
+        //     _id: ObjectId(orderId),
+        //     "products._id": ObjectId(singleOrderId),
+        //   },
+        //   {
+        //     $set: { "products.$.status": "cancelled" },
+        //   },
+        //   {
+        //     new: true,
+        //   }
+        // );
+
+        const cancelled = await orderModel.findOneAndUpdate(
+          {
+            _id: new ObjectId(orderId),
+            "products._id": new ObjectId(singleOrderId),
+          },
+          {
+            $set: { "products.$.status": "cancelled" },
+          },
+          {
+            new: true,
+          }
+        );
+
+        const result = await orderModel.aggregate([
+          {
+            $unwind: "$products",
+          },
+          {
+            $match: {
+              _id: new ObjectId(orderId),
+              "products._id": new ObjectId(singleOrderId),
+            },
+          },
+        ]);
+        console.log("This is cancelled", cancelled);
+        console.log("This is result", result);
+        const singleProductId = result[0].products.product;
+        const singleProductSize = result[0].products.size;
+        const singleProductQuantity = result[0].products.quantity;
+  
+        // const stockIncrease = await productModel.updateOne(
+        //   { _id: singleProductId, "productQuantity.size": singleProductSize },
+        //   {
+        //     $inc: {
+        //       "productQuantity.$.quantity": singleProductQuantity,
+        //       totalQuantity: singleProductQuantity,
+        //     },
+        //   }
+        // );
+
+        const stockIncrease = await productModel.updateOne(
+          { 
+            _id: singleProductId, 
+            "productQuantity": { $elemMatch: { size: singleProductSize } } 
+          },
+          {
+            $inc: {
+              "productQuantity.$.quantity": singleProductQuantity,
+              totalQuantity: singleProductQuantity,
+            },
+          }
+        );        
+        
+        const response = await orderModel.findOne({ _id: orderId });
+        
+  
+        resolve(cancelled);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  };
+
 
 module.exports = {
       placeOrder,
@@ -216,4 +299,5 @@ module.exports = {
       getOrderDetails,
       getAllOrders,
       changeOrderStatusOfEachProduct,
+      cancelSingleOrder,
 }

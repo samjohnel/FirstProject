@@ -1037,7 +1037,7 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="widget-about font-md mb-md-5 mb-lg-0">
                             <div class="logo logo-width-1 wow fadeIn animated">
-                                <a href="index.html"><img src="/public/image/fashion club logo.jpg" alt="logo"></a>
+                                <a href="/userHome"><img src="/public/user-assets/imgs/theme/icons/logo.png" alt="logo"></a>
                             </div>
                             <h5 class="mt-20 mb-10 fw-600 text-grey-4 wow fadeIn animated">Contact</h5>
                             <p class="wow fadeIn animated">
@@ -1192,7 +1192,9 @@
           url: `/addToCart/${productId}/${size}`,
           method: "POST",
           success: function (response) {
+           
             if (response.status) {
+                console.log("response.status is ",response.status)
               Toastify({
                 text: `Added to Cart`,
                 duration: 3000,
@@ -1208,19 +1210,20 @@
               }, 1000);
             }
             else {
-              Toastify({
-                text: `Something went wrong, Please try again later`,
-                duration: 3000,
-                gravity: "top", // `top` or `bottom`
-                position: "center", // `left`, `center` or `right`
-                stopOnFocus: true, // Prevents dismissing of toast on hover
-                style: {
-                  background: "red",
-                },
-              }).showToast();
-              setTimeout(() => {
-                location.reload();
-              }, 1000);
+            //   Toastify({
+            //     text: `Something went wrong, Please try again later`,
+            //     duration: 3000,
+            //     gravity: "top", // `top` or `bottom`
+            //     position: "center", // `left`, `center` or `right`
+            //     stopOnFocus: true, // Prevents dismissing of toast on hover
+            //     style: {
+            //       background: "red",
+            //     },
+            //   }).showToast();
+            //   setTimeout(() => {
+            //     location.reload();
+            //   }, 1000);
+            window.location.href = "/cart"
             }
 
           },

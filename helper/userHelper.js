@@ -62,12 +62,19 @@ const deleteAddressHelper= async(userId,addressId)=>{
       let response = {};
       if (user) {
         if (user.isActive) {
-          const success = bcrypt.compareSync(
-  
-            userDetails.password,
-            user.password
-          );
-            console.log(success);
+          // const success = await bcrypt.compare(
+          //   userDetails.password,
+          //   user.password
+          // );
+          //   console.log(success);
+
+          if (userDetails.password === user.password) {
+            success = true;
+          } else {
+            success = false;
+          }
+
+
           if (success) {
   
             if (userDetails.name) {

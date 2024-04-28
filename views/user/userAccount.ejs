@@ -29,7 +29,7 @@
             <div class="container">
                 <div class="header-wrap">
                     <div class="logo logo-width-1">
-                        <a href="index.html"><img src="/public/user-assets/imgs/theme/icons/logo.png" alt="logo"></a>
+                        <a href="/userHome"><img src="/public/user-assets/imgs/theme/icons/logo.png" alt="logo"></a>
                     </div>
                     <div class="header-right">
                         <div class="search-style-2">
@@ -45,7 +45,7 @@
                                     </a>
                                 </div>
                                 <div class="header-action-icon-2">
-                                    <a class="mini-cart-icon" href="shop-cart.html">
+                                    <a class="mini-cart-icon" href="/cart">
                                         <img alt="Evara" src="/public/user-assets/imgs/theme/icons/icon-cart.svg">
                                     </a>
                                 </div>
@@ -59,7 +59,7 @@
             <div class="container">
                 <div class="header-wrap header-space-between position-relative">
                     <div class="logo logo-width-1 d-block d-lg-none">
-                        <a href="index.html"><img src="/public/user-assets/imgs/theme/logo.svg" alt="logo"></a>
+                        <a href="/userHome"><img src="/public/user-assets/imgs/theme/logo.svg" alt="logo"></a>
                     </div>
                     <div class="header-nav d-none d-lg-flex">
                         <div class="main-categori-wrap d-none d-lg-block">
@@ -71,21 +71,21 @@
                         <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
                             <nav>
                                 <ul>
-                                    <li><a class="active" href="index.html">Home <i class="fi-rs-angle-down"></i></a>
+                                    <li><a class="active" href="/userHome">Home </a>
                                         
                                     </li>
                                     <li>
-                                        <a href="page-about.html">About</a>
+                                        <a href="#">About</a>
                                     </li>
-                                    <li><a href="shop-grid-right.html">Shop <i class="fi-rs-angle-down"></i></a>
+                                    <li><a href="/userShop">Shop </a>
                                         
                                     </li>
                                     
                                     
-                                    <li><a href="#">Pages <i class="fi-rs-angle-down"></i></a>
+                                    <li><a href="#">Pages </a>
                                     </li>
                                     <li>
-                                        <a href="page-contact.html">Contact</a>
+                                        <a href="#">Contact</a>
                                     </li>
                                 </ul>
                             </nav>
@@ -94,15 +94,13 @@
                     <div class="header-action-right d-block d-lg-none">
                         <div class="header-action-2">
                             <div class="header-action-icon-2">
-                                <a href="shop-wishlist.html">
+                                <a href="#">
                                     <img alt="Evara" src="/public/user-assets/imgs/theme/icons/icon-heart.svg">
-                                    <span class="pro-count white">4</span>
                                 </a>
                             </div>
                             <div class="header-action-icon-2">
-                                <a class="mini-cart-icon" href="shop-cart.html">
+                                <a class="mini-cart-icon" href="/cart">
                                     <img alt="Evara" src="/public/user-assets/imgs/theme/icons/icon-cart.svg">
-                                    <span class="pro-count white">2</span>
                                 </a>
                                 <div class="cart-dropdown-wrap cart-dropdown-hm2">
                                     <ul>
@@ -131,7 +129,7 @@
                                         <div class="shopping-cart-total">
                                         </div>
                                         <div class="shopping-cart-button">
-                                            <a href="shop-cart.html">View cart</a>
+                                            <a href="/cart">View cart</a>
                                             <a href="shop-checkout.html">Checkout</a>
                                         </div>
                                     </div>
@@ -176,7 +174,7 @@
                                             <a class="nav-link" id="account-detail-tab" data-bs-toggle="tab" href="#account-detail" role="tab" aria-controls="account-detail" aria-selected="true"><i class="fi-rs-user mr-10"></i>Account details</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="page-login-register.html"><i class="fi-rs-sign-out mr-10"></i>Logout</a>
+                                            <a class="nav-link" href="/logout"><i class="fi-rs-sign-out mr-10"></i>Logout</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -287,8 +285,8 @@
                                                 <h5 class="mb-0">Add Address</h5>
                                             </div>
                                             <div class="card-body">
-                                                <form  name="formAddress" id="formAddress">
-                                                <!-- <form method="put" action="/addAddress" name="formAddress" id="formAddress"> -->
+                                                <!-- <form  name="formAddress" id="formAddress"> -->
+                                                <form method="post" action="/addAddress" name="formAddress" id="formAddress">
                                                     <div class="row">
                                                         <div class="form-group col-md-12">
                                                             <label>House Name/No.<span class="required">*</span></label>
@@ -356,7 +354,7 @@
                                                             <p>
                                                                 <%= address.countryname %>
                                                             </p>
-                                                            <button href="#" class="btn-small"
+                                                            <button href="#" class="btn-small" style="background-color: #088178;"
                                                                 onclick="editAddress('<%=userData._id %>','<%=address._id%>')">Edit</button>
     
                                                             <button href="#" class="btn-small delete-Button"
@@ -375,7 +373,7 @@
                                             <div class="card-header">
                                                 <h5>Account Details</h5>
                                             </div>
-                                            <div class="card-body">
+                                            <!-- <div class="card-body">
                                                 <form method="post" name="enq" id="userDetailsForm">
                                                     <div class="row">
                                                         <div class="form-group col-md-6">
@@ -415,6 +413,39 @@
                                                             <button type="submit" class="btn btn-fill-out submit"
                                                                 name="submit" value="Submit">Save</button>
                                                         </div>
+                                                    </div>
+                                                </form>
+                                            </div> -->
+
+                                            <div class="card-body">
+                                                <form name="enq" id="userDetailsForm">
+                                                    <div class="row">
+                                                        <div class="form-group col-md-6">
+                                                            <label>Full Name <span class="required"></span></label>
+                                                            <input required="" class="form-control square" name="name" type="text" id="name" value="<%= userData.name %>" >
+                                                            <span id="nameError" class="text-danger"></span>
+                                                        </div>
+                                                        <div class="form-group col-md-6">
+                                                            <label>Email Address <span class="required"></span></label>
+                                                            <input required="" class="form-control square" name="email" type="email" id="email" value="<%= userData.email %>" readonly>
+                                                            <span id="emailError" class="text-danger"></span>
+                                                        </div>
+                                                        <div class="form-group col-md-6">
+                                                            <label>Phone <span class="required"></span></label>
+                                                            <input required="" class="form-control square" name="phone" type="phone" id="mobile" value="<%= userData.mobile %>" >
+                                                            <span id="mobileError" class="text-danger"></span>
+                                                        </div>
+                                                        <div class="form-group col-md-6">
+                                                            <label>Current Password (enter before save)<spanclass="required">*</span></label>
+                                                            <input required="" class="form-control square"name="password" id="password" type="password">
+                                                            <span id="passwordError" class="text-danger" ></span>
+                                                        </div>
+                                                        
+                                                        <!-- Add more address fields as needed -->
+                                                    </div>
+                                                    <div class="d-flex">
+                                                        <div class="col-md-4">
+                                                            <button type="submit" class="btn btn-fill-out submit" value="Submit">Save</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -588,7 +619,7 @@
                                     <span id="pin-error" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-12">
-                                    <button type="submit" class="btn btn-fill-out submit" >Save</button>
+                                    <button type="submit" class="btn btn-fill-out submit">Save</button>
                                 </div>
                             </form>
                         </div>
@@ -652,7 +683,7 @@
             const districtRegex = /^(?!\s*$)[a-zA-Z\s]+$/;
             const stateRegex = /^(?!\s*$)[a-zA-Z ]+$/;
             const countryRegex = /^(?!\s*$)[a-zA-Z ]+$/;
-            const pincodeRegex = /^(\d{6}$/;
+            const pincodeRegex = /^\d{6}$/;
             let isValid = true;
     
     
@@ -710,66 +741,14 @@
         document.getElementById("formAddress").addEventListener("submit", (e) => {
             const result = validateForm2();
             if (!result) {
+                console.log("there is error")
                 e.preventDefault();
+            }else{
+                console.log("validation passed")
             }
         })
     </script>
-
-
-
-<script>//add address ajax///////
-
-    $(document).ready(function () {
-        $("#formAddress").submit(function (event) {
-            const result = validateForm2();
-            console.log(result)
-            event.preventDefault();
-            if (result) {
-                var formData = $(this).serialize();
-                $.ajax({
-                    url: "/addAddress",
-                    method: "PATCH",
-                    data: formData,
-                    success: (response) => {
-                        console.log(response);
-                        if (response.success) {
-                            console.log(response.success, 'fdgfdg');
-                            Toastify({
-
-                                text: `Address Added`,
-                                duration: 3000,
-                                gravity: "top",
-                                position: "center",
-                                stopOnFocus: true,
-                                style: {
-                                    background: "linear-gradient(to right, aqua, blue)",
-                                },
-                            }).showToast();
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1000);
-
-                        } else {
-                            Toastify({
-                                text: `Address Added`,
-                                duration: 3000,
-                                gravity: "top",
-                                position: "center",
-                                stopOnFocus: true,
-                                style: {
-                                    background: "linear-gradient(to right, red, white)",
-                                },
-                            }).showToast();
-                        }
-                    }
-
-                })
-            }
-        })
-    })
-
-
-</script>
+    
 
 <script>
     ///////////////////EDIT-IN-MODAL////////////////////
@@ -871,7 +850,7 @@
 
 </script>
 
-<!-- Edit accunt info ajax -->
+<!-- Edit account info ajax -->
 <script>
     $(document).ready(function () {
         $("#userDetailsForm").submit(function (event) {
@@ -921,7 +900,9 @@
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const mobileRegex = /^\d{10}$/;
         const passwordRegex = /^(?=.[A-Za-z])(?=.\d)(?=.*[^A-Za-z\d]).{8,}$/;
-        let isValid = true
+        let isValid = true;
+        
+
         if (!nameRegex.test(document.getElementById("name").value)) {
             document.getElementById("nameError").innerHTML = "Invalid Format(should only contain letters and spaces.)";
             isValid = false;

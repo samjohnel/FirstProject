@@ -84,7 +84,6 @@ const getAllActiveProducts = () => {
 
 
 
-
 const addProduct = (data, files,req,res) => {
 
 
@@ -92,9 +91,7 @@ const addProduct = (data, files,req,res) => {
    
     let images=[]
     for(const file of files){
-        images.push(file.filename)
-        console.log("hgytvvf");
-        console.log(files);
+        images.push(file.filename);
     }
     let totalQuantity =
       parseInt(data.smallQuantity) +
@@ -135,6 +132,8 @@ const addProduct = (data, files,req,res) => {
       });
   });
 };
+
+
 
 const checkDuplicateFunction = (body, productId) => {
     return new Promise(async (resolve, reject) => {
