@@ -12,8 +12,9 @@ router.post("/login", userController.loginPost);
 
 
 router.get("/signUp", userController.getUserSignUp);//This is fine
-router.post("/signUp", userController.registerPost);
-router.post("/signUp", userController.otpRedirect);
+router.post("/signUp", userController.registerPost, userController.otpRedirect);
+
+// router.post("/signUp", );
 router.get("/otpPage", userController.getOtpPage);
 router.post("/otpPage", userController.otpPost);
 router.post("/verifyCredentials", userController.verifyCredentials);

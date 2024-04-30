@@ -74,7 +74,6 @@ const deleteAddressHelper= async(userId,addressId)=>{
             success = false;
           }
 
-
           if (success) {
   
             if (userDetails.name) {
@@ -83,8 +82,8 @@ const deleteAddressHelper= async(userId,addressId)=>{
             if (userDetails.email) {
               user.email = userDetails.email;
             }
-            if (userDetails.mobile) {
-              user.mobile = userDetails.mobile;
+            if (userDetails.phone) {
+              user.mobile = userDetails.phone;
             }
            
             await user.save();
@@ -99,7 +98,9 @@ const deleteAddressHelper= async(userId,addressId)=>{
     });
   };
 
-module.exports = {addAddress, 
+module.exports = {
+                  addAddress, 
                   editAddressHelper,
                   deleteAddressHelper,
-                  updateUserDetails};
+                  updateUserDetails
+                };

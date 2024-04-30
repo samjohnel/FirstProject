@@ -72,7 +72,7 @@ const otpPost = async (req, res) => {
         // Compare the user-entered OTP with the stored OTP
         if (userEnteredOtp === storedOtp && Date.now() < req.session.otpExpiryTime){
             // Create a new user using the session data
-            const newUser = await User.create(userData);
+            const newUser = await user.create(userData);
             console.log('New user created:', newUser);
             res.redirect('/login');
         } else {
@@ -95,15 +95,15 @@ const otpPost = async (req, res) => {
 
 
 
-const registerPost = async (req, res) => {
+const registerPost = async (req, res, next) => {
     try {
         // Extract user data from request body
         const userData = {
             name: req.body.name,
-            mobile: req.body.phone, // Assuming the phone field corresponds to mobile
+            mobile: req.body.mobile, // Assuming the phone field corresponds to mobile
             email: req.body.email,
             password: req.body.password,
-            cpassword: req.body.cpassword,
+            cpassword: req.body.confpassword,
             isActive: 0,
         };
 
@@ -112,14 +112,14 @@ const registerPost = async (req, res) => {
 
         // Create a new user document using the User model
        
-        if (password !== cpassword) {
+        if (userData.password !== userData.cpassword) {
             res.redirect("/signup?error=Passwords don't match");
         }
         
 
         // Redirect to a success page or handle success response
-        res.redirect('/success-page'); // Redirect to a success page
-
+       // Redirect to a success page
+       next();
         
 
     } catch (error) {
