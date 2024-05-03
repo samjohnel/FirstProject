@@ -30,6 +30,7 @@ router.get("/addressEditor/:userId/:addressId", userMiddleware.isLogout, userCon
 router.put("/editAddress/:id", userMiddleware.isLogout, userController.editAddress);
 router.put('/deleteAddress/:id', userMiddleware.isLogout, userController.deleteAddress);
 router.put("/updateUser", userMiddleware.isLogout, userController.updateUser);//update user details
+router.put('/updatePassword',userMiddleware.isLogout,userController.updatePassword)
 router.get("/userShop", userMiddleware.isLogout, userController.loadShop);
 router.get('/detailProductPage/:id',userMiddleware.isLogout,userController.LoadUserProduct);
 router.get("/cart", userMiddleware.isLogout, userController.userCartLoad);
@@ -42,5 +43,6 @@ router.post("/placeOrder", userMiddleware.isLogout, orderController.placeOrder);
 router.get("/orderSuccessPage",userMiddleware.isLogout,orderController.orderSuccessPageLoad);
 router.get("/orderDetails/:id", userMiddleware.isLogout, orderController.orderDetails);
 router.patch("/cancelSingleOrder", userMiddleware.isLogout, orderController.cancelSingleOrder);
+router.post("/searchProduct",userMiddleware.isLogout, productController.searchProduct);
 
 module.exports = router;

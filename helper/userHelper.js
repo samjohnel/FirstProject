@@ -62,17 +62,17 @@ const deleteAddressHelper= async(userId,addressId)=>{
       let response = {};
       if (user) {
         if (user.isActive) {
-          // const success = await bcrypt.compare(
-          //   userDetails.password,
-          //   user.password
-          // );
-          //   console.log(success);
+          const success = await bcrypt.compare(
+            userDetails.password,
+            user.password
+          );
+            console.log(success);
 
-          if (userDetails.password === user.password) {
-            success = true;
-          } else {
-            success = false;
-          }
+          // if (userDetails.password === user.password) {
+          //   success = true;
+          // } else {
+          //   success = false;
+          // }
 
           if (success) {
   
@@ -98,9 +98,44 @@ const deleteAddressHelper= async(userId,addressId)=>{
     });
   };
 
+
+  const updateUserPassword = async (userId, passwordDetails) => {
+    return new Promise(async (resolve, reject) => {
+      const user = await userModel.findById(new ObjectId(userId));
+      
+      console.log(passwordDetails);
+      let response = {};
+      if (user) {
+        if (user.isActive) {
+          if (typeof passwordDetails.oldPassword === 'string' && typeof user.password === 'string') {
+            const success = await bcrypt.compare(passwordDetails.oldPassword, user.password);
+            if (success) {
+              if (
+                passwordDetails.newPassword &&
+                passwordDetails.newPassword === passwordDetails.confirmPassword
+              ) {
+                user.password = await bcrypt.hash(passwordDetails.newPassword, 10);
+                await user.save();
+                response.status = true;
+                resolve(response);
+              }
+            } else {
+              response.message = "Incorrect Password";
+              resolve(response);
+            }
+          } else {
+            response.message = "Invalid input data format";
+            resolve(response);
+          }
+        }
+      }
+    });
+  };
+
 module.exports = {
                   addAddress, 
                   editAddressHelper,
                   deleteAddressHelper,
-                  updateUserDetails
+                  updateUserDetails,
+                  updateUserPassword,
                 };

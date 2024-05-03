@@ -11,7 +11,8 @@ const cartHelper = require('../../helper/cartHelper');
 const cartModel = require('../../models/cartModel');
 const orderHelper = require('../../helper/orderHelper')
 const ObjectId = require("mongoose").Types.ObjectId;
-const moment = require("moment")
+const bcrypt = require('bcrypt');
+const moment = require("moment");
 
 const userLogin = (req, res) => {
     try {
@@ -33,7 +34,6 @@ const otpRedirect = async (req, res) => {
     try {
         // const { email, password, mobile} = req.body
         // console.log( email, password, mobile);
-        console.log(req.body);
  
         req.session.userData = req.body;
         const otp = await otpHelper.generateOtp(req.body.email);
@@ -72,8 +72,14 @@ const otpPost = async (req, res) => {
         // Compare the user-entered OTP with the stored OTP
         if (userEnteredOtp === storedOtp && Date.now() < req.session.otpExpiryTime){
             // Create a new user using the session data
+ 
+            const hashedPassword = await bcrypt.hash(userData.password, 10); // Using a salt factor of 10
+
+            // Save hashed password to user data
+             userData.password = hashedPassword;
+
+
             const newUser = await user.create(userData);
-            console.log('New user created:', newUser);
             res.redirect('/login');
         } else {
             req.flash('message', 'Invalid OTP');
@@ -107,18 +113,19 @@ const registerPost = async (req, res, next) => {
             isActive: 0,
         };
 
-        // Save user data to session (if needed)
-        req.session.userData = userData;
-
+        
         // Create a new user document using the User model
        
         if (userData.password !== userData.cpassword) {
             res.redirect("/signup?error=Passwords don't match");
         }
-        
+
+          // Save user data to session (if needed)
+          req.session.userData = userData;
 
         // Redirect to a success page or handle success response
        // Redirect to a success page
+      
        next();
         
 
@@ -130,29 +137,66 @@ const registerPost = async (req, res, next) => {
     }
 };
 
-const loginPost = async (req, res) => {
+// const loginPost = async (req, res) => {
 
+//     const logemail = req.body.email;
+//     const logpassword = req.body.password;
+
+//     try {
+      
+//             let userInfo = await user.findOne({email: logemail});
+//             if(userInfo.password === logpassword) {
+//                 req.session.user = userInfo._id; 
+//                 res.redirect("/userhome");
+//             } else {
+//                 res.send("error");
+//             }
+
+
+//         } 
+
+//      catch (error) {
+//         console.log(error);
+//     }
+
+// }
+
+
+const loginPost = async (req, res) => {
     const logemail = req.body.email;
     const logpassword = req.body.password;
 
     try {
-      
-            let userInfo = await user.findOne({email: logemail});
-            if(userInfo.password === logpassword) {
-                req.session.user = userInfo._id; 
-                res.redirect("/userhome");
-            } else {
-                res.send("error");
-            }
+        let userInfo = await user.findOne({ email: logemail });
 
+        if (userInfo) {
+            // Compare the plain text password with the hashed password from the database
+            bcrypt.compare(logpassword, userInfo.password, (err, result) => {
+                if (err) {
+                    // Handle error
+                    console.error('Error comparing passwords:', err);
+                    return res.status(500).send('Internal Server Error');
+                }
+                if (result) {
+                    // Passwords match
+                    req.session.user = userInfo._id;
+                    return res.redirect("/userhome");
+                } else {
+                    // Passwords don't match
+                    return res.status(401).send("Incorrect email or password");
+                }
+            });
+        } else {
+            // User not found
+            return res.status(401).send("Incorrect email or password");
 
-        } 
-
-     catch (error) {
-        console.log(error);
+        }
+    } catch (error) {
+        console.error('Error finding user:', error);
+        return res.status(500).send('Internal Server Error');
     }
-
 }
+
 
 
 const verifyCredentials = async (req, res) => {
@@ -160,7 +204,7 @@ const verifyCredentials = async (req, res) => {
         const { email, password } = req.body;
 
         // Find the user with the given email
-        const userInfo = await User.findOne({ email });
+        const userInfo = await user.findOne({ email });
 
         if (!userInfo) {
             // User not found
@@ -228,7 +272,6 @@ const accountView = async(req,res)=>{
       order.quantity = quantity;
       quantity = 0;
     }
-    console.log(userData);
     res.render("userAccount",{
       userData,
       orderDetails
@@ -316,12 +359,108 @@ const addAddress = async (req, res) => {
     }
    }
 
+   const updatePassword=async(req,res,next)=>{
+    try{
+    console.log("Getting into update Password");
+    const userId=req.session.user;
+    const passwordDetails=req.body;
+   
+    const result=await userHelper.updateUserPassword(userId,passwordDetails)
+    res.json(result)
+    }catch(error){
+    console.log(error);
+    }
+  }
+
    const loadShop = async(req,res)=>{
     try {
+
+      if (req.query.search) {
+        let payload = req.query.search.trim();
+        let searchResult = await productModel
+          .find({
+            productName: { $regex: new RegExp(payload + ".*", "i") },
+          })
+          .populate("productCategory")
+          .exec();
+      
+        console.log("This is the searchResult", searchResult);
+      
+        // Check if searchResult is not empty
+        if (searchResult.length > 0) {
+          var sorted = true;
+          var normalSorted = false;
+      
+          let userId = req.session.user;
+          const categories = await categoryHelper.getAllCategory();
+          let cartCount = await cartHelper.getCartCount(userId);
+          let products = await productHelper.getAllActiveProducts();
+      
+          // Iterate through products to check cart status
+          for (const product of products) {
+            const cartStatus = await cartHelper.isAProductInCart(userId, product._id);
+          }
+      
+          // Filter products with the same category as the first search result
+          let sameCatProduct = await productModel.aggregate([
+            {
+              $match: {
+                productName: searchResult[0].productName,
+              },
+            },
+            {
+              $lookup: {
+                from: "categories",
+                localField: "productCategory",
+                foreignField: "_id",
+                as: "category",
+              },
+            },
+            {
+              $match: {
+                productStatus: true,
+                "category": { $ne: [] },
+              },
+            },
+          ]);
+      
+          let itemsPerPage = 6;
+          let currentPage = parseInt(req.query.page) || 1;
+          let startIndex = (currentPage - 1) * itemsPerPage;
+          let endIndex = startIndex + itemsPerPage;
+          let totalPages = Math.ceil(products.length / 6);
+      
+          res.render("userShop", {
+            products: sameCatProduct,
+            userData: req.session.user,
+            cartCount,
+            categories,
+            sorted,
+            normalSorted,
+            totalPages,
+            payload,
+          });
+        } else {
+          // Render the "userShop" template with an empty products array
+          res.render("userShop", {
+            products: [],
+            userData: req.session.user,
+            cartCount: 0, // Assuming cart count is 0 when there are no search results
+            categories: [], // Empty categories array
+            sorted: false, // Assuming sorting is not applicable when there are no search results
+            normalSorted: false, // Assuming sorting is not applicable when there are no search results
+            totalPages: 0, // No pages when there are no search results
+            payload, // Pass the payload for consistency
+          });
+        }
+      }
+      
+      
+      else{
       const users = req.session.user;
       const categories = await categoryHelper.getAllCategory();
       let products = await productHelper.getAllActiveProducts();
-  
+      console.log("THis is inside products", products);
   
       if (users) {
         res.render("userShop", {
@@ -337,7 +476,9 @@ const addAddress = async (req, res) => {
   
         });
       }
-    } catch (error) {
+    }
+    } 
+      catch (error) {
       console.log(error);
     }
   }
@@ -350,12 +491,14 @@ const addAddress = async (req, res) => {
     .findById({_id:id})
     .populate("productCategory")
     .lean()
+     
 
     const categoryId= product.productCategory;
     
     const products = await productModel.find({productCategory:categoryId}) 
     .populate("productCategory")
     .lean()
+
       
         res.render('detailProductPage', {
          product,products,
@@ -512,4 +655,5 @@ module.exports = {
     removeCartItem,
     checkoutPage,
     addressEditModal,
+    updatePassword,
 }
