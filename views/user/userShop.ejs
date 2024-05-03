@@ -708,11 +708,11 @@
             console.log("Hiii", searchResult);
 
             let html = ''
-            console.log(data.searchResult.length);
+            console.log("This is data.searchResult", data.searchResult);
             if (data.searchResult.length > 0) {
                 for (let i = 0; i < data.searchResult.length; i++) {
                     console.log("in loop", data.searchResult[i].productName);
-                    // html += `<a href="/shop/${data.searchResult[i]._id}"><li style="display:flex;justify-content:space-evenly;text-align: center; border-bottom: 2px solid #acb1b5; width:80%% ;padding:10px"> ${data.searchResult[i].name} <img class="img-thumbnail" width="50" src="/${data.searchResult[i].image[0]}" alt="no image avalable"></li></a>`;
+                     html += `<a href="/detailProductPage/${data.searchResult[i]._id}"><li style="display:flex;justify-content:space-evenly;text-align: center; border-bottom: 2px solid #acb1b5; width:80%% ;padding:10px"> ${data.searchResult[i].productName} <img class="img-thumbnail" width="50" src="/public/uploads/${data.searchResult[i].image[1]}" alt="no image avalable"></li></a>`;
                 }
                 $('#suggestionList').html(html); // Update suggestionList
             }
