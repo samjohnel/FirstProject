@@ -44,5 +44,6 @@ router.get("/orderSuccessPage",userMiddleware.isLogout,orderController.orderSucc
 router.get("/orderDetails/:id", userMiddleware.isLogout, orderController.orderDetails);
 router.patch("/cancelSingleOrder", userMiddleware.isLogout, orderController.cancelSingleOrder);
 router.post("/searchProduct",userMiddleware.isLogout, productController.searchProduct);
+router.get("/shopFilter", userMiddleware.isLogout, userController.shopFilterLoad);
 
 module.exports = router;

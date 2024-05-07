@@ -29,6 +29,7 @@ const searchProduct = async (req, res, next) => {
   };
 
 
-module.exports = {productViewLoad,
+module.exports = {
+                  productViewLoad,
                   searchProduct,
                 };

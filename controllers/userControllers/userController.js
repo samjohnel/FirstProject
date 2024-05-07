@@ -374,7 +374,7 @@ const addAddress = async (req, res) => {
 
    const loadShop = async(req,res)=>{
     try {
-
+      const extractPrice = (price) => parseInt(price.replace(/[^\d]/g, ""));
       if (req.query.search) {
         let payload = req.query.search.trim();
         let searchResult = await productModel
@@ -384,7 +384,7 @@ const addAddress = async (req, res) => {
           .populate("productCategory")
           .exec();
       
-        console.log("This is the searchResult", searchResult);
+        
       
         // Check if searchResult is not empty
         if (searchResult.length > 0) {
@@ -460,28 +460,134 @@ const addAddress = async (req, res) => {
       const users = req.session.user;
       const categories = await categoryHelper.getAllCategory();
       let products = await productHelper.getAllActiveProducts();
-      console.log("THis is inside products", products);
-  
-      if (users) {
+      let sorted = false;
+      let totalPages = Math.ceil(products.length / 6);
+
+      if (req.query.filter) {
+        if (req.query.filter == "Ascending") {
+          products.sort(
+              (a, b) => extractPrice(a.productPrice.toString()) - extractPrice(b.productPrice.toString())
+          );
+          normalSorted = "Ascending";
+        } else if (req.query.filter == "Descending") {
+          products.sort(
+              (a, b) => extractPrice(b.productPrice.toString()) - extractPrice(a.productPrice.toString())
+          );
+          normalSorted = "Descending";
+        } else if (req.query.filter == "Alpha") {
+          products.sort((a, b) => {
+              const nameA = a.productName.toUpperCase();
+              const nameB = b.productName.toUpperCase();
+              if (nameA < nameB) {
+                  return -1;
+              }
+              if (nameA > nameB) {
+                  return 1;
+              }
+              return 0;
+          });
+          normalSorted = "Alpha";
+        }
+      
+        }
+
+      
         res.render("userShop", {
           products: products,
           categories,
-          users
+          users,
+          normalSorted,
+          sorted,
+          totalPages,
   
         });
-      } else {
-        res.render("homepage", {
-          products: products,
-          categories
-  
-        });
-      }
+       
     }
     } 
       catch (error) {
       console.log(error);
     }
   }
+
+
+
+  const shopFilterLoad = async (req, res, next) => {
+    try {
+      let filteredProducts;
+      const extractPrice = (price) => parseInt(price.replace(/[^\d]/g, ""));
+    
+      const { search, category, sort, page, limit } = req.query;
+      if (category) {
+        let userId = req.session.user;
+        var categories = await categoryHelper.getAllCategory();
+  
+        var cartCount = await cartHelper.getCartCount(userId);
+  
+        // var wishListCount = await wishlistHelper.getWishListCount(userId);
+  
+        //var product = await productHelper.getAllActiveProducts();
+        
+        //const products = await productHelper.getAllActiveProducts();
+        const products = await productHelper.getAllActiveProducts();
+        for (let product of products) {
+          product.category = product.category.map(cat => cat.categoryName);
+        }
+        
+
+        let categorySortedProducts = await products.filter((product) => {
+          return product.productCategory.toString().trim() == category.trim();
+        });
+  
+        filteredProducts = categorySortedProducts;
+        var sorted = false;
+      }
+     
+      if (sort) {
+        if (sort == "Ascending") {
+          filteredProducts.sort(
+            (a, b) => extractPrice(a.productPrice.toString()) - extractPrice(b.productPrice.toString())
+          );
+          sorted = "Ascending";
+        } else if (sort == "Descending") {
+          filteredProducts.sort(
+            (a, b) => extractPrice(b.productPrice.toString()) - extractPrice(a.productPrice.toString())
+          );
+          sorted = "Descending";
+        } else if (sort == "Alpha") {
+          filteredProducts.sort((a, b) => {
+            const nameA = a.productName.toUpperCase();
+            const nameB = b.productName.toUpperCase();
+            if (nameA < nameB) {
+              return -1;
+            }
+            if (nameA > nameB) {
+              return 1;
+            }
+            return 0;
+          });
+          sorted = "Alpha";
+        }
+      }
+      let itemsPerPage = 6;
+      let currentPage = parseInt(req.query.page) || 1;
+      let startIndex = (currentPage - 1) * itemsPerPage;
+      let endIndex = startIndex + itemsPerPage;
+      let totalPages = Math.ceil(filteredProducts.length / 6);
+      const currentProduct = filteredProducts.slice(startIndex, endIndex);
+      
+      res.json({
+        products: currentProduct,
+        totalPages,
+        userData: req.session.user,
+        cartCount,
+        categories,
+        sorted,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+  
 
   const LoadUserProduct = async (req, res) => {
     const id=req.params.id
@@ -656,4 +762,5 @@ module.exports = {
     checkoutPage,
     addressEditModal,
     updatePassword,
+    shopFilterLoad,
 }
