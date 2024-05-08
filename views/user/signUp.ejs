@@ -23,6 +23,9 @@
             <h4> Threaded Elegance</h4>
         </div>
 
+        <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
+
+
         <div class="d-flex justify-content-center mt-5 pb-5">
             <div class="card" style="border-radius: 2rem; width: 550px;">
                 <div class="card-body">
@@ -206,6 +209,8 @@
         return true;
     }
 
+
+
     let mobileValidate = () => {
         const mobileValid = mobileId.value;
         if (mobileValid.trim() === "") { // Corrected: Added parentheses after trim
@@ -233,6 +238,8 @@
         }
         return true;
     }
+
+
 
        let passwordValidate = () => {
         const passwordValid = passwordId.value;
@@ -265,9 +272,13 @@
         return true;
        }
 
-       
-       let cpasswordValidate = () => {
+
+    let cpasswordValidate = () => {
+        const alpha = /[a-zA-Z]/; // Define alpha within the function
+        const digit = /\d/; // Define digit within the function
         const cpasswordValid = cPasswordId.value; // Corrected ID
+        const password = passwordId.value;
+
         if (cpasswordValid.length < 8) {
             error5.style.display = "block";
             error5.innerHTML = "Please enter a valid password";
@@ -277,45 +288,70 @@
                 error5.innerHTML = "";
             }, 3000);
             return false;
-        } else if(!alpha.test(cpasswordValid) || !digit.test(cpasswordValid))
-    {
-        error4.style.display = "block"
-        error4.innerHTML = "Should contain number and alphabets !!"
+        } else if (!alpha.test(cpasswordValid) || !digit.test(cpasswordValid)) {
+            error4.style.display = "block"
+            error4.innerHTML = "Should contain number and alphabets !!"
 
-        setTimeout(() => {
-            error4.style.display = "none";
-            error4.innerHTML = "";
-        }, 3000);
-        return false;
-    }
-        else {
+            setTimeout(() => {
+                error4.style.display = "none";
+                error4.innerHTML = "";
+            }, 3000);
+            return false;
+        } else if (password !== cpasswordValid) { // Compare passwords
+            console.log("fffff");
+            error5.style.display = "block";
+            error5.innerHTML = "Passwords do not match";
+
+            setTimeout(() => {
+                error5.style.display = "none";
+                error5.innerHTML = "";
+            }, 3000);
+            return false;
+        } else {
             error5.style.display = "none";
             error5.innerHTML = "";
+            return true;
         }
-        return true;
-    }
+    };
+
+
 
        nameId.addEventListener("blur", nameValidate);
        mailId.addEventListener("blur", emailValidate);
        mobileId.addEventListener("blur", mobileValidate);
        passwordId.addEventListener("blur", passwordValidate);
        cPasswordId.addEventListener("blur", cpasswordValidate);
+
        
 
-    formId.addEventListener('submit', function(e){
-        let email = emailValidate();
-        let name = nameValidate();
-        let mobile = mobileValidate();
-        let password = passwordValidate();
-        let cpassword = cpasswordValidate();
+    formId.addEventListener('submit', function (e) {
+        const emailValid = emailValidate();
+        const nameValid = nameValidate();
+        const mobileValid = mobileValidate();
+        const passwordValid = passwordValidate();
+        const cpasswordValid = cpasswordValidate();
+        
 
-        if(!email || !name || !mobile || !password || !cpassword) {
+        if (!emailValid || !nameValid || !mobileValid || !passwordValid || !cpasswordValid ) {
             e.preventDefault();
         }
     });
+
    
  
     </script>
+
+<script>
+    // Check if there's an error message
+    const errorMessage = "<%= locals.errorMessage %>";
+    if (errorMessage) {
+        // Display the error message div and set its content
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.style.display = 'block';
+        errorDiv.textContent = errorMessage;
+    }
+</script>
+
 
 </body>
       

@@ -17,6 +17,7 @@ router.post("/signUp", userController.registerPost, userController.otpRedirect);
 // router.post("/signUp", );
 router.get("/otpPage", userController.getOtpPage);
 router.post("/otpPage", userController.otpPost);
+router.get("/resendOtp", userController.resendOtpRedirect);
 router.post("/verifyCredentials", userController.verifyCredentials);
 
 

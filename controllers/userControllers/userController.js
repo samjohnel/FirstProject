@@ -13,6 +13,7 @@ const orderHelper = require('../../helper/orderHelper')
 const ObjectId = require("mongoose").Types.ObjectId;
 const bcrypt = require('bcrypt');
 const moment = require("moment");
+const { query } = require("express");
 
 const userLogin = (req, res) => {
     try {
@@ -24,7 +25,8 @@ const userLogin = (req, res) => {
 
 const getUserSignUp = (req, res) => {
     try {
-        res.render("signUp")
+      let error = req.flash("error")
+        res.render("signUp",{error: error} )
     } catch (error) {
         console.log(error)
     }
@@ -100,9 +102,9 @@ const otpPost = async (req, res) => {
 
 
 
-
 const registerPost = async (req, res, next) => {
     try {
+
         // Extract user data from request body
         const userData = {
             name: req.body.name,
@@ -114,17 +116,14 @@ const registerPost = async (req, res, next) => {
         };
 
         
-        // Create a new user document using the User model
        
-        if (userData.password !== userData.cpassword) {
-            res.redirect("/signup?error=Passwords don't match");
-        }
-
-          // Save user data to session (if needed)
+        // if (userData.password !== userData.cpassword) {
+        //        req.flash("error","Passwords don't match" )
+        //     return res.redirect("/signup?error=Passwords don't match");
+        // }
+      
           req.session.userData = userData;
 
-        // Redirect to a success page or handle success response
-       // Redirect to a success page
       
        next();
         
@@ -160,6 +159,67 @@ const registerPost = async (req, res, next) => {
 //     }
 
 // }
+
+
+const resendOtp = async (email) => {
+  try {
+      const otp = await otpHelper.generateOtp(email);
+      console.log("Resent OTP:", otp);
+      return otp;
+  } catch (error) {
+      throw error;
+  }
+};
+
+const resendOtpRedirect = async (req, res) => {
+  try {
+      const email = req.session.userData.email; // Assuming email is stored in session
+      const otp = await resendOtp(email);
+      req.session.otp = otp;
+      req.session.otpExpiryTime = Date.now() + 60 * 1000; // Set new OTP expiry time
+      console.log(`Resent OTP: ${otp}`);
+      res.redirect("/otpPage");
+  } catch (error) {
+      console.error("Failed to resend OTP:", error);
+      // Handle the error accordingly
+      res.status(500).send("Failed to resend OTP");
+  }
+};
+
+// const resendOtpNew = (req, res) => {
+//   try {
+
+//       const otp = generateRandomOtp();
+//       console.log(otp);
+//       const email = req.session.email
+
+//       const mailOptions = {
+//           from: 'hafismhdthaleekara764@gmail.com',
+//           to: email,
+//           subject: 'OTP Verification In Register Side',
+//           text: Your OTP is: ${otp}
+//       };
+//       console.log("email, otp",email, otp)
+//       transporter.sendMail(mailOptions, (error, info) => {
+//           if (error) {
+//               console.error("Error sending OTP email", error.message);
+//           } else {
+//               console.log("Register Side OTP mail sent", info.response);
+//           }
+//       });
+
+
+//        console.log("This is resended otp: ",otp);
+//       // Store OTP in session
+//       req.session.otp = otp;
+      
+//       req.session.otpExpirationTime = Date.now() + 20 * 1000
+//       res.redirect("/otpRegister")
+//   } catch (error) {
+//       console.log(error);
+//   }
+// }
+
 
 
 const loginPost = async (req, res) => {
@@ -763,4 +823,5 @@ module.exports = {
     addressEditModal,
     updatePassword,
     shopFilterLoad,
+    resendOtpRedirect
 }

@@ -185,8 +185,13 @@ const placeOrder = (body, userId) => {
               as: "userOrderDetails",
             },
           },
+          {
+            $sort:{
+              orderedOn:-1
+            }
+          }
         ])
-        .sort({ orderedOn: -1 });
+        // .sort({ orderedOn: -1 });
       if (result) {
         resolve(result);
       }

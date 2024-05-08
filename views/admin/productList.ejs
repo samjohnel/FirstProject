@@ -63,9 +63,10 @@
                                                 <%= products[i].category[0].categoryName %>
                                             </td>
                                             <% } %>
-                                                <td style="vertical-align: middle; padding-left: 2rem;" width="12%">₹<%=
-                                                        products[i].productPrice %>
-                                                </td>
+                                            <td style="vertical-align: middle; padding-left: 2rem;" width="12%">₹<%=
+                                                (products[i].productPrice - ((products[i].productPrice * products[i].productDiscount) / 100))%>
+                                            </td>
+                                            
                                                 <td style="vertical-align: middle; padding-left: 2.5rem;" width="12%">
                                                     <%= products[i].totalQuantity %>
                                                 </td>

@@ -2,18 +2,45 @@ const moment = require('moment');
 const orderHelper = require('../../helper/orderHelper');
 const user = require("../../models/userModel");
 
+// const adminOrderPageLoad = async (req, res) => {
+//     try {
+//       const allOrders = await orderHelper.getAllOrders();
+//       for (const order of allOrders) {
+//         const dateString = order.orderedOn;
+//         order.formattedDate = moment(dateString).format("MMMM Do, YYYY");
+//       }
+//       res.render("orderPage", { allOrders });
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   };
+
 const adminOrderPageLoad = async (req, res) => {
-    try {
-      const allOrders = await orderHelper.getAllOrders();
+  try {
+      // Retrieve all orders
+      let allOrders = await orderHelper.getAllOrders();
+
+      
+      // Sort orders by orderedOn date in descending order
+      // allOrders.sort((a, b) => {
+      //     return new Date(b.orderedOn) - new Date(a.orderedOn);
+      // });
+
+    console.log("before",allOrders);
+      // Format dates and render the template
       for (const order of allOrders) {
-        const dateString = order.orderedOn;
-        order.formattedDate = moment(dateString).format("MMMM Do, YYYY");
+          const dateString = order.orderedOn;
+          order.formattedDate = moment(dateString).format("MMMM Do, YYYY");
       }
+      console.log("after",allOrders);
+
+      // Render the orderPage template with sorted orders
       res.render("orderPage", { allOrders });
-    } catch (error) {
+  } catch (error) {
       console.log(error);
-    }
-  };
+  }
+};
+
 
   const adminOrderDetails = async (req, res) => {
     try {

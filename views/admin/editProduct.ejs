@@ -91,7 +91,10 @@
                                     <img src="/public/uploads/<%= product.image[0] %>"
                                         style="width: 100px; height: 72px;" alt="">
                                     <% } %>
-                                        <input class="form-control" type="file" name="images" multiple>
+                                        <!-- <input class="form-control" type="file" name="images" multiple> -->
+                                        <input class="form-control" type="file" name="images" multiple onchange="validateFiles(this)" accept="image/*">
+                                        <div id="errorMessages" style="color: red;"></div>
+
                                         <input type="hidden" value="<%= product.image %> " name="oldImage">
                                         <% if(Array.isArray(product.image)) { %>
                                             <p>
@@ -247,5 +250,39 @@
         }
     });
     </script>
+
+<input class="form-control" type="file" name="images" multiple onchange="validateFiles(this)" accept="image/*">
+
+
+<script>
+    function validateFiles(input) {
+        const allowedTypes = ['image/jpeg', 'image/png'];
+        const files = input.files;
+        const errorMessages = [];
+    
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            if (!allowedTypes.includes(file.type)) {
+                errorMessages.push(`File '${file.name}' is not an image.`);
+            }
+        }
+    
+        if (errorMessages.length > 0) {
+            // Clear the selected files
+            input.value = '';
+            // Show error messages
+            displayErrorMessages(errorMessages);
+        }
+    }
+    
+    function displayErrorMessages(messages) {
+        const errorDiv = document.getElementById('errorMessages');
+        errorDiv.innerHTML = messages.join('<br>');
+        setTimeout(() => {
+            errorDiv.innerHTML = '';
+        }, 3000); // Display messages for 3 seconds
+    }
+    </script>
+
 
     <%- include('../layouts/adminLayout/admin-footer') %>
