@@ -37,7 +37,7 @@ router.get('/detailProductPage/:id',userMiddleware.isLogout,userController.LoadU
 router.get("/cart", userMiddleware.isLogout, userController.userCartLoad);
 router.post("/addToCart/:id/:size", userMiddleware.isLogout, userController.addToCart);
 router.patch("/updateCartQuantity", userController.updateCartQuantity);
-router.delete("/removeCart/:id", userMiddleware.isLogout, userController.removeCartItem);
+router.delete("/removeCart/:id/:size", userMiddleware.isLogout, userController.removeCartItem);
 router.get("/checkout", userMiddleware.isLogout, userController.checkoutPage);
 router.get("/addressEditor/:userId/:addressId",userMiddleware.isLogout, userController.addressEditModal);
 router.post("/placeOrder", userMiddleware.isLogout, orderController.placeOrder);

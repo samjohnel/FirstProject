@@ -8,6 +8,7 @@ const moment = require("moment");
 
 const placeOrder = async (req, res) => {
     const body = req.body;
+    console.log("THis is body", body);
     const userId = req.session.user;
   
     const result = await orderHelper.placeOrder(body, userId);

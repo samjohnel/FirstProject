@@ -667,6 +667,9 @@
                                           
                                         </span>
                                         <span class="old-price"><%= products[i].productPrice %></span>
+                                        <span class="text-brand">
+                                            ₹<%= products[i].productPrice - (products[i].productPrice*products[i].productDiscount/100)%>
+                                        </span>
                                       </div>
                                       <div class="product-action-1 show">
                                         <a aria-label="Add To Cart" class="action-btn hover-up" href="#"><i

@@ -175,54 +175,73 @@ const isAProductInCart = (userId, productId) => {
 };
 
 
-const incDecProductQuantity = async (userId, productId, quantity, operation) => {
+const incDecProductQuantity = async (userId, productId, quantity, size, operation, qty) => {
   return new Promise(async (resolve, reject) => {
-    const findPro = await product.findById({ _id: productId });
-    //const findCart = await cartModel.findOne({user: userId});
-    // const product = findCart.products.find((items) => {
-    //   return items._id.toString() == productId
-    // })
-    // console.log(product);
+    try {
+      const findPro = await product.findById({ _id: productId });
+      
+      const sizeIndex = findPro.productQuantity.findIndex(item => item.size === size);
+
+      if (sizeIndex === -1) {
+        // Size not found in the product's quantity array
+        reject(new Error("Size not found"));
+        return;
+      }
+
+      let updateQuery = {};
+
+      const cartBefore = await cartModel.findOne({user: userId});
 
 
-    let updateQuery = {};
+      if (operation === "increment" && qty < findPro.productQuantity[sizeIndex].quantity ) {
+        updateQuery = {
+          $inc: {
+            "products.$.quantity": 1,
+            "products.$.subTotal": findPro.productPrice,
+            totalAmount: findPro.productPrice
+          }
+        };
+      } else if (operation === "decrement" && qty > 1) {
+        
+        console.log("This is findPro.productPrice", findPro.productPrice);
+        updateQuery = { 
+          $inc: {
+            "products.$.quantity": -1,
+            "products.$.subTotal": -findPro.productPrice,
+            totalAmount: -findPro.productPrice
+          }
+        };
+      } else {
+        // Operation not allowed
+        resolve(null);
+        return;
+      }
 
-    if (operation === "increment") {
-      updateQuery = {
-        $inc: {
-          "products.$.quantity": 1,
-          "products.$.subTotal": findPro.productPrice,
-          totalAmount: findPro.productPrice
-        }
-      };
-    } else if (operation === "decrement") {
-      updateQuery = { 
-        $inc: {
-          "products.$.quantity": -1,
-          "products.$.subTotal": -findPro.productPrice,
-          totalAmount: -findPro.productPrice
-        }
-      };
+      const cart = await cartModel.findOneAndUpdate(
+        { user: userId, "products.productItemId": findPro._id ,'products.size':size},
+        updateQuery
+      );
+
+      const cartAfter = await cartModel.findOne({user: userId});
+      
+      let total = cartAfter.totalAmount;
+      resolve(total);
+    } catch (error) {
+      reject(error);
     }
-
-    const cart = await cartModel.findOneAndUpdate(
-      { user: userId, "products.productItemId": findPro._id },
-      updateQuery
-    );
-
-    let total = cart.totalAmount;
-    resolve(total);
   });
 };
 
 
-const removeItemFromCart = (userId, productId) => {
+
+
+const removeItemFromCart = (userId, productId, size) => {
   return new Promise(async (resolve, reject) => {
     cartModel
       .updateOne(
         { user: userId },
         {
-          $pull: { products: { productItemId: productId } },
+          $pull: { products: { productItemId: productId }, products: { size: size } },
         }
       )
       .then((result) => {

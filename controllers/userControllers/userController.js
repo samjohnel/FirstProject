@@ -734,14 +734,23 @@ const userCartLoad = async (req, res) => {
     const productId = req.query.productId;
     const quantity = req.query.quantity;
     const userId = req.session.user;
+    const size = req.query.size;
     const operation = req.query.operation; // 'increment' or 'decrement'
+    const qty = req.query.qty;
+    console.log("This is quantity", quantity)
     
     const update = await cartHelper.incDecProductQuantity(
       userId,
       productId,
       quantity,
-      operation
+      size,
+      operation, 
+      qty
     );
+
+    console.log("This is update", update)
+
+    console.log("THis is the quantity that we are passing", quantity)
     
     if (update) {
       res.json({ status: true, quantity, total: update });
@@ -754,7 +763,8 @@ const userCartLoad = async (req, res) => {
     try {
       const userId = req.session.user;
       const productId = req.params.id;
-      const result = await cartHelper.removeItemFromCart(userId, productId);
+      const size = req.params.size;
+      const result = await cartHelper.removeItemFromCart(userId, productId, size);
       if (result) {
         res.json({ status: true });
       } else {

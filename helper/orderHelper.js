@@ -19,6 +19,7 @@ const placeOrder = (body, userId) => {
             _id: 0,
           }
         );
+    
         const user = await userModel.findOne({ _id: userId });
         let products = [];
         let status = "pending";
@@ -31,7 +32,7 @@ const placeOrder = (body, userId) => {
             product: product.productItemId,
             quantity: product.quantity,
             size: product.size,
-            productPrice: product.price,
+            productPrice: product.subTotal,
             status: status,
           });
 
@@ -48,10 +49,12 @@ const placeOrder = (body, userId) => {
               },
             }
           );
+          console.log("This is the chageStock", changeStock)
           
         }
 
-  
+        console.log("This is the products array", products);
+
         if (cart && address) {
           const result = orderModel.create({
             user: userId,
