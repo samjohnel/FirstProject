@@ -14,6 +14,7 @@ const adminLoginPost = async (req, res) => {
     if (result) {
        // req.body.password === result.password ? (req.session.admin = result._id, res.render('adminHome')) :  req.flash('message', 'Invalid Password'), res.redirect('/admin/adminLogin');
        if(req.body.password === result.password) {
+        req.session.admin = result._id;
         res.render("adminHome")
         }else{
             req.flash('message', 'Invalid Password');
@@ -26,9 +27,10 @@ const adminLoginPost = async (req, res) => {
 }
 
 const adminLogout = (req, res) => {
-    req.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
 
     if (req.session.admin) {
+        console.log("THis is req.session.admin", req.session.admin)
         delete req.session.admin;
         req.flash('message', 'Logged out successfully');
         res.redirect('/admin');

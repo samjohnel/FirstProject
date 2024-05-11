@@ -11,34 +11,33 @@ const multer = require("../middleware/multer");
 const sharp = require("../middleware/sharp");
 
 router.get("/", adminAuth.isLogin, authContoller.adminLoginLoad);
-// router.get("/adminLogins", adminController.loadLogins);
 router.post("/", authContoller.adminLoginPost);
 router.get("/logout", adminAuth.isLogout, authContoller.adminLogout)
-router.get("/userList", adminController.userList);
-router.patch("/blockUnblockUser/:id", adminController.blockUnblockUser);
-router.get("/category", categoryController.loadCategory);
-router.post("/addCategory", categoryController.addCategory);
-router.get("/editCategory", categoryController.editCategoryLoad);
-router.put("/editCategory/:id", categoryController.editCategory);
-router.patch("/deleteCategory/:id",categoryController.deleteCategory);
-router.get("/productList", productController.productListLoad);
-router.get("/addProduct", productController.addProductLoad);
+router.get("/userList", adminAuth.isLogout, adminController.userList);
+router.patch("/blockUnblockUser/:id", adminAuth.isLogout, adminController.blockUnblockUser);
+router.get("/category", adminAuth.isLogout, categoryController.loadCategory);
+router.post("/addCategory", adminAuth.isLogout, categoryController.addCategory);
+router.get("/editCategory", adminAuth.isLogout, categoryController.editCategoryLoad);
+router.put("/editCategory/:id", adminAuth.isLogout, categoryController.editCategory);
+router.patch("/deleteCategory/:id", adminAuth.isLogout, categoryController.deleteCategory);
+router.get("/productList", adminAuth.isLogout, productController.productListLoad);
+router.get("/addProduct", adminAuth.isLogout, productController.addProductLoad);
 
-router.get("/orders", orderController.adminOrderPageLoad);
+router.get("/orders", adminAuth.isLogout, orderController.adminOrderPageLoad);
 
-router.get("/orderDetails/:id", orderController.adminOrderDetails);
+router.get("/orderDetails/:id", adminAuth.isLogout, orderController.adminOrderDetails);
 
-router.patch("/orderStatusChangeForEachProduct/:orderId/:productId",
-    orderController.changeOrderStatusOfEachProduct
+router.patch("/orderStatusChangeForEachProduct/:orderId/:productId", adminAuth.isLogout,
+orderController.changeOrderStatusOfEachProduct
 );
 
-router.post('/addproduct', multer.productUpload.array("images"), productController.addProductPost);
+router.post('/addproduct', multer.productUpload.array("images"), adminAuth.isLogout, productController.addProductPost);
 
-router.get("/editProduct/:id", productController.editProductLoad);
+router.get("/editProduct/:id", adminAuth.isLogout, productController.editProductLoad);
 
-router.put("/editProduct/:id", multer.productUpload.array("images"), productHelper.editProductPost);
+router.put("/editProduct/:id", adminAuth.isLogout, multer.productUpload.array("images"), productHelper.editProductPost);
 
-router.patch("/deleteproduct/:id", productController.deleteProduct);
+router.patch("/deleteproduct/:id", adminAuth.isLogout, productController.deleteProduct);
 
 
   
