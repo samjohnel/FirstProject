@@ -10,21 +10,25 @@ const adminLoginLoad = (req, res) => {
 }
 
 const adminLoginPost = async (req, res) => {
-    const result = await adminModel.findOne({email: req.body.email});
-    if (result) {
-       // req.body.password === result.password ? (req.session.admin = result._id, res.render('adminHome')) :  req.flash('message', 'Invalid Password'), res.redirect('/admin/adminLogin');
-       if(req.body.password === result.password) {
+    const result = await adminModel.findOne({ email: req.body.email });
+    console.log("This is the result", req.body.password);
+
+    if (!result) {
+        // If no admin with the provided email exists
+        return res.render("adminLogin", { errormessage: "Wrong email" });
+    }
+
+    // If an admin with the provided email exists, check the password
+    if (req.body.password === result.password) {
+        // If the password is correct, set the session and redirect to adminHome
         req.session.admin = result._id;
-        res.render("adminHome")
-        }else{
-            req.flash('message', 'Invalid Password');
-            res.redirect('/admin');
-            }
+        return res.render("adminHome");
     } else {
-        req.flash('message', 'Invalid Email');
-        res.redirect('/admin');
+        // If the password is incorrect, render adminLogin with error message
+        return res.render('adminLogin', { errormessage: "Wrong password" });
     }
 }
+
 
 const adminLogout = (req, res) => {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');

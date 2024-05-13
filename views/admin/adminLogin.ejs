@@ -29,15 +29,17 @@
                 <div class="card">
                     <div class="card-body">
                         <h2 class="card-title text-center">Admin Login</h2>
-                        <% if (locals.message) { %>
-                        <div class="alert alert-danger" role="alert">
-                            <%= message %>
-                        </div>
-                        <% } %>
-                        <% if (locals.error) { %>
-                            <div class="alert alert-danger" role="alert">
-                                <%= error %>
-                            </div>
+                        
+                        <% if (locals.errormessage) { %>
+                           
+                            <div class="alert alert-danger" role="alert" id="errmessage">
+                                <%= locals.errormessage %>
+                            </div>  
+                            <script>
+                                setTimeout(() => {
+                                    document.getElementById("errmessage").style.display="none"
+                                }, 3000);
+                            </script>
                             <script>
                                 setTimeout(function() {
                                     document.querySelector('.alert').style.display = 'none';
