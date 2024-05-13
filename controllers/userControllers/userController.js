@@ -164,7 +164,7 @@ const registerPost = async (req, res, next) => {
 const resendOtp = async (email) => {
   try {
       const otp = await otpHelper.generateOtp(email);
-      console.log("Resent OTP:", otp);
+      // console.log("Resent OTP:", otp);
       return otp;
   } catch (error) {
       throw error;
@@ -173,10 +173,10 @@ const resendOtp = async (email) => {
 
 const resendOtpRedirect = async (req, res) => {
   try {
-      const email = req.session.userData.email; // Assuming email is stored in session
+      const email = req.session.userData.email; 
       const otp = await resendOtp(email);
       req.session.otp = otp;
-      req.session.otpExpiryTime = Date.now() + 60 * 1000; // Set new OTP expiry time
+      req.session.otpExpiryTime = Date.now() + 60 * 1000; 
       console.log(`Resent OTP: ${otp}`);
       res.redirect("/otpPage");
   } catch (error) {

@@ -157,28 +157,28 @@
     }
     updateTimer();
 
-    function resendOTP() {
-        // Implement logic to generate a new OTP and send it to the user
-        const newOTP = generateRandomOtp();
-        sendOTPToUser(newOTP);
+    // function resendOTP() {
+    //     // Implement logic to generate a new OTP and send it to the user
+    //     const newOTP = generateRandomOtp();
+    //     sendOTPToUser(newOTP);
 
-        // Reset the timer
-        timeRemaining = 60;
+    //     // Reset the timer
+    //     timeRemaining = 60;
 
-        // Hide the Resend OTP button
-        resendButton.style.display = 'none';
+    //     // Hide the Resend OTP button
+    //     resendButton.style.display = 'none';
 
-        // Call updateTimer() again to restart the timer
-        updateTimer();
-    }
+    //     // Call updateTimer() again to restart the timer
+    //     updateTimer();
+    // }
 
-    // Example function to simulate sending OTP to the user (replace this with your actual implementation)
-    function sendOTPToUser(otp) {
-        console.log(`Sending OTP to the user: ${otp}`);
-        // Implement logic to send the OTP to the user (e.g., via email, SMS, etc.)
-    }
+    // // Example function to simulate sending OTP to the user (replace this with your actual implementation)
+    // function sendOTPToUser(otp) {
+    //     console.log(`Sending OTP to the user: ${otp}`);
+    //     // Implement logic to send the OTP to the user (e.g., via email, SMS, etc.)
+    // }
 
-    resendButton.addEventListener('click', resendOTP);
+    // resendButton.addEventListener('click', resendOTP);
 
 </script>
 
