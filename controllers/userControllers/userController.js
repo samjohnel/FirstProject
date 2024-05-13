@@ -223,39 +223,40 @@ const resendOtpRedirect = async (req, res) => {
 
 
 const loginPost = async (req, res) => {
-    const logemail = req.body.email;
-    const logpassword = req.body.password;
+  const logemail = req.body.email;
+  const logpassword = req.body.password;
 
-    try {
-        let userInfo = await user.findOne({ email: logemail });
+  try {
+      let userInfo = await user.findOne({ email: logemail });
 
-        if (userInfo) {
-            // Compare the plain text password with the hashed password from the database
-            bcrypt.compare(logpassword, userInfo.password, (err, result) => {
-                if (err) {
-                    // Handle error
-                    console.error('Error comparing passwords:', err);
-                    return res.status(500).send('Internal Server Error');
-                }
-                if (result) {
-                    // Passwords match
-                    req.session.user = userInfo._id;
-                    return res.redirect("/userhome");
-                } else {
-                    // Passwords don't match
-                    return res.status(401).send("Incorrect email or password");
-                }
-            });
-        } else {
-            // User not found
-            return res.status(401).send("Incorrect email or password");
-
-        }
-    } catch (error) {
-        console.error('Error finding user:', error);
-        return res.status(500).send('Internal Server Error');
-    }
+      if (userInfo) {
+          // Compare the plain text password with the hashed password from the database
+          bcrypt.compare(logpassword, userInfo.password, (err, result) => {
+              if (err) {
+                  // Handle error
+                  console.error('Error comparing passwords:', err);
+                  res.status(500).render('login', { error: 'Internal Server Error' });
+              }
+              if (result) {
+                  // Passwords match
+                  req.session.user = userInfo._id;
+                  res.redirect("/userhome");
+              } else {
+                  // Passwords don't match
+                  res.status(401).render('login', { error: 'Incorrect password' });
+              }
+          });
+      } else {
+          // User not found
+          res.status(401).render('login', { error: 'Incorrect email' });
+      }
+  } catch (error) {
+      console.error('Error finding user:', error);
+      res.status(500).render('login', { error: 'Internal Server Error' });
+  }
 }
+
+
 
 
 
