@@ -200,7 +200,7 @@ const checkDuplicateFunction = (body, productId) => {
         parseInt(req.body.smallQuantity) +
         parseInt(req.body.mediumQuantity) +
         parseInt(req.body.largeQuantity);
-      console.log(totalAmount);
+  
       const check = await checkDuplicateFunction(
         req.body,
         req.params.id
@@ -226,7 +226,7 @@ const checkDuplicateFunction = (body, productId) => {
           product.productPrice = req.body.productPrice;
           product.productQuantity = productQuantity;
           product.totalQuantity = totalAmount;
-          product.Category = req.body.productCategory;
+          product.productCategory = req.body.productCategory;
           product.productDiscount = req.body.productDiscount;
           break;
         case 2:
@@ -235,11 +235,10 @@ const checkDuplicateFunction = (body, productId) => {
           product.productPrice = req.body.productPrice;
           product.productQuantity = productQuantity;
           product.totalQuantity = totalAmount;
-          product.Category = req.body.productCategory;
+          product.productCategory = req.body.productCategory;
           product.productDiscount = req.body.productDiscount;
           break;
         case 3:
-          console.log("Product already Exists");
           break;
         default:
           console.log("error");
