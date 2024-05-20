@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require("../controllers/userControllers/userController");
 const productController = require("../controllers/userControllers/productControllers");
 const orderController = require("../controllers/userControllers/orderController");
+const wishlistController = require("../controllers/userControllers/wishlistController");
 const userMiddleware = require("../middleware/userMiddleware");
 const userAuth= require("../middleware/userAuth");
 
@@ -46,5 +47,8 @@ router.get("/orderDetails/:id", userMiddleware.isLogout, orderController.orderDe
 router.patch("/cancelSingleOrder", userMiddleware.isLogout, orderController.cancelSingleOrder);
 router.post("/searchProduct",userMiddleware.isLogout, productController.searchProduct);
 router.get("/shopFilter", userMiddleware.isLogout, userController.shopFilterLoad);
+router.get("/wishlist",userMiddleware.isLogout,wishlistController.wishlistLoad);
+router.post("/addToWishlist/:id",userMiddleware.isLogout, wishlistController.addToWishlist);
+router.put("/removeFromWishlist", wishlistController.removeFromWishlist);
 
 module.exports = router;

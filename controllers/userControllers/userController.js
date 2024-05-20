@@ -9,7 +9,8 @@ const categoryHelper = require('../../helper/categoryHelper');
 const productHelper = require('../../helper/productHelper');
 const cartHelper = require('../../helper/cartHelper');
 const cartModel = require('../../models/cartModel');
-const orderHelper = require('../../helper/orderHelper')
+const orderHelper = require('../../helper/orderHelper');
+const wishlistHelper = require('../../helper/wishlistHelper');
 const ObjectId = require("mongoose").Types.ObjectId;
 const bcrypt = require('bcrypt');
 const moment = require("moment");
@@ -665,7 +666,17 @@ const addAddress = async (req, res) => {
     const products = await productModel.find({productCategory:categoryId}) 
     .populate("productCategory")
     .lean()
+    
 
+    // const cartStatus = await cartHelper.isAProductInCart(userData, product._id);
+    // product.cartStatus = cartStatus;
+
+    const wishlistStatus = await wishlistHelper.isInWishlist(
+      userData,
+      product._id
+    );
+    
+    product.wishlistStatus = wishlistStatus;
       
         res.render('detailProductPage', {
          product,products,

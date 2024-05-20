@@ -37,6 +37,7 @@ console.log("This is finProduct", findProduct);
             { $push: { products: { productItemId: productId, quantity: 1 ,size:size,subTotal:findProduct.productPrice} } ,$inc:{totalAmount:findProduct.productPrice}},
             { upsert: true }
           );
+          
             }else{
               console.log("This is supposed to happen")
               resolve(false);
