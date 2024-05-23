@@ -329,7 +329,8 @@
                                   <% } else if (productDetails[i].products.status=="returned" ) { %>
                                     <a href="#" class="text-muted">Returned</a>
                                     <% } else if (productDetails[i].products.status=="payment pending" ) { %>
-                                        class="text-muted">Retry</a>
+                                      <a onclick="retryPayment('<%=productDetails[0].orderId%>')"
+                                        class="text-muted">Retry</a>>
                                       <% } else { %>
                                         <a onclick="cancelOrder('<%=productDetails[i]._id%>','<%=productDetails[i].products._id%>')"
                                           class="text-danger">Cancel</a>

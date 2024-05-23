@@ -3,7 +3,7 @@ const userSchema = new mongoose.Schema({
     name: {
         type: String,
         reqired: true
-    }, 
+    },
     email: {
         type: String,
         required: true
@@ -20,31 +20,47 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
-    address:[
+    address: [
         {
-            housename:{
-                type:String
+            housename: {
+                type: String
             },
-            streetname:{
-                type:String
+            streetname: {
+                type: String
             },
-            areaname:{
-                type:String
+            areaname: {
+                type: String
             },
-            districtname:{
-                type:String
+            districtname: {
+                type: String
             },
-            statename:{
-                type:String
+            statename: {
+                type: String
             },
-            countryname:{
-                type:String
+            countryname: {
+                type: String
             },
-            pin:{
-                type:Number
+            pin: {
+                type: Number
             }
         }
     ],
+    wallet: {
+        balance: { type: Number, default: 0 },
+        details: [
+            {
+                type: { type: String, enum: ["credit", "debit", "refund"] },
+                amount: { type: Number },
+                date: { type: Date },
+                transactionId: {
+                    type: Number,
+                    default: function () {
+                        return Math.floor(100000 + Math.random() * 900000);
+                    },
+                },
+            },
+        ],
+    }
 })
 
 const User = mongoose.model("User", userSchema);

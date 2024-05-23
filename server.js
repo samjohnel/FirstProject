@@ -10,6 +10,9 @@ const flash = require("express-flash");
 const noCache = require("nocache");
 const nocache = require("nocache");
 const methodOverride = require("method-override");
+// Load environment variables from .env file
+require('dotenv').config();
+
 const app = express();
 let port = 2002;
 

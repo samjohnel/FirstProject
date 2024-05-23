@@ -2,6 +2,7 @@ const cartModel = require("../models/cartModel");
 const userModel = require('../models/userModel');
 const productModel = require("../models/productModel");
 const orderModel = require("../models/orderModel");
+const walletHelper = require("../helper/walletHelper");
 const ObjectId = require("mongoose").Types.ObjectId;
 // const { Types: { ObjectId } } = require("mongoose");
 const mongoose = require("mongoose");
@@ -223,19 +224,7 @@ const placeOrder = (body, userId) => {
   const cancelSingleOrder = (orderId, singleOrderId, price) => {
     return new Promise(async (resolve, reject) => {
       try {
-        // const cancelled = await orderModel.findOneAndUpdate(
-        //   {
-        //     _id: ObjectId(orderId),
-        //     "products._id": ObjectId(singleOrderId),
-        //   },
-        //   {
-        //     $set: { "products.$.status": "cancelled" },
-        //   },
-        //   {
-        //     new: true,
-        //   }
-        // );
-
+        
         const cancelled = await orderModel.findOneAndUpdate(
           {
             _id: new ObjectId(orderId),
@@ -291,6 +280,13 @@ const placeOrder = (body, userId) => {
         
         const response = await orderModel.findOne({ _id: orderId });
         
+        if (response.paymentMethod == 'RazorPay') {
+          console.log("razorpay");
+          const walletUpdation = await walletHelper.walletAmountAdding(
+            response.user,
+            price
+          );
+        }
   
         resolve(cancelled);
       } catch (error) {

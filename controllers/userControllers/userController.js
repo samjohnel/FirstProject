@@ -321,6 +321,11 @@ const accountView = async(req,res)=>{
     const userId = req.session.user;
 
     const userData = await user.findOne({_id:userId})
+    const walletData = await userHelper.getWalletDetails(userId);
+    console.log("HHH", walletData);
+    for (const amount of walletData.wallet.details) {
+      amount.formattedDate = moment(amount.date).format("MMM Do, YYYY");
+    }
 
     const orderDetails = await orderHelper.getOrderDetails(userId);
     for (const order of orderDetails) {
@@ -334,9 +339,14 @@ const accountView = async(req,res)=>{
       order.quantity = quantity;
       quantity = 0;
     }
+
+    let sum = walletData.wallet.details.reduce((acc, detail) => acc + detail.amount, 0);
+
     res.render("userAccount",{
       userData,
-      orderDetails
+      orderDetails,
+      walletData,
+      sum,
     })
   } catch (error) {
     console.log(error);

@@ -21,6 +21,7 @@
 </head>
 
 <body>
+     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
      <header class="header-area header-style-1 header-height-2">
         
         <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
@@ -686,7 +687,7 @@
               paymentOption: payment,
             }
      
-            const totalAmount = document.getElementById("totalAmount");
+            const totalAmount = document.getElementById("totalAmount").innerText.trim();
             console.log(totalAmount,data)
      
             if (payment === "COD") {
@@ -711,7 +712,140 @@
                   }
                 }
               })
-            }
+            } else if (payment === "RazorPay") {
+                    console.log("razorpay selected");
+
+                    $.ajax({
+                        url: `/createorder?totalAmount=${totalAmount}`,
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        success: function (data) {
+                            const parseAmount = parseInt(totalAmount);
+                            console.log(data);
+                            if(data.status){
+                                var options = {
+                                    "key": "rzp_test_aGNUOMnoTXmBAS",
+                                    "amount": 100000,
+                                    "currency": "INR",
+                                    "name": "Shan Apparels",
+                                    "description": "Test Transaction",
+                                    "image": "http://localhost:4004/public/user-assets/imgs/theme/icons/logo.png",
+                                    "order_id": data.orderId.id,
+                                    "handler": function (response) {
+                                        console.log(response);
+                                        console.log("Hello");
+                                        verify(response, data.orderId.id);
+                                        console.log("hey");
+                                    },
+                                    "prefill": {
+                                        "name": "Gaurav Kumar",
+                                        "email": "gaurav.kumar@example.com",
+                                        "contact": "9000090000"
+                                    },
+                                    "notes": {
+                                        "address": "Razorpay Corporate Office"
+                                    },
+                                    "theme": {
+                                        "color": "#3399cc"
+                                    }
+                                };
+                                var rzp = new Razorpay(options);
+                                rzp.open();
+                                rzp.on("payment.failed", function (response) {
+                                    console.log('Payment failed:', response.error.description);
+                                    handleFailure(response.error.description, address, payment);
+                                });
+                            }else{
+                                Toastify({
+                                    text: data.result,
+                                    duration: 3000,
+                                    gravity: "top",
+                                    position: "center",
+                                    stopOnFocus: true,
+                                    style: {
+                                        background: "linear-gradient(to right, #ff9966, #ff5e62)",
+                                    },
+                                }).showToast();
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error:', error);
+                        }
+                    });
+
+                    function handleFailure(description, address, paymentMethod) {
+                        console.log('Payment failed:', description);
+                        createOrderWithStatusPending(address, paymentMethod);
+                        window.location.href = "/orderFailure";
+                    }
+
+                    function createOrderWithStatusPending(address, paymentMethod) {
+                        $.ajax({
+                            url: '/placeOrder',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify({
+                                addressId: address,
+                                paymentOption: paymentMethod,
+                                status: "payment pending"
+                            }),
+                            success: function (data) {
+                                console.log(data);
+                                if (data.success) {
+                                    window.location.href = '/orderFailure';
+                                } else {
+                                    console.error('Error: Order creation failed');
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error('Error:', error);
+                            }
+                        });
+                    }
+
+                    function verify(response, orderId) {
+                        $.ajax({
+                            url: '/paymentSuccess',
+                            type: 'POST',
+                            data: {
+                                paymentid: response.razorpay_payment_id,
+                                razorpayorderid: response.razorpay_order_id,
+                                signature: response.razorpay_signature,
+                                orderId
+                            },
+                            success: function (data) {
+                                if (data.success) {
+                                    $.ajax({
+                                        url: '/placeOrder',
+                                        type: 'POST',
+
+                                        data: {
+                                            addressId: address,
+                                            paymentOption: payment,
+                                        },
+                                        success: function (data) {
+                                            console.log(data);
+                                            window.location.href = '/orderSuccessPage';
+                                        },
+                                        error: function (xhr, status, error) {
+                                            console.error('Error:', error);
+                                        }
+                                    });
+                                } else {
+                                    console.error('Payment failed:', data.error);
+                                    alert('Payment failed. Please try again later.');
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error('Error:', error);
+                            }
+                        });
+                    }
+
+
+
+                }
      
           })
      

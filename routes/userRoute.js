@@ -50,5 +50,9 @@ router.get("/shopFilter", userMiddleware.isLogout, userController.shopFilterLoad
 router.get("/wishlist",userMiddleware.isLogout,wishlistController.wishlistLoad);
 router.post("/addToWishlist/:id",userMiddleware.isLogout, wishlistController.addToWishlist);
 router.put("/removeFromWishlist", wishlistController.removeFromWishlist);
+router.post("/createOrder", userMiddleware.isLogout, orderController.createOrder);
+router.post('/paymentSuccess', userMiddleware.isLogout, orderController.paymentSuccess);
+router.get("/orderFailure", userMiddleware.isLogout, orderController.orderFailedPageLoad);
+
 
 module.exports = router;

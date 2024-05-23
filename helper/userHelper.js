@@ -132,10 +132,24 @@ const deleteAddressHelper= async(userId,addressId)=>{
     });
   };
 
+  const getWalletDetails = async (userId) => {
+    return new Promise(async (resolve, reject) => {
+      const result = await userModel.findOne({ _id: userId });
+  
+      if (result) {
+        resolve(result);
+      } else {
+        console.log("not found");
+      }
+    });
+  };
+  
+
 module.exports = {
                   addAddress, 
                   editAddressHelper,
                   deleteAddressHelper,
                   updateUserDetails,
                   updateUserPassword,
+                  getWalletDetails,
                 };

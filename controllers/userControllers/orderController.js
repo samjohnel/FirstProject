@@ -4,6 +4,14 @@ const productModel = require('../../models/productModel');
 const cartHelper = require('../../helper/cartHelper');
 const orderHelper = require("../../helper/orderHelper")
 const moment = require("moment");
+const Razorpay = require("razorpay");
+require('dotenv').config();
+
+
+var razorpay = new Razorpay({
+  key_id: process.env.KEY_ID,
+  key_secret: process.env.KEY_SECRET,
+});
 
 
 const placeOrder = async (req, res) => {
@@ -66,9 +74,77 @@ const placeOrder = async (req, res) => {
     }
   };
 
+
+const createOrder = async (req, res) => {
+  try {
+    const amount = req.query.totalAmount;
+    console.log("THis is the amount", amount);
+    const cart = await cartModel.findOne({ user: req.session.user });
+    console.log("This is the cart", cart)
+    for (const product of cart.products) {
+      const availableStock = await productModel.findOne({
+        _id: product.productItemId,
+        "productQuantity.size": product.size,
+      });
+      
+      const availableStockForSize = availableStock.productQuantity.find(item => item.size === product.size);
+      console.log("this is availableStockForSize", availableStockForSize);
+      if (!availableStockForSize || availableStockForSize.quantity < product.quantity) {
+        // If stock is not available for the preferred size, reject the promise and return error
+        res.json({ result: `Insufficient stock for size ${product.size}`, status: false });
+      } else {
+        const order = await razorpay.orders.create({
+          amount: amount * 100,
+          currency: "INR",
+          receipt: req.session.user,
+        });
+        console.log({ orderId: order, status: true });
+
+        res.json({ orderId: order, status: true });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const paymentSuccess = (req, res) => {
+  try {
+    console.log("this is payment success")
+    const { paymentid, signature, orderId } = req.body;
+    const { createHmac } = require("node:crypto");
+
+
+    const hash = createHmac("sha256", process.env.KEY_SECRET)
+      .update(orderId + "|" + paymentid)
+      .digest("hex");
+
+
+    if (hash === signature) {
+      console.log("success");
+      res.status(200).json({ success: true, message: "Payment successful" });
+    } else {
+      console.log("error");
+      res.json({ success: false, message: "Invalid payment details" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+
+const orderFailedPageLoad = (req, res) => {
+  res.render("orderFailure");
+};
+
+
   module.exports = {
     placeOrder,
     orderSuccessPageLoad,
     orderDetails,
     cancelSingleOrder,
+    createOrder,
+    paymentSuccess,
+    orderFailedPageLoad,
   }
