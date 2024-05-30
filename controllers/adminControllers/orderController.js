@@ -87,9 +87,37 @@ const changeOrderStatusOfEachProduct = async (req, res) => {
   }
 };
 
+const loadSalesReport = async (req, res) => {
+  console.log("Getting in");
+  try {
+    orderHelper
+      .salesReport()
+      .then((response) => {
+        console.log(response);
+        response.forEach((order) => {
+          const orderDate = new Date(order.orderedOn);
+          const formattedDate = orderDate.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          });
+          order.orderedOn = formattedDate;
+        });
+
+        res.render("admin/salesReport", { sales: response });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 
 module.exports = {
     adminOrderPageLoad, 
     adminOrderDetails,
     changeOrderStatusOfEachProduct,
+    loadSalesReport,
 }

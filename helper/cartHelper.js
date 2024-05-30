@@ -49,7 +49,7 @@ console.log("This is finProduct", findProduct);
 
     const cart = await cartModel.updateOne(
       { user: userId },
-      { $push: { products: { productItemId: productId, quantity: 1 ,size:size,subTotal:findProduct.productPrice} } ,$inc:{totalAmount:findProduct.productPrice}},
+      { $push: { products: { productItemId: productId, quantity: 1 ,size:size, subTotal:findProduct.productPrice} } ,$inc:{totalAmount:findProduct.productPrice}},
       { upsert: true }
     );
       }

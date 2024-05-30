@@ -424,19 +424,29 @@
                                           </a>
                                         </h2>
                                         <div class="rating-result" title="90%">
-                                          <span>
-                                            <span>
-                                              <%= products[i].productDiscount %>% OFF
-                                            </span>
-                                          </span>
-                                        </div>
-                                        <div class="product-price">
-                                          <span class="text-dark"> 
-                                            ₹<%= products[i].productPrice %>
-                                            
-                                          </span>
-                            
-                                        </div>
+                                            <% if (products[i].productDiscount > 0) { %>
+                                              <span>
+                                                <%= products[i].productDiscount %>% OFF
+                                              </span>
+                                            <% } %>
+                                          </div>
+                                          
+                                          <div class="product-price">
+                                            <% if (products[i].productDiscount > 0) { %>
+                                              <span class="text-dark">
+                                                <del>₹ <%= products[i].productPrice.toFixed(2) %></del>
+                                                &nbsp;&nbsp;&nbsp; <!-- Non-breaking spaces for spacing -->
+                                                ₹ <%= (products[i].productPrice - (products[i].productPrice * products[i].productDiscount / 100)).toFixed(2) %>
+                                              </span>
+                                            <% } else { %>
+                                              <span class="text-dark">
+                                                ₹ <%= products[i].productPrice.toFixed(2) %>
+                                              </span>
+                                            <% } %>
+                                          </div>
+                                          
+                                          
+                                          
                                         <div class="product-action-1 show">
                                             <button aria-label="Add To Cart" class="action-btn hover-up addToCartButton" data-product-id="<%= products[i]._id %>" 
                                                 data-product-name="<%= products[i].productName %>" data-product-price="<%= products[i].productPrice %>"

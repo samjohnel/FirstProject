@@ -2,7 +2,8 @@ const user = require("../../models/userModel");
 const cartModel = require('../../models/cartModel');
 const productModel = require('../../models/productModel');
 const cartHelper = require('../../helper/cartHelper');
-const orderHelper = require("../../helper/orderHelper")
+const orderHelper = require("../../helper/orderHelper");
+const couponModel = require("../../models/couponModel");
 const moment = require("moment");
 const Razorpay = require("razorpay");
 require('dotenv').config();
@@ -15,24 +16,45 @@ var razorpay = new Razorpay({
 
 
 const placeOrder = async (req, res) => {
-    const body = req.body;
-    console.log("THis is body", body);
+  try {
+    const { couponCode, ...body } = req.body;
     const userId = req.session.user;
-  
-    const result = await orderHelper.placeOrder(body, userId);
+
+    let coupon = { discount: 0 };
+
+    if (couponCode) {
+      const foundCoupon = await couponModel.findOne({ code: couponCode });
+      if (foundCoupon) {
+        coupon = foundCoupon;
+      }
+    }
+
+
+    const result = await orderHelper.placeOrder(body, userId, coupon.discount);
+
     if (result.status) {
+      if (coupon && coupon.code) { 
+        coupon.usedBy.push(userId);
+        await coupon.save();
+      }
+
       const cart = await cartHelper.clearAllCartItems(userId);
       if (cart) {
         res.json({ url: "/orderSuccessPage", status: true });
       }
     } else {
-      res.json({ message: result.message, status: false })
+      res.json({ message: result.message, status: false });
     }
-  };
-  
-  const orderSuccessPageLoad = (req, res) => {
-    res.render("orderSuccessPage");
-  };
+  } catch (error) {
+    console.error("Error placing order:", error);
+    res.status(500).json({ message: "Internal server error", status: false });
+  }
+};
+
+
+const orderSuccessPageLoad = (req, res) => {
+  res.render("orderSuccessPage");
+};
   
   const orderDetails = async (req, res) => {
     try {

@@ -6,6 +6,7 @@ const adminAuth = require("../middleware/adminAuth");
 const categoryController = require("../controllers/adminControllers/categoryController")
 const productController = require("../controllers/adminControllers/productController")
 const orderController = require("../controllers/adminControllers/orderController")
+const couponController = require("../controllers/adminControllers/couponController");
 const productHelper = require("../helper/productHelper");
 const multer = require("../middleware/multer");
 const sharp = require("../middleware/sharp");
@@ -28,7 +29,7 @@ router.get("/orders", adminAuth.isLogout, orderController.adminOrderPageLoad);
 router.get("/orderDetails/:id", adminAuth.isLogout, orderController.adminOrderDetails);
 
 router.patch("/orderStatusChangeForEachProduct/:orderId/:productId", adminAuth.isLogout,
-orderController.changeOrderStatusOfEachProduct
+    orderController.changeOrderStatusOfEachProduct
 );
 
 router.post('/addproduct', multer.productUpload.array("images"), adminAuth.isLogout, productController.addProductPost);
@@ -39,8 +40,22 @@ router.put("/editProduct/:id", adminAuth.isLogout, multer.productUpload.array("i
 
 router.patch("/deleteproduct/:id", adminAuth.isLogout, productController.deleteProduct);
 
+router.get("/coupons", adminAuth.isLogout, couponController.couponListLoad);
 
-  
-  
+router.post("/addCoupon", couponController.addCoupon);
+
+router.get(
+    "/editCoupon/:id",
+    adminAuth.isLogout,
+    couponController.getEditCoupon
+);
+
+router.post("/editCoupon", couponController.editCoupon);
+
+router.delete("/deleteCoupon/:id", couponController.deleteCoupon);
+
+router.get("/salesReport", orderController.loadSalesReport);
+
+
 
 module.exports = router;    

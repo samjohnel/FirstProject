@@ -28,10 +28,10 @@ const cartSchema= new mongoose.Schema({
               }
         }
     ],
-    // coupon:{
-    //     type:String,
-    //     default:null  
-    // },
+    coupon:{
+        type:String,
+        default:null  
+    },
     totalAmount:{
         type:Number,
         required:true

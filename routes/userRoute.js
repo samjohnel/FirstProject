@@ -4,6 +4,7 @@ const userController = require("../controllers/userControllers/userController");
 const productController = require("../controllers/userControllers/productControllers");
 const orderController = require("../controllers/userControllers/orderController");
 const wishlistController = require("../controllers/userControllers/wishlistController");
+const couponController = require("../controllers/adminControllers/couponController");
 const userMiddleware = require("../middleware/userMiddleware");
 const userAuth= require("../middleware/userAuth");
 
@@ -53,6 +54,9 @@ router.put("/removeFromWishlist", wishlistController.removeFromWishlist);
 router.post("/createOrder", userMiddleware.isLogout, orderController.createOrder);
 router.post('/paymentSuccess', userMiddleware.isLogout, orderController.paymentSuccess);
 router.get("/orderFailure", userMiddleware.isLogout, orderController.orderFailedPageLoad);
+router.post("/applyCoupon", userMiddleware.isLogout, couponController.applyCoupon);
+router.post('/removeCoupon', userMiddleware.isLogout, couponController.removeCoupon);
+
 
 
 module.exports = router;

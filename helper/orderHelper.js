@@ -8,80 +8,75 @@ const ObjectId = require("mongoose").Types.ObjectId;
 const mongoose = require("mongoose");
 
 
-const placeOrder = (body, userId) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const cart = await cartModel.findOne({ user: userId });
-        console.log("cart is ",cart);
-        const address = await userModel.findOne(
-          { _id: userId, "address._id": body.addressId },
+const placeOrder = (body, userId, discount) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const cart = await cartModel.findOne({ user: userId });
+      const address = await userModel.findOne(
+        { _id: userId, "address._id": body.addressId },
+        {
+          "address.$": 1,
+          _id: 0,
+        }
+      );
+
+      const user = await userModel.findOne({ _id: userId });
+      let products = [];
+      let status = "pending";
+      if (body.status) {
+        status = "payment pending";
+      }
+      for (const product of cart.products) {
+        products.push({
+          product: product.productItemId,
+          quantity: product.quantity,
+          size: product.size,
+          productPrice: product.subTotal,
+          status: status,
+        });
+
+        let changeStock = await productModel.updateOne(
+          { 
+            "_id": product.productItemId, 
+            "productQuantity.size": product.size 
+          },
           {
-            "address.$": 1,
-            _id: 0,
+            $inc: {
+              "productQuantity.$.quantity": -product.quantity,
+              "totalQuantity": -product.quantity,
+            },
           }
         );
-    
-        const user = await userModel.findOne({ _id: userId });
-        let products = [];
-        let status = "pending";
-        //console.log("product.productId is", cart.products.productId);
-        if (body.status) {
-          status = "payment pending";
-        }
-        for (const product of cart.products) {
-          products.push({
-            product: product.productItemId,
-            quantity: product.quantity,
-            size: product.size,
-            productPrice: product.subTotal,
-            status: status,
-          });
-
-          
-          let changeStock = await productModel.updateOne(
-            { 
-              "_id": product.productItemId, 
-              "productQuantity.size": product.size 
-            },
-            {
-              $inc: {
-                "productQuantity.$.quantity": -product.quantity,
-                "totalQuantity": -product.quantity,
-              },
-            }
-          );
-          console.log("This is the chageStock", changeStock)
-          
-        }
-
-        console.log("This is the products array", products);
-
-        if (cart && address) {
-          const result = orderModel.create({
-            user: userId,
-            products: products,
-            address: {
-              name: user.name,
-              house: address.address[0].housename,
-              street: address.address[0].streetname,
-              area: address.address[0].areaname,
-              district: address.address[0].districtname,
-              state: address.address[0].statename,
-              country: address.address[0].countryname,
-              pin: address.address[0].pin,
-              phone: user.phone,
-            },
-            paymentMethod: body.paymentOption,
-            totalAmount: cart.totalAmount,
-          });
-  
-          resolve({ result: result, status: true });
-        }
-      } catch (error) {
-        console.log(error);
       }
-    });
-  };
+
+      if (cart && address) {
+        const result = orderModel.create({
+          user: userId,
+          products: products,
+          address: {
+            name: user.name,
+            house: address.address[0].housename,
+            street: address.address[0].streetname,
+            area: address.address[0].areaname,
+            district: address.address[0].districtname,
+            state: address.address[0].statename,
+            country: address.address[0].countryname,
+            pin: address.address[0].pin,
+            phone: user.phone,
+          },
+          paymentMethod: body.paymentOption,
+          totalAmount: cart.totalAmount,
+          couponAmount: discount
+        });
+
+        resolve({ result: result, status: true });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  });
+};
+
 
   const getSingleOrderDetails = (orderId) => {
     return new Promise(async (resolve, reject) => {
@@ -295,6 +290,28 @@ const placeOrder = (body, userId) => {
     });
   };
 
+  const salesReport = async () => {
+    try {
+      const result = await orderModel.aggregate([
+        { $unwind: "$products" },
+        { $match: { "products.status": "delivered" } },
+        {
+          $lookup: {
+            from: "products",
+            localField: "products.product",
+            foreignField: "_id",
+            as: "productDetails",
+          },
+        },
+      ]);
+  
+      return result;
+    } catch (error) {
+      console.log("Error:", error);
+      throw error; // Re-throwing the error to be caught elsewhere if needed.
+    }
+  };
+
 
 module.exports = {
       placeOrder,
@@ -304,4 +321,5 @@ module.exports = {
       getAllOrders,
       changeOrderStatusOfEachProduct,
       cancelSingleOrder,
+      salesReport,
 }

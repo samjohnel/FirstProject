@@ -11,6 +11,8 @@ const cartHelper = require('../../helper/cartHelper');
 const cartModel = require('../../models/cartModel');
 const orderHelper = require('../../helper/orderHelper');
 const wishlistHelper = require('../../helper/wishlistHelper');
+const couponHelper = require('../../helper/couponHelper');
+const couponModel = require('../../models/couponModel');
 const ObjectId = require("mongoose").Types.ObjectId;
 const bcrypt = require('bcrypt');
 const moment = require("moment");
@@ -803,7 +805,15 @@ const userCartLoad = async (req, res) => {
       const userId = req.session.user;
       const userData = await user.findById({ _id: userId });
       let cartItems = await cartHelper.getAllCartItems(userId);
+      let totalandSubTotal = await cartHelper.totalSubtotal(userId, cartItems);
+      const coupons = await couponHelper.findAllCoupons();
+      let cart = await cartModel.findOne({ user: userId });
   
+      if (cart.coupon != null) {
+        const appliedCoupon = await couponModel.findOne({ code: cart.coupon });
+        cartItems.couponAmount = appliedCoupon.discount;
+        cartItems.coupon = cart.coupon;
+      
       // Calculate total amount for each product
       let totalAmountOfEachProduct = [];
       for (let i = 0; i < cartItems.length; i++) {
@@ -812,16 +822,37 @@ const userCartLoad = async (req, res) => {
         const total = product.productPrice * quantity;
         totalAmountOfEachProduct.push(total);
       }
-  
-      // Calculate total and subtotal
-      let totalandSubTotal = await cartHelper.totalSubtotal(userId, cartItems);
-  
+      
+      console.log("This is cartItems.coupon when there is coupon", cart);
+
       res.render("checkout", {
         userData,
         cartItems,
         totalandSubTotal,
-        totalAmountOfEachProduct
+        totalAmountOfEachProduct,
+        coupons,
       });
+    } else {
+      let totalAmountOfEachProduct = []; 
+       // Calculate total amount for each product
+       for (let i = 0; i < cartItems.length; i++) {
+         const product = cartItems[i].product;
+         const quantity = cartItems[i].quantity;
+         const total = product.productPrice * quantity;
+         totalAmountOfEachProduct.push(total);
+       }
+
+       console.log("This is cartItems.coupon when there is no coupon", cartItems);
+
+       res.render("checkout", {
+        userData,
+        cartItems,
+        totalandSubTotal,
+        totalAmountOfEachProduct,
+        coupons,
+      });
+
+    }
     } catch (error) {
       console.log(error);
     }
