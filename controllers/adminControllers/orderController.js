@@ -26,7 +26,6 @@ const adminOrderPageLoad = async (req, res) => {
       //     return new Date(b.orderedOn) - new Date(a.orderedOn);
       // });
 
-    console.log("before",allOrders);
       // Format dates and render the template
       for (const order of allOrders) {
           const dateString = order.orderedOn;
@@ -47,7 +46,6 @@ const adminOrderPageLoad = async (req, res) => {
         const orderId = req.params.id;
 
         const productDetails = await orderHelper.getOrderDetailsOfEachProduct(orderId);
-        console.log("This is productDetail", productDetails)
         const userData = await user.findOne({ _id: productDetails[0].user });
 
         productDetails.forEach(product => {
@@ -60,8 +58,6 @@ const adminOrderPageLoad = async (req, res) => {
             // Format product price
             product.products.formattedProductPrice = product.product.productPrice;
         });
-
-        console.log("productDetails is ", productDetails);
 
         res.render("orderDetail", { productDetails, userData });
     } catch (error) {
@@ -104,7 +100,7 @@ const loadSalesReport = async (req, res) => {
           order.orderedOn = formattedDate;
         });
 
-        res.render("admin/salesReport", { sales: response });
+        res.render("salesReport", { sales: response });
       })
       .catch((error) => {
         console.log(error);
@@ -114,10 +110,34 @@ const loadSalesReport = async (req, res) => {
   }
 };
 
+const loadSalesReportDateSort = async (req, res) => {
+  const startDate = req.body.startDate;
+  const endDate = req.body.endDate;
+  orderHelper
+    .salesReportDateSort(startDate, endDate)
+    .then((response) => {
+      response.forEach((order) => {
+        const orderDate = new Date(order.orderedOn);
+        const formattedDate = orderDate.toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        });
+        order.orderedOn = formattedDate;
+      });
+
+      res.json({ sales: response });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
 
 module.exports = {
     adminOrderPageLoad, 
     adminOrderDetails,
     changeOrderStatusOfEachProduct,
     loadSalesReport,
+    loadSalesReportDateSort,
 }

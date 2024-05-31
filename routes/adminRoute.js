@@ -56,6 +56,8 @@ router.delete("/deleteCoupon/:id", couponController.deleteCoupon);
 
 router.get("/salesReport", orderController.loadSalesReport);
 
+router.post("/salesReport", orderController.loadSalesReportDateSort);
+
 
 
 module.exports = router;    

@@ -308,7 +308,37 @@ const placeOrder = (body, userId, discount) => {
       return result;
     } catch (error) {
       console.log("Error:", error);
-      throw error; // Re-throwing the error to be caught elsewhere if needed.
+      throw error; 
+    }
+  };
+
+  const salesReportDateSort = async (startDate, endDate) => {
+    try {
+      const startDateSort = new Date(startDate);
+      const endDateSort = new Date(endDate);
+  
+      const result = await orderModel.aggregate([
+        {
+          $match: {
+            orderedOn: { $gte: startDateSort, $lte: endDateSort },
+          },
+        },
+        { $unwind: "$products" },
+        { $match: { "products.status": "delivered" } },
+        {
+          $lookup: {
+            from: "products",
+            localField: "products.product",
+            foreignField: "_id",
+            as: "productDetails",
+          },
+        },
+        { $sort: { orderedOn: 1 } }, 
+      ]);
+      return result;
+    } catch (error) {
+      console.log("Error:", error);
+      throw error;
     }
   };
 
@@ -322,4 +352,5 @@ module.exports = {
       changeOrderStatusOfEachProduct,
       cancelSingleOrder,
       salesReport,
+      salesReportDateSort,
 }
