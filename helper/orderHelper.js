@@ -342,6 +342,70 @@ const placeOrder = (body, userId, discount) => {
     }
   };
 
+  const returnSingleOrder = (orderId, singleOrderId,price) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const cancelled = await orderModel.findOneAndUpdate(
+          {
+            _id: new ObjectId(orderId),
+            "products._id": new ObjectId(singleOrderId),
+          },
+          {
+            $set: { "products.$.status": "return pending" },
+          },
+          {
+            new: true,
+          }
+        );
+        const result = await orderModel.aggregate([
+          {
+            $unwind: "$products",
+          },
+          {
+            $match: {
+              _id: new ObjectId(orderId),
+              "products._id": new ObjectId(singleOrderId),
+            },
+          },
+        ]);
+        const singleProductId = result[0].products.product;
+        const singleProductSize = result[0].products.size;
+        const singleProductQuantity = result[0].products.quantity;
+  
+        const stockIncrease = await productModel.updateOne(
+          { _id: singleProductId, "productQuantity.size": singleProductSize },
+          {
+            $inc: {
+              "productQuantity.$.quantity": singleProductQuantity,
+              totalQuantity: singleProductQuantity,
+            },
+          }
+        );
+        const response = await orderModel.findOne({ _id: orderId });
+        let amountToReturn;
+        response.products.forEach(product=>{
+          if(product._id==singleOrderId){
+            amountToReturn = product.productPrice
+          }
+        })
+        console.log("order id is",orderId)
+        console.log("response issssssssssss",response.paymentMethod)
+        if (response.paymentMethod == 'RazorPay') {
+          console.log("razorpay");
+          console.log("price issssssssssssssss",price)
+          const walletUpdation = await walletHelper.walletAmountAdding(
+            response.user,
+            amountToReturn
+          );
+        }
+  
+        resolve(cancelled);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  };
+
 
 module.exports = {
       placeOrder,
@@ -353,4 +417,5 @@ module.exports = {
       cancelSingleOrder,
       salesReport,
       salesReportDateSort,
+      returnSingleOrder,
 }

@@ -59,7 +59,26 @@ const addCategory = (body) => {
     }
   };
 
+  const getAllActiveCategory = () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const categories = await categoryModel.find({ status: true });
+        if (categories) {
+          resolve(categories);
+        } else {
+          resolve({ message: "No Active Categories" });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  };
+
   
   
 
-  module.exports = { addCategory, getAllCategory, softDeleteCategory };
+  module.exports = { addCategory, 
+                     getAllCategory, 
+                     softDeleteCategory,
+                     getAllActiveCategory,
+                    };

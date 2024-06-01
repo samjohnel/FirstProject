@@ -8,6 +8,7 @@ const productController = require("../controllers/adminControllers/productContro
 const orderController = require("../controllers/adminControllers/orderController")
 const couponController = require("../controllers/adminControllers/couponController");
 const productHelper = require("../helper/productHelper");
+const offerController = require("../controllers/adminControllers/offerController");
 const multer = require("../middleware/multer");
 const sharp = require("../middleware/sharp");
 
@@ -42,7 +43,7 @@ router.patch("/deleteproduct/:id", adminAuth.isLogout, productController.deleteP
 
 router.get("/coupons", adminAuth.isLogout, couponController.couponListLoad);
 
-router.post("/addCoupon", couponController.addCoupon);
+router.post("/addCoupon",  adminAuth.isLogout,couponController.addCoupon);
 
 router.get(
     "/editCoupon/:id",
@@ -54,9 +55,43 @@ router.post("/editCoupon", couponController.editCoupon);
 
 router.delete("/deleteCoupon/:id", couponController.deleteCoupon);
 
-router.get("/salesReport", orderController.loadSalesReport);
+router.get("/salesReport",  adminAuth.isLogout, orderController.loadSalesReport);
 
 router.post("/salesReport", orderController.loadSalesReportDateSort);
+
+router.get(
+    "/productOffers",
+    adminAuth.isLogout,
+    offerController.productOfferLoad
+);
+
+router.post("/productAddOffer", offerController.productAddOffer);
+
+router.get(
+    "/productEditOffer/:id",
+    adminAuth.isLogout,
+    offerController.productEditLoad
+  );
+
+router.post("/productEditOffer", offerController.productEditOffer);
+
+router.patch('/deleteProductOffer/:id', adminAuth.isLogout, offerController.deleteProductOffer);
+
+router.get(
+    "/categoryOffers",
+    adminAuth.isLogout,
+    offerController.categoryOfferLoad
+  );
+
+router.post("/categoryAddOffer", offerController.addCategoryOffer);
+
+router.get("/categoryEditOffer/:id", adminAuth.isLogout, offerController.categoryEditLoad);
+
+router.post("/categoryEditOffer", offerController.categoryEditOffer);
+
+router.patch('/deleteCategoryOffer/:id', adminAuth.isLogout, offerController.deleteCategoryOffer);
+
+
 
 
 

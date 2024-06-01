@@ -56,6 +56,7 @@ router.post('/paymentSuccess', userMiddleware.isLogout, orderController.paymentS
 router.get("/orderFailure", userMiddleware.isLogout, orderController.orderFailedPageLoad);
 router.post("/applyCoupon", userMiddleware.isLogout, couponController.applyCoupon);
 router.post('/removeCoupon', userMiddleware.isLogout, couponController.removeCoupon);
+router.patch("/returnSingleOrder", userMiddleware.isLogout, orderController.returnSingleOrder);
 
 
 

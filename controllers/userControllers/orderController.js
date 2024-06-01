@@ -160,6 +160,24 @@ const orderFailedPageLoad = (req, res) => {
   res.render("orderFailure");
 };
 
+const returnSingleOrder = async (req, res) => {
+  try {
+    const orderId = req.query.orderId;
+    const singleOrderId = req.query.singleOrderId;
+    const price = req.query.price;
+    const result = await orderHelper.returnSingleOrder(orderId, singleOrderId,price);
+    if (result) {
+      res.json({ status: true });
+    } else {
+      res.json({ status: false });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+
 
   module.exports = {
     placeOrder,
@@ -169,4 +187,5 @@ const orderFailedPageLoad = (req, res) => {
     createOrder,
     paymentSuccess,
     orderFailedPageLoad,
+    returnSingleOrder,
   }
