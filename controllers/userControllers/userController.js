@@ -13,6 +13,7 @@ const orderHelper = require('../../helper/orderHelper');
 const wishlistHelper = require('../../helper/wishlistHelper');
 const couponHelper = require('../../helper/couponHelper');
 const couponModel = require('../../models/couponModel');
+const orderModel = require('../../models/orderModel');
 const ObjectId = require("mongoose").Types.ObjectId;
 const bcrypt = require('bcrypt');
 const moment = require("moment");
@@ -342,7 +343,23 @@ const accountView = async(req,res)=>{
       quantity = 0;
     }
 
-    let sum = walletData.wallet.details.reduce((acc, detail) => acc + detail.amount, 0);
+    // const pages = req.query.page || 1;
+    // const size = 5;
+    // const pageSkip = (pages - 1) * size;
+    // const orderCount = await orderModel.find().populate('userId').count();
+    // const numOfPages = Math.ceil(orderCount / size);
+    // const orderDetails= await orderModel.find().populate('userId').skip(pageSkip).limit(size).sort({orderedOn: -1});
+    // const currtent 
+
+    let sum = walletData.wallet.details.reduce((acc, detail) => {
+      if (detail.type === "refund") {
+        return acc + detail.amount;
+      } else if (detail.type === "debit") {
+        return acc - detail.amount;
+      }
+      return acc;
+    }, 0);
+    
 
     res.render("userAccount",{
       userData,

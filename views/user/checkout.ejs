@@ -762,7 +762,32 @@
                   }
                 }
               })
-            } else if (payment === "RazorPay") {
+              
+            } else if (payment === "Wallet") {
+                $.ajax({
+                url: "/placeOrder",
+                method: "POST",
+                data: data,
+                success: (response) => {
+                  if (response.status) {
+                    window.location.href = response.url
+                  } else {
+                    Toastify({
+                      text: `${response.message}`,
+                      duration: 3000,
+                      gravity: "top",
+                      position: "center",
+                      stopOnFocus: true,
+                      style: {
+                        background: "linear-gradient(to right, aqua, blue)",
+                      },
+                    }).showToast();
+                  }
+                }
+              })
+            }
+
+            else if (payment === "RazorPay") {
                     console.log("razorpay selected");
 
                     $.ajax({

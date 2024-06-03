@@ -35,6 +35,34 @@ const placeOrder = (body, userId, discount) => {
           status: status,
         });
 
+        if (body.paymentOption == "Wallet") {
+          if (cart.totalAmount > user.wallet.balance) {
+            console.log("This is cart.totalAmount", cart.totalAmount);
+            console.log("This is user.wallet.balance", user.wallet.balance);
+            resolve({ status: false, message: "Insufficient Balance" });
+            return;
+          } else {
+            const newDetail = {
+              type: "debit",
+              amount: cart.totalAmount,
+              date: new Date(),
+              transactionId: Math.floor(100000 + Math.random() * 900000),
+            };
+
+            // Updating user with new balance and new detail
+            const response = await userModel.findOneAndUpdate(
+              { _id: userId },
+              {
+                $set: {
+                  "wallet.balance": user.wallet.balance - cart.totalAmount,
+                },
+                $push: { "wallet.details": newDetail },
+              },
+              { new: true } // to return the updated document
+            );
+          }
+        }
+
         let changeStock = await productModel.updateOne(
           { 
             "_id": product.productItemId, 
