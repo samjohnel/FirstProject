@@ -319,18 +319,42 @@ const logout = (req, res) => {
 }
 
 
-const accountView = async(req,res)=>{
+const accountView = async (req, res) => {
   try {
     const userId = req.session.user;
 
-    const userData = await user.findOne({_id:userId})
-    const walletData = await userHelper.getWalletDetails(userId);
-    console.log("HHH", walletData);
+    const walletResult = await userHelper.getWalletDetails(userId);
+    
+    const walletData = walletResult.toObject(); 
+
     for (const amount of walletData.wallet.details) {
       amount.formattedDate = moment(amount.date).format("MMM Do, YYYY");
     }
 
-    const orderDetails = await orderHelper.getOrderDetails(userId);
+    const walletPage = parseInt(req.query.walletPage) || 1;
+    const walletLimit = 7; // Number of wallet transactions per page
+    const walletSkip = (walletPage - 1) * walletLimit;
+
+    const totalWalletTransactions = walletData.wallet.details.length;
+    const totalWalletPages = Math.ceil(totalWalletTransactions / walletLimit);
+
+    const paginatedWalletDetails = walletData.wallet.details.slice(walletSkip, walletSkip + walletLimit);
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = 7; // Number of orders per page
+    const skip = (page - 1) * limit;
+
+    const totalOrders = await orderModel.countDocuments({ user: userId });
+    const totalPages = Math.ceil(totalOrders / limit);
+
+    const orderDetails = await orderModel.find({ user: userId })
+      .sort({ orderedOn: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate("products.product")
+      .lean();
+
+
     for (const order of orderDetails) {
       const dateString = order.orderedOn;
       order.formattedDate = moment(dateString).format("MMMM Do, YYYY");
@@ -343,14 +367,6 @@ const accountView = async(req,res)=>{
       quantity = 0;
     }
 
-    // const pages = req.query.page || 1;
-    // const size = 5;
-    // const pageSkip = (pages - 1) * size;
-    // const orderCount = await orderModel.find().populate('userId').count();
-    // const numOfPages = Math.ceil(orderCount / size);
-    // const orderDetails= await orderModel.find().populate('userId').skip(pageSkip).limit(size).sort({orderedOn: -1});
-    // const currtent 
-
     let sum = walletData.wallet.details.reduce((acc, detail) => {
       if (detail.type === "refund") {
         return acc + detail.amount;
@@ -359,18 +375,77 @@ const accountView = async(req,res)=>{
       }
       return acc;
     }, 0);
-    
 
-    res.render("userAccount",{
-      userData,
-      orderDetails,
-      walletData,
-      sum,
-    })
+
+    if (req.xhr) {
+      // If the request is AJAX, return JSON data
+      res.json({
+        walletData: { wallet: { details: paginatedWalletDetails } },
+        walletCurrentPage: walletPage,
+        totalWalletPages: totalWalletPages
+      });
+    } else {
+      // Otherwise, render the full page
+      res.render("userAccount", {
+        userData: walletData,
+        orderDetails,
+        walletData: { wallet: { details: paginatedWalletDetails } },
+        sum,
+        currentPage: page,
+        totalPages: totalPages,
+        walletCurrentPage: walletPage,
+        totalWalletPages: totalWalletPages
+      });
+    }
   } catch (error) {
     console.log(error);
   }
 }
+
+
+
+const getOrderData = async (req, res) => {
+  try {
+    const userId = req.session.user;
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = 7; // Number of orders per page
+    const skip = (page - 1) * limit;
+
+    const totalOrders = await orderModel.countDocuments({ user: userId });
+    const totalPages = Math.ceil(totalOrders / limit);
+
+    const orderDetails = await orderModel.find({ user: userId })
+    .sort({ orderedOn: -1 })
+    .skip(skip)
+    .limit(limit)
+    .populate("products.product")
+    .lean();
+
+
+    for (const order of orderDetails) {
+      const dateString = order.orderedOn;
+      order.formattedDate = moment(dateString).format("MMMM Do, YYYY");
+      order.formattedTotal = order.totalAmount;
+      let quantity = 0;
+      for (const product of order.products) {
+        quantity += Number(product.quantity);
+      }
+      order.quantity = quantity;
+    }
+
+
+    res.json({
+      orderDetails,
+      currentPage: page,
+      totalPages: totalPages
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
 
 const addAddress = async (req, res) => {
   console.log("Code reached addAddress")
@@ -903,5 +978,6 @@ module.exports = {
     addressEditModal,
     updatePassword,
     shopFilterLoad,
-    resendOtpRedirect
+    resendOtpRedirect,
+    getOrderData,
 }

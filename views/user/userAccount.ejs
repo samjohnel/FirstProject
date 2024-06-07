@@ -215,16 +215,23 @@
                                                             <tr>
                                                                 <th>Order</th>
                                                                 <th>Date</th>
+                                                                <th>Products</th> <!-- New column for product names -->
                                                                 <th>Status</th>
                                                                 <th>Total</th>
                                                             </tr>
                                                         </thead>
-                                                        <tbody>
+                                                        <tbody id="ordersTableBody">
                                                             <% orderDetails.forEach(element => { %>
                                                                 <tr>
                                                                     <td>#<%= element.orderId %></td>
                                                                     <td><%= element.formattedDate %></td>
-                                                                    <td><%= element.formattedTotal %> for <%= element.quantity %> item</td>
+                                                                    <td>
+                                                                        <% element.products.forEach(product => { %>
+                                                                            <%= product.product.productName %><br> <!-- Display product names -->
+                                                                        <% }) %>
+                                                                    </td>
+                                                                    <td><%= element.status %></td> <!-- Assuming you have a status field in element -->
+                                                                    <td><%= element.formattedTotal %></td>
                                                                     <td>
                                                                         <a href="/orderDetails/<%= element._id %>" class="btn-small d-block text-primary">View</a>
                                                                     </td>
@@ -234,10 +241,30 @@
                                                         
                                                     </table>
                                                 </div>
+                                                <nav aria-label="Page navigation">
+                                                    <ul class="pagination justify-content-center" id="pagination">
+                                                        <% if (currentPage > 1) { %>
+                                                            <li class="page-item">
+                                                                <a class="page-link" href="#" data-page="<%= currentPage - 1 %>">&laquo;</a>
+                                                            </li>
+                                                        <% } %>
+                                                        <% for (let i = 1; i <= totalPages; i++) { %>
+                                                            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                                                <a class="page-link" href="#" data-page="<%= i %>"><%= i %></a>
+                                                            </li>
+                                                        <% } %>
+                                                        <% if (currentPage < totalPages) { %>
+                                                            <li class="page-item">
+                                                                <a class="page-link" href="#" data-page="<%= currentPage + 1 %>">&raquo;</a>
+                                                            </li>
+                                                        <% } %>
+                                                    </ul>
+                                                </nav>
                                             </div>
                                         </div>
                                     </div>
-
+                                    
+                                      
                                     <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
                                         <div class="row">
                                                 <% userData.address.forEach(function(address, index) { %>
@@ -406,58 +433,53 @@
                            
                             </div>
 
-                            <div class="tab-pane fade  show " id="wallet" role="tabpanel"
-                                    aria-labelledby="wallet-detail-tab">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h4 class="mb-0">Your Wallet <br> (Avialable Balance: <%= sum %><span
-                                                    class="text-primary"></span> )
-                                            </h4>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="table-responsive container">
-                                                <table class="table" id="walletTable">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Transaction Id</th>
-                                                            <th>Date</th>
-        
-                                                            <th>Amount</th>
-        
-                                                            <th>Transaction Type</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <% for( let i=0; i <walletData.wallet.details.length; i++ ) { %>
-                                                            <tr>
-                                                                <td>
-                                                                    <%= walletData.wallet.details[i].transactionId %>
-                                                                </td>
-                                                                <td>
-                                                                    <%= walletData.wallet.details[i].formattedDate %>
-                                                                </td>
-        
-                                                                <td>₹ <%= walletData.wallet.details[i].amount %>
-                                                                </td>
-        
-                                                                <td width="10%">
-                                                                    <%= walletData.wallet.details[i].type %>
-        
-        
-                                                                </td>
-        
-                                                            </tr>
-                                                            <% } %>
-        
-        
-        
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
+                            <div class="tab-pane fade show" id="wallet" role="tabpanel" aria-labelledby="wallet-detail-tab">
+                                <div class="card">
+                                  <div class="card-header">
+                                    <h4 class="mb-0">Your Wallet <br> (Available Balance: <%= sum %><span class="text-primary"></span> )</h4>
+                                  </div>
+                                  <div class="card-body">
+                                    <div class="table-responsive container">
+                                      <table class="table" id="walletTable">
+                                        <thead>
+                                          <tr>
+                                            <th>Transaction Id</th>
+                                            <th>Date</th>
+                                            <th>Amount</th>
+                                            <th>Transaction Type</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody id="walletTableBody">
+                                          <% for (let i = 0; i < walletData.wallet.details.length; i++) { %>
+                                            <tr>
+                                              <td><%= walletData.wallet.details[i].transactionId %></td>
+                                              <td><%= walletData.wallet.details[i].formattedDate %></td>
+                                              <td>₹ <%= walletData.wallet.details[i].amount %></td>
+                                              <td width="10%"><%= walletData.wallet.details[i].type %></td>
+                                            </tr>
+                                          <% } %>
+                                        </tbody>
+                                      </table>
                                     </div>
-        
-                            </div>
+                                    <nav aria-label="Wallet Transaction Pagination">
+                                      <ul class="pagination" id="walletPagination">
+                                        <% if (walletCurrentPage > 1) { %>
+                                          <li class="page-item"><a class="page-link" href="#" data-page="<%= walletCurrentPage - 1 %>">Previous</a></li>
+                                        <% } %>
+                                        <% for (let i = 1; i <= totalWalletPages; i++) { %>
+                                          <li class="page-item <%= i === walletCurrentPage ? 'active' : '' %>">
+                                            <a class="page-link" href="#" data-page="<%= i %>"><%= i %></a>
+                                          </li>
+                                        <% } %>
+                                        <% if (walletCurrentPage < totalWalletPages) { %>
+                                          <li class="page-item"><a class="page-link" href="#" data-page="<%= walletCurrentPage + 1 %>">Next</a></li>
+                                        <% } %>
+                                      </ul>
+                                    </nav>
+                                  </div>
+                                </div>
+                              </div>
+                              
 
                         
                     </div>
@@ -1156,6 +1178,109 @@
     })
 
 </script>
+
+<script>
+    $(document).ready(function() {
+        $('#pagination').on('click', 'a', function(e) {
+            e.preventDefault();
+            const page = $(this).data('page');
+            $.ajax({
+                url: '/getOrderData',
+                data: { page: page },
+                success: function(response) {
+                    const ordersTableBody = $('#ordersTableBody');
+                    ordersTableBody.empty();
+                    response.orderDetails.forEach(element => {
+                        let productNames = '';
+                        element.products.forEach(product => {
+                            productNames += product.product.productName + '<br>'; // Append each product name
+                        });
+                        ordersTableBody.append(`
+                            <tr>
+                                <td>#${element.orderId}</td>
+                                <td>${element.formattedDate}</td>
+                                <td>${productNames}</td> <!-- Display product names -->
+                                <td>${element.status}</td>
+                                <td>${element.formattedTotal}</td>
+                                <td>
+                                    <a href="/orderDetails/${element._id}" class="btn-small d-block text-primary">View</a>
+                                </td>
+                            </tr>
+                        `);
+                    });
+                    updatePagination(response.currentPage, response.totalPages);
+                }
+            });
+        });
+
+        function updatePagination(currentPage, totalPages) {
+            const pagination = $('#pagination');
+            pagination.empty();
+            if (currentPage > 1) {
+                pagination.append(`
+                    <li class="page-item">
+                        <a class="page-link" href="#" data-page="${currentPage - 1}">&laquo;</a>
+                    </li>
+                `);
+            }
+            for (let i = 1; i <= totalPages; i++) {
+                pagination.append(`
+                    <li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <a class="page-link" href="#" data-page="${i}">${i}</a>
+                    </li>
+                `);
+            }
+            if (currentPage < totalPages) {
+                pagination.append(`
+                    <li class="page-item">
+                        <a class="page-link" href="#" data-page="${currentPage + 1}">&raquo;</a>
+                    </li>
+                `);
+            }
+        }
+    });
+</script>
+
+
+
+<script>
+    $(document).ready(function() {
+      $('#walletPagination').on('click', 'a', function(e) {
+        e.preventDefault();
+        var page = $(this).data('page');
+        $.ajax({
+          url: '/accountView', // Replace with your actual URL
+          method: 'GET',
+          data: { walletPage: page },
+          success: function(response) {
+            var walletTableBody = $('#walletTableBody');
+            walletTableBody.empty();
+            response.walletData.wallet.details.forEach(function(detail) {
+              var row = '<tr>' +
+                '<td>' + detail.transactionId + '</td>' +
+                '<td>' + detail.formattedDate + '</td>' +
+                '<td>₹ ' + detail.amount + '</td>' +
+                '<td width="10%">' + detail.type + '</td>' +
+                '</tr>';
+              walletTableBody.append(row);
+            });
+
+            var pagination = $('#walletPagination');
+            pagination.empty();
+            if (response.walletCurrentPage > 1) {
+              pagination.append('<li class="page-item"><a class="page-link" href="#" data-page="' + (response.walletCurrentPage - 1) + '">Previous</a></li>');
+            }
+            for (var i = 1; i <= response.totalWalletPages; i++) {
+              pagination.append('<li class="page-item ' + (i === response.walletCurrentPage ? 'active' : '') + '"><a class="page-link" href="#" data-page="' + i + '">' + i + '</a></li>');
+            }
+            if (response.walletCurrentPage < response.totalWalletPages) {
+              pagination.append('<li class="page-item"><a class="page-link" href="#" data-page="' + (response.walletCurrentPage + 1) + '">Next</a></li>');
+            }
+          }
+        });
+      });
+    });
+  </script>
 
 
 

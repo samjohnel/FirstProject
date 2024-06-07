@@ -134,15 +134,23 @@ const deleteAddressHelper= async(userId,addressId)=>{
 
   const getWalletDetails = async (userId) => {
     return new Promise(async (resolve, reject) => {
-      const result = await userModel.findOne({ _id: userId });
+      try {
+        const result = await userModel.findOne({ _id: userId });
   
-      if (result) {
-        resolve(result);
-      } else {
-        console.log("not found");
+        if (result) {
+          // Sort the wallet details by date in descending order
+          result.wallet.details.sort((a, b) => new Date(b.date) - new Date(a.date));
+          resolve(result);
+        } else {
+          console.log("not found");
+          reject("User not found");
+        }
+      } catch (error) {
+        reject(error);
       }
     });
   };
+  
   
 
 module.exports = {

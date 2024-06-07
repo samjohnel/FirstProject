@@ -28,6 +28,8 @@ router.get("/logout", userController.logout);
 
 router.get("/userHome",userAuth.isAuthenticated ,userController.userHome);
 router.get("/accountView", userMiddleware.isLogout, userController.accountView);
+router.get("/getOrderData", userMiddleware.isLogout, userController.getOrderData);
+router.get("/getOrderData", userMiddleware.isLogout, userController.accountView);
 router.post("/addAddress", userMiddleware.isLogout, userController.addAddress);
 router.get("/addressEditor/:userId/:addressId", userMiddleware.isLogout, userController.addressEditModal);
 router.put("/editAddress/:id", userMiddleware.isLogout, userController.editAddress);
