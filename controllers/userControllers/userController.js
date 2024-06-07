@@ -9,6 +9,7 @@ const categoryHelper = require('../../helper/categoryHelper');
 const productHelper = require('../../helper/productHelper');
 const cartHelper = require('../../helper/cartHelper');
 const cartModel = require('../../models/cartModel');
+const wishlistModel = require('../../models/wishlistModel');
 const orderHelper = require('../../helper/orderHelper');
 const wishlistHelper = require('../../helper/wishlistHelper');
 const couponHelper = require('../../helper/couponHelper');
@@ -18,6 +19,7 @@ const ObjectId = require("mongoose").Types.ObjectId;
 const bcrypt = require('bcrypt');
 const moment = require("moment");
 const { query } = require("express");
+const wishlist = require("../../models/wishlistModel");
 
 const userLogin = (req, res) => {
     try {
@@ -267,6 +269,7 @@ const loginPost = async (req, res) => {
 const verifyCredentials = async (req, res) => {
     try {
         const { email, password } = req.body;
+        const { email: sessionEmail, password: sessionPassword } = req.session;
 
         // Find the user with the given email
         const userInfo = await user.findOne({ email });
@@ -291,17 +294,37 @@ const verifyCredentials = async (req, res) => {
     }
 };
 
-const userHome =async(req, res) => {
-    try {
-        const products = await productModel
-        .find().populate("productCategory")
-       .lean();
+const userHome = async (req, res) => {
+  try {
+      const cartDocument = await cartModel.findOne({ user: req.session.user });
+      let cartTotalCount = 0;
+      if (cartDocument) {
+          cartTotalCount = cartDocument.products.length;
+      } else {
+          console.log("Cart not found");
+      }
 
-        res.render("homepage",{products});
-    } catch (error) {
-        console.log(error);
-    }
+      const wishlistDocument = await wishlistModel.findOne({ user: req.session.user });
+      let wishlistTotalCount = 0;
+      if (wishlistDocument) {
+          wishlistTotalCount = wishlistDocument.products.length;
+      } else {
+          console.log("Wishlist not found");
+      }
+
+      const products = await productModel
+          .find().populate("productCategory")
+          .lean();
+
+      // Pass cartTotalCount and wishlistTotalCount to the view
+      res.render("homepage", { products, cartTotalCount, wishlistTotalCount });
+  } catch (error) {
+      console.log(error);
+  }
 }
+
+
+
 
 const logout = (req, res) => {
     try {
@@ -321,6 +344,22 @@ const logout = (req, res) => {
 
 const accountView = async (req, res) => {
   try {
+    const cartDocument = await cartModel.findOne({ user: req.session.user });
+    let cartTotalCount = 0;
+    if (cartDocument) {
+        cartTotalCount = cartDocument.products.length;
+    } else {
+        console.log("Cart not found");
+    }
+
+    const wishlistDocument = await wishlistModel.findOne({ user: req.session.user });
+    let wishlistTotalCount = 0;
+    if (wishlistDocument) {
+        wishlistTotalCount = wishlistDocument.products.length;
+    } else {
+        console.log("Wishlist not found");
+    }
+
     const userId = req.session.user;
 
     const walletResult = await userHelper.getWalletDetails(userId);
@@ -382,7 +421,9 @@ const accountView = async (req, res) => {
       res.json({
         walletData: { wallet: { details: paginatedWalletDetails } },
         walletCurrentPage: walletPage,
-        totalWalletPages: totalWalletPages
+        totalWalletPages: totalWalletPages,
+        cartTotalCount,
+        wishlistTotalCount,
       });
     } else {
       // Otherwise, render the full page
@@ -394,7 +435,9 @@ const accountView = async (req, res) => {
         currentPage: page,
         totalPages: totalPages,
         walletCurrentPage: walletPage,
-        totalWalletPages: totalWalletPages
+        totalWalletPages: totalWalletPages,
+        cartTotalCount,
+        wishlistTotalCount,
       });
     }
   } catch (error) {
@@ -538,142 +581,152 @@ const addAddress = async (req, res) => {
     }
   }
 
-   const loadShop = async(req,res)=>{
+  const loadShop = async (req, res) => {
     try {
-      const extractPrice = (price) => parseInt(price.replace(/[^\d]/g, ""));
-      if (req.query.search) {
-        let payload = req.query.search.trim();
-        let searchResult = await productModel
-          .find({
-            productName: { $regex: new RegExp(payload + ".*", "i") },
-          })
-          .populate("productCategory")
-          .exec();
-      
-        
-      
-        // Check if searchResult is not empty
-        if (searchResult.length > 0) {
-          var sorted = true;
-          var normalSorted = false;
-      
-          let userId = req.session.user;
-          const categories = await categoryHelper.getAllCategory();
-          let cartCount = await cartHelper.getCartCount(userId);
-          let products = await productHelper.getAllActiveProducts();
-      
-          // Iterate through products to check cart status
-          for (const product of products) {
-            const cartStatus = await cartHelper.isAProductInCart(userId, product._id);
-          }
-      
-          // Filter products with the same category as the first search result
-          let sameCatProduct = await productModel.aggregate([
-            {
-              $match: {
-                productName: searchResult[0].productName,
-              },
-            },
-            {
-              $lookup: {
-                from: "categories",
-                localField: "productCategory",
-                foreignField: "_id",
-                as: "category",
-              },
-            },
-            {
-              $match: {
-                productStatus: true,
-                "category": { $ne: [] },
-              },
-            },
-          ]);
-      
-          let itemsPerPage = 6;
-          let currentPage = parseInt(req.query.page) || 1;
-          let startIndex = (currentPage - 1) * itemsPerPage;
-          let endIndex = startIndex + itemsPerPage;
-          let totalPages = Math.ceil(products.length / 6);
-      
-          res.render("userShop", {
-            products: sameCatProduct,
-            userData: req.session.user,
-            cartCount,
-            categories,
-            sorted,
-            normalSorted,
-            totalPages,
-            payload,
-          });
+        // Fetch the cart document for the logged-in user
+        const cartDocument = await cartModel.findOne({ user: req.session.user });
+        let cartTotalCount = 0;
+        if (cartDocument) {
+            cartTotalCount = cartDocument.products.length;
         } else {
-          // Render the "userShop" template with an empty products array
-          res.render("userShop", {
-            products: [],
-            userData: req.session.user,
-            cartCount: 0, // Assuming cart count is 0 when there are no search results
-            categories: [], // Empty categories array
-            sorted: false, // Assuming sorting is not applicable when there are no search results
-            normalSorted: false, // Assuming sorting is not applicable when there are no search results
-            totalPages: 0, // No pages when there are no search results
-            payload, // Pass the payload for consistency
-          });
-        }
-      }
-      
-      
-      else{
-      const users = req.session.user;
-      const categories = await categoryHelper.getAllCategory();
-      let products = await productHelper.getAllActiveProducts();
-      let sorted = false;
-      let totalPages = Math.ceil(products.length / 6);
-
-      if (req.query.filter) {
-        if (req.query.filter == "Ascending") {
-          products.sort(
-              (a, b) => extractPrice(a.productPrice.toString()) - extractPrice(b.productPrice.toString())
-          );
-          normalSorted = "Ascending";
-        } else if (req.query.filter == "Descending") {
-          products.sort(
-              (a, b) => extractPrice(b.productPrice.toString()) - extractPrice(a.productPrice.toString())
-          );
-          normalSorted = "Descending";
-        } else if (req.query.filter == "Alpha") {
-          products.sort((a, b) => {
-              const nameA = a.productName.toUpperCase();
-              const nameB = b.productName.toUpperCase();
-              if (nameA < nameB) {
-                  return -1;
-              }
-              if (nameA > nameB) {
-                  return 1;
-              }
-              return 0;
-          });
-          normalSorted = "Alpha";
-        }
-      
+            console.log("Cart not found");
         }
 
-      
-        res.render("userShop", {
-          products: products,
-          categories,
-          users,
-          normalSorted,
-          sorted,
-          totalPages,
-  
-        });
-       
+        // Fetch the wishlist document for the logged-in user
+        const wishlistDocument = await wishlistModel.findOne({ user: req.session.user });
+        let wishlistTotalCount = 0;
+        if (wishlistDocument) {
+            wishlistTotalCount = wishlistDocument.products.length;
+        } else {
+            console.log("Wishlist not found");
+        }
+
+        // Initialize default values for sorting variables
+        let sorted = false;
+        let normalSorted = null; // Default value for normalSorted
+
+        // Handle search query
+        if (req.query.search) {
+            let payload = req.query.search.trim();
+            let searchResult = await productModel
+                .find({
+                    productName: { $regex: new RegExp(payload + ".*", "i") },
+                })
+                .populate("productCategory")
+                .exec();
+
+            if (searchResult.length > 0) {
+                // Process search results
+                let userId = req.session.user;
+                const categories = await categoryHelper.getAllCategory();
+                let cartCount = await cartHelper.getCartCount(userId);
+                let products = await productHelper.getAllActiveProducts();
+
+                // Filter products with the same category as the first search result
+                let sameCatProduct = await productModel.aggregate([
+                    {
+                        $match: {
+                            productName: searchResult[0].productName,
+                        },
+                    },
+                    {
+                        $lookup: {
+                            from: "categories",
+                            localField: "productCategory",
+                            foreignField: "_id",
+                            as: "category",
+                        },
+                    },
+                    {
+                        $match: {
+                            productStatus: true,
+                            "category": { $ne: [] },
+                        },
+                    },
+                ]);
+
+                let itemsPerPage = 6;
+                let currentPage = parseInt(req.query.page) || 1;
+                let totalPages = Math.ceil(products.length / itemsPerPage);
+
+                res.render("userShop", {
+                    products: sameCatProduct,
+                    userData: req.session.user,
+                    cartCount,
+                    categories,
+                    sorted: true,
+                    normalSorted: false,
+                    totalPages,
+                    payload,
+                    cartTotalCount, 
+                    wishlistTotalCount,
+                });
+            } else {
+                // No search results
+                res.render("userShop", {
+                    products: [],
+                    userData: req.session.user,
+                    cartCount: 0,
+                    categories: [],
+                    sorted: false,
+                    normalSorted: false,
+                    totalPages: 0,
+                    payload,
+                    cartTotalCount, 
+                    wishlistTotalCount,
+                });
+            }
+        } else {
+            // No search query
+            const users = req.session.user;
+            const categories = await categoryHelper.getAllCategory();
+            let products = await productHelper.getAllActiveProducts();
+            let totalPages = Math.ceil(products.length / 6);
+
+            // Handle sorting/filtering
+            if (req.query.filter) {
+                const extractPrice = (price) => parseInt(price.replace(/[^\d]/g, ""));
+                if (req.query.filter === "Ascending") {
+                    products.sort(
+                        (a, b) => extractPrice(a.productPrice.toString()) - extractPrice(b.productPrice.toString())
+                    );
+                    normalSorted = "Ascending";
+                } else if (req.query.filter === "Descending") {
+                    products.sort(
+                        (a, b) => extractPrice(b.productPrice.toString()) - extractPrice(a.productPrice.toString())
+                    );
+                    normalSorted = "Descending";
+                } else if (req.query.filter === "Alpha") {
+                    products.sort((a, b) => {
+                        const nameA = a.productName.toUpperCase();
+                        const nameB = b.productName.toUpperCase();
+                        if (nameA < nameB) return -1;
+                        if (nameA > nameB) return 1;
+                        return 0;
+                    });
+                    normalSorted = "Alpha";
+                }
+                sorted = true; // Set sorted to true if any filter is applied
+            } else {
+                normalSorted = "None"; // Indicate no sorting applied
+            }
+
+            res.render("userShop", {
+                products,
+                categories,
+                users,
+                normalSorted,
+                sorted,
+                totalPages,
+                cartTotalCount, 
+                wishlistTotalCount,
+            });
+        }
+    } catch (error) {
+        console.log(error);
     }
-    } 
-      catch (error) {
-      console.log(error);
-    }
-  }
+};
+
 
 
 
@@ -756,6 +809,23 @@ const addAddress = async (req, res) => {
   
 
   const LoadUserProduct = async (req, res) => {
+    const cartDocument = await cartModel.findOne({ user: req.session.user });
+        let cartTotalCount = 0;
+        if (cartDocument) {
+            cartTotalCount = cartDocument.products.length;
+        } else {
+            console.log("Cart not found");
+        }
+
+        // Fetch the wishlist document for the logged-in user
+        const wishlistDocument = await wishlistModel.findOne({ user: req.session.user });
+        let wishlistTotalCount = 0;
+        if (wishlistDocument) {
+            wishlistTotalCount = wishlistDocument.products.length;
+        } else {
+            console.log("Wishlist not found");
+        }
+    
     const id=req.params.id
     const userData=req.session.user
     const categories=await categoryHelper.getAllCategory()
@@ -784,12 +854,31 @@ const addAddress = async (req, res) => {
       
         res.render('detailProductPage', {
          product,products,
-         userData,categories })
+         userData,categories,
+         cartTotalCount, wishlistTotalCount })
    
 }
 
 const userCartLoad = async (req, res) => {
     try {
+
+      const cartDocument = await cartModel.findOne({ user: req.session.user });
+      let cartTotalCount = 0;
+      if (cartDocument) {
+          cartTotalCount = cartDocument.products.length;
+      } else {
+          console.log("Cart not found");
+      }
+
+      // Fetch the wishlist document for the logged-in user
+      const wishlistDocument = await wishlistModel.findOne({ user: req.session.user });
+      let wishlistTotalCount = 0;
+      if (wishlistDocument) {
+          wishlistTotalCount = wishlistDocument.products.length;
+      } else {
+          console.log("Wishlist not found");
+      }
+
       const userData = req.session.user;
   
       const cartItems = await cartHelper.getAllCartItems(userData);
@@ -826,6 +915,8 @@ const userCartLoad = async (req, res) => {
         cartCount,
         totalAmount: totalandSubTotal,
         totalAmountOfEachProduct,
+        cartTotalCount,
+        wishlistTotalCount,
       });
     } catch (error) {
       console.log(error);
