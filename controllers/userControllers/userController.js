@@ -989,57 +989,73 @@ const userCartLoad = async (req, res) => {
       const userData = await user.findById({ _id: userId });
       let cartItems = await cartHelper.getAllCartItems(userId);
       let totalandSubTotal = await cartHelper.totalSubtotal(userId, cartItems);
-      const coupons = await couponHelper.findAllCoupons();
+      const now = new Date();
+  
+      // Fetch and filter coupons directly from MongoDB using aggregation
+      const filteredCoupons = await couponModel.aggregate([
+        {
+          $match: {
+            expiryDate: { $gt: now }, // Not expired
+            usedBy: { $not: { $elemMatch: { $eq: userId } } } // Not used by the current user
+          }
+        },
+        {
+          $sort: { createdAt: -1 } // Sort by createdAt in descending order
+        }
+      ]);
+  
+      console.log("This is the filtered coupons", filteredCoupons);
+  
       let cart = await cartModel.findOne({ user: userId });
   
       if (cart.coupon != null) {
         const appliedCoupon = await couponModel.findOne({ code: cart.coupon });
         cartItems.couponAmount = appliedCoupon.discount;
         cartItems.coupon = cart.coupon;
-      
-      // Calculate total amount for each product
-      let totalAmountOfEachProduct = [];
-      for (let i = 0; i < cartItems.length; i++) {
-        const product = cartItems[i].product;
-        const quantity = cartItems[i].quantity;
-        const total = product.productPrice * quantity;
-        totalAmountOfEachProduct.push(total);
+  
+        // Calculate total amount for each product
+        let totalAmountOfEachProduct = [];
+        for (let i = 0; i < cartItems.length; i++) {
+          const product = cartItems[i].product;
+          const quantity = cartItems[i].quantity;
+          const total = product.productPrice * quantity;
+          totalAmountOfEachProduct.push(total);
+        }
+  
+        console.log("This is cartItems.coupon when there is coupon", cart);
+  
+        res.render("checkout", {
+          userData,
+          cartItems,
+          totalandSubTotal,
+          totalAmountOfEachProduct,
+          coupons: filteredCoupons,
+        });
+      } else {
+        let totalAmountOfEachProduct = [];
+        // Calculate total amount for each product
+        for (let i = 0; i < cartItems.length; i++) {
+          const product = cartItems[i].product;
+          const quantity = cartItems[i].quantity;
+          const total = product.productPrice * quantity;
+          totalAmountOfEachProduct.push(total);
+        }
+  
+        console.log("This is cartItems.coupon when there is no coupon", cartItems);
+  
+        res.render("checkout", {
+          userData,
+          cartItems,
+          totalandSubTotal,
+          totalAmountOfEachProduct,
+          coupons: filteredCoupons,
+        });
       }
-      
-      console.log("This is cartItems.coupon when there is coupon", cart);
-
-      res.render("checkout", {
-        userData,
-        cartItems,
-        totalandSubTotal,
-        totalAmountOfEachProduct,
-        coupons,
-      });
-    } else {
-      let totalAmountOfEachProduct = []; 
-       // Calculate total amount for each product
-       for (let i = 0; i < cartItems.length; i++) {
-         const product = cartItems[i].product;
-         const quantity = cartItems[i].quantity;
-         const total = product.productPrice * quantity;
-         totalAmountOfEachProduct.push(total);
-       }
-
-       console.log("This is cartItems.coupon when there is no coupon", cartItems);
-
-       res.render("checkout", {
-        userData,
-        cartItems,
-        totalandSubTotal,
-        totalAmountOfEachProduct,
-        coupons,
-      });
-
-    }
     } catch (error) {
       console.log(error);
     }
   };
+  
 
 
 module.exports = {
