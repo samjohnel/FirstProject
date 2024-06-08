@@ -5,15 +5,18 @@ const ObjectId = require("mongoose").Types.ObjectId; 1
 const voucherCode = require("voucher-code-generator");
 
 const findAllCoupons = () => {
-    return new Promise(async (resolve, reject) => {
-      await couponModel
-        .find()
-        .lean()
-        .then((result) => {
+  return new Promise(async (resolve, reject) => {
+      try {
+          const result = await couponModel
+              .find()
+              .sort({ createdAt: -1 }) // Sort by 'createdAt' in descending order
+              .lean();
           resolve(result);
-        });
-    });
-  };
+      } catch (error) {
+          reject(error);
+      }
+  });
+};
 
 
   const addCoupon = (couponData) => {

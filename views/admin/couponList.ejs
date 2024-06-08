@@ -99,8 +99,9 @@
             <div class="mb-3">
               <label for="recipient-name" class="col-form-label">Expired On</label>
               <input type="date" class="form-control" name="couponExpiry" id="couponExpiry" placeholder="DD/MM/YYYY">
+              <div id="couponExpiryError" style="color: red;"></div> <!-- Add an error div for the expiry date -->
             </div>
-
+            
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               <button type="submit" id="addCouponSubmit" class="btn btn-dark" style="background-color: black;">Create Coupon</button>
@@ -251,44 +252,67 @@
 
 <!-- // addCoupon validation // -->
 <script>
-    function validateForm() {
+  function validateForm() {
       var couponName = document.getElementById("couponName").value;
       var couponDiscount = document.getElementById("couponDiscount").value;
-      console.log(couponName,couponDiscount);
+      var couponExpiry = document.getElementById("couponExpiry").value;
+      
       var couponNameError = document.getElementById("couponNameError");
       var couponDiscountError = document.getElementById("couponDiscountError");
-  
-      document.getElementById('couponNameError').innerHTML = "";
-      document.getElementById('couponDiscountError').innerHTML = "";
-  
+      var couponExpiryError = document.getElementById("couponExpiryError");
+
+      // Clear previous error messages
+      couponNameError.innerHTML = "";
+      couponDiscountError.innerHTML = "";
+      couponExpiryError.innerHTML = "";
+
       // Validate couponName
       if (!couponName.match(/^[a-zA-Z0-9\s]+$/) || couponName.trim() == "") {
-        document.getElementById('couponNameError').innerText = "Coupon name can only contain letters, numbers, and spaces.";
-        return false;
+          couponNameError.innerText = "Coupon name can only contain letters, numbers, and spaces.";
+          return false;
       }
-  
+
       // Validate couponDiscount
       if (couponDiscount === "") {
-        document.getElementById('couponDiscountError').innerText = "Please enter a discount value.";
-        return false;
+          couponDiscountError.innerText = "Please enter a discount value.";
+          return false;
       }
-  
+
       // Check if couponDiscount is a valid number and within range
       if (isNaN(couponDiscount) || parseFloat(couponDiscount) < 0 || parseFloat(couponDiscount) > 99) {
-        document.getElementById('couponDiscountError').innerText = "Enter a valid value";
-        return false;
+          couponDiscountError.innerText = "Enter a valid value between 0 and 99.";
+          return false;
       }
-  
+
+      // Validate couponExpiry date
+      if (couponExpiry === "") {
+          couponExpiryError.innerText = "Please select an expiry date.";
+          return false;
+      }
+      
+      // Convert selected date to a comparable format
+      var selectedDate = new Date(couponExpiry);
+      // Get the current date without time (only year, month, day)
+      var today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      // Check if the selected date is in the past
+      if (selectedDate < today) {
+          couponExpiryError.innerText = "The expiry date cannot be in the past.";
+          return false;
+      }
+
+      // If all validations pass
       return true;
-    }
-    
-    document.getElementById("addCouponSubmit").addEventListener("click", function(event) {
-       
+  }
+  
+  document.getElementById("addCouponSubmit").addEventListener("click", function(event) {
       if (!validateForm()) {
-        event.preventDefault();
+          event.preventDefault();
       }
-    });
-  </script>
+  });
+</script>
+
 
 <!-- editCoupon -->
 <script>
