@@ -26,14 +26,17 @@ const placeOrder = (body, userId, discount) => {
       if (body.status) {
         status = "payment pending";
       }
+     
       for (const product of cart.products) {
         products.push({
           product: product.productItemId,
           quantity: product.quantity,
           size: product.size,
+          discount: product.discount,
           productPrice: product.subTotal,
           status: status,
         });
+        console.log("This is the product", product);
 
         if (body.paymentOption == "Wallet") {
           if (cart.totalAmount > user.wallet.balance) {
@@ -175,7 +178,7 @@ const placeOrder = (body, userId, discount) => {
             if (check == true && count >= 1) {
                 orderDetails.deliveryStatus = true;
             }
-            console.log(orderDetails);
+            console.log("This is the plaves your neber", orderDetails);
 
             resolve(orderDetails);
         } catch (error) {
@@ -247,7 +250,7 @@ const placeOrder = (body, userId, discount) => {
   const cancelSingleOrder = (orderId, singleOrderId, price) => {
     return new Promise(async (resolve, reject) => {
       try {
-        
+        // Update the order status to "cancelled"
         const cancelled = await orderModel.findOneAndUpdate(
           {
             _id: new ObjectId(orderId),
@@ -260,7 +263,8 @@ const placeOrder = (body, userId, discount) => {
             new: true,
           }
         );
-
+  
+        // Aggregate to get the specific product details from the order
         const result = await orderModel.aggregate([
           {
             $unwind: "$products",
@@ -272,22 +276,17 @@ const placeOrder = (body, userId, discount) => {
             },
           },
         ]);
-        console.log("This is cancelled", cancelled);
-        console.log("This is result", result);
+  
+        if (result.length === 0) {
+          reject(new Error('Product not found in order'));
+          return;
+        }
+  
         const singleProductId = result[0].products.product;
         const singleProductSize = result[0].products.size;
         const singleProductQuantity = result[0].products.quantity;
   
-        // const stockIncrease = await productModel.updateOne(
-        //   { _id: singleProductId, "productQuantity.size": singleProductSize },
-        //   {
-        //     $inc: {
-        //       "productQuantity.$.quantity": singleProductQuantity,
-        //       totalQuantity: singleProductQuantity,
-        //     },
-        //   }
-        // );
-
+        // Increase the product stock in the inventory
         const stockIncrease = await productModel.updateOne(
           { 
             _id: singleProductId, 
@@ -300,24 +299,29 @@ const placeOrder = (body, userId, discount) => {
             },
           }
         );        
-        
+  
+        // Retrieve the order to check the payment method
         const response = await orderModel.findOne({ _id: orderId });
         
-        if (response.paymentMethod == 'RazorPay') {
-          console.log("razorpay");
+        // Calculate the total refund amount based on the product quantity and price
+        const refundAmount = singleProductQuantity * price;
+        
+        // Add the refund amount to the user's wallet if the payment method was RazorPay
+        if (response.paymentMethod === 'RazorPay') {
           const walletUpdation = await walletHelper.walletAmountAdding(
             response.user,
-            price
+            refundAmount
           );
         }
   
         resolve(cancelled);
       } catch (error) {
         console.log(error);
+        reject(error);
       }
     });
   };
-
+  
   const salesReport = async () => {
     try {
       const result = await orderModel.aggregate([

@@ -100,7 +100,7 @@
                                       class="btn  btn-success rounded font-sm">Send Out</a>
                                     <% } else if (allOrders[i].status=='outForDelivery' ) {%>
                                       <a onclick="changeOrderStatus('<%= allOrders[i]._id %>','delivered')"
-                                        class="btn btn-primary rounded font-sm">Approved</a>
+                                        class="btn btn-primary rounded font-sm">Approved</a>  
                                       <% } else if (allOrders[i].status=='delivered' ) { %>
                                         <span class="badge bg-success">Delivered</span>
                                         <% } %>

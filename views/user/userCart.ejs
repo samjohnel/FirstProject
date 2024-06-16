@@ -228,6 +228,7 @@
                           <th scope="col" class="text-center">Name</th>
                           <th scope="col" class="text-center">Size</th>
                           <th scope="col" class="text-center">Price</th>
+                          <th scope="col" class="text-center">Discount</th>
                           <th scope="col" class="text-center">Quantity</th>
                           <th scope="col" class="text-center">Subtotal</th>
                           <th scope="col" class="text-center">Remove</th>
@@ -254,6 +255,9 @@
                             <td class="price" data-title="Price" id="price-span"><span id="price<%=i%>">
                                 <%= cartItems[i].product.productPrice %>
                               </span></td>
+                              <td class="discount" data-title="Discount" id="discount-span"><span id="discount<%=i%>">
+                                <%= cartItems[i].product.finalDiscount %>
+                              </span></td>
                             <td class="text-center" data-title="Stock">
                               <div class="detail-qty border radius  m-auto">
                                 <a href="#" class="qty-down"
@@ -267,10 +271,11 @@
                               </div>
                             </td>
                             <td class="text-right" id="text-right<%= cartItems[i].product._id %>" data-title="Cart">
-                              <span id="individualTotal<%=i%>">
-                                <%=totalAmountOfEachProduct[i]%>
-                              </span>
+                              <span id="individualTotal<%= i %>">
+                                <%= ((cartItems[i].product.productPrice - (cartItems[i].product.productPrice * cartItems[i].product.finalDiscount / 100)) * cartItems[i].quantity).toFixed(2) %>
+                              </span>                                                            
                             </td>
+                            
                             <td class="action" data-title="Remove"><a
                                 onclick="removeItemFromCart('<%=cartItems[i].product._id%>','<%=i+1%>', '<%= cartItems[i].size %>')" class="text-muted"><i
                                   class="fi-rs-trash"></i></a></td>
@@ -577,7 +582,7 @@
   </script> -->
 
   <script>
-    const   removeItemFromCart = (productId, index, size) => {
+    const removeItemFromCart = (productId, index, size) => {
       console.log("This is the size", size);
       $.ajax({
         url: "/removeCart/" + productId + "/" + size,

@@ -416,7 +416,7 @@
                                                     <span class="product-qty">x <%= cartItems[i].quantity %></span>
                                                 </td>
                                                 <td>
-                                                    <%= totalAmountOfEachProduct[i] %>
+                                                    <%= cartItems[i].finalPrice *  cartItems[i].quantity%>
                                                 </td>
                                             </tr>
                                         <% } %>

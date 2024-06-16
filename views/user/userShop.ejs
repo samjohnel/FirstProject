@@ -435,19 +435,32 @@
                                           </a>
                                         </h2>
                                         <div class="rating-result" title="90%">
-                                            <% if (products[i].productDiscount > 0) { %>
+                                            <% 
+                                              const highestDiscount = Math.max(products[i].productDiscount, products[i].categoryOffer);
+                                              
+                                              if (highestDiscount > 0) { 
+                                            %>
                                               <span>
-                                                <%= products[i].productDiscount %>% OFF
+                                                <%= highestDiscount %>% OFF
                                               </span>
                                             <% } %>
                                           </div>
                                           
+                                          
                                           <div class="product-price">
-                                            <% if (products[i].productDiscount > 0) { %>
+                                            <% 
+                                              // Determine the higher discount between the product and the category
+                                              const effectiveDiscount = Math.max(products[i].productDiscount, products[i].categoryOffer);
+                                          
+                                              // Calculate the discounted price based on the effective discount
+                                              const discountedPrice = products[i].productPrice - (products[i].productPrice * effectiveDiscount / 100);
+                                            %>
+                                            
+                                            <% if (effectiveDiscount > 0) { %>
                                               <span class="text-dark">
                                                 <del>₹ <%= products[i].productPrice.toFixed(2) %></del>
                                                 &nbsp;&nbsp;&nbsp; <!-- Non-breaking spaces for spacing -->
-                                                ₹ <%= (products[i].productPrice - (products[i].productPrice * products[i].productDiscount / 100)).toFixed(2) %>
+                                                ₹ <%= discountedPrice.toFixed(2) %>
                                               </span>
                                             <% } else { %>
                                               <span class="text-dark">
@@ -455,6 +468,7 @@
                                               </span>
                                             <% } %>
                                           </div>
+                                          
                                           
                                           
                                           

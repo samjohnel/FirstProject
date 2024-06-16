@@ -670,21 +670,34 @@
                                       </h2>
                                       <div class="rating-result" title="90%">
                                         <span>
-                                          <span>
-                                            10%
-                                          </span>
+                                            <span>
+                                                <% 
+                                                    if (products[i].productDiscount > 0 || products[i].categoryOffer > 0) {
+                                                        // Calculate the effective discount percentage (higher of productDiscount and categoryOffer)
+                                                        const effectiveDiscount = Math.max(products[i].productDiscount, products[i].categoryOffer);
+                                                %>
+                                                <%= effectiveDiscount %>%
+                                                <% }  %>
+                                            </span>
                                         </span>
-                                      </div>
-                                      <div class="product-price">
-                                        <span class="text-dark"> 
-                                          <!-- <%= products[i].discountedPrice %> -->
-                                          
-                                        </span>
-                                        <span class="old-price"><%= products[i].productPrice %></span>
-                                        <span class="text-brand">
-                                            ₹<%= products[i].productPrice - (products[i].productPrice*products[i].productDiscount/100)%>
-                                        </span>
-                                      </div>
+                                    </div>
+                                    
+                                    
+                                    <div class="product-price">
+                                        <% 
+                                            const effectiveDiscount = Math.max(products[i].productDiscount, products[i].categoryOffer);
+                                            const discountedPrice = products[i].productPrice * (1 - effectiveDiscount / 100);
+                                            const finalPrice = effectiveDiscount > 0 ? discountedPrice.toFixed(2) : '';
+                                        %>
+                                        <% if (effectiveDiscount > 0) { %>
+                                            <span class="old-price">₹<%= products[i].productPrice.toFixed(2) %></span>
+                                            <span class="text-brand">₹<%= finalPrice %></span>
+                                        <% } else { %>
+                                            <span class="text-brand">₹<%= products[i].productPrice.toFixed(2) %></span>
+                                        <% } %>
+                                    </div>
+                                    
+                                    
                                       <div class="product-action-1 show">
                                         <a aria-label="Add To Cart" class="action-btn hover-up" href="#"><i
                                             class="fi-rs-shopping-bag-add"></i></a>

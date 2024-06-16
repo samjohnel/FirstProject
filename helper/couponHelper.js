@@ -89,38 +89,81 @@ const findAllCoupons = () => {
     });
   };
   
-  const  applyCouponHelper = (userId, couponCode) => {
-    return new Promise(async (resolve, reject) => {
-      console.log(couponCode);
-      let coupon = await couponModel.findOne({ code: couponCode })
-      console.log("this is apply coupon",coupon);
-      if (coupon && coupon.isActive === "Active") {
-        if (!coupon.usedBy.includes(userId)) {
-          let cart = await cartModel.findOne({ user: new ObjectId(userId)});
-          console.log(cart)
-          const discount = coupon.discount;
-          console.log(cart.totalAmount,discount);
-          cart.totalAmount = cart.totalAmount - discount;
-          cart.coupon = couponCode;
+  // const  applyCouponHelper = (userId, couponCode) => {
+  //   return new Promise(async (resolve, reject) => {
+  //     console.log(couponCode);
+  //     let coupon = await couponModel.findOne({ code: couponCode })
+  //     console.log("this is apply coupon",coupon);
+  //     if (coupon && coupon.isActive === "Active") {
+  //       if (!coupon.usedBy.includes(userId)) {
+  //         let cart = await cartModel.findOne({ user: new ObjectId(userId)});
+  //         console.log(cart)
+  //         const discount = coupon.discount;
+  //         console.log(cart.totalAmount,discount);
+  //         cart.totalAmount = cart.totalAmount - discount;
+  //         cart.coupon = couponCode;
   
-          await cart.save();
-          console.log(cart)
+  //         await cart.save();
+  //         console.log(cart)
   
           
-          resolve({
-            discount,
-            cart,
-            status: true,
-            message: "Coupon applied successfully",
-          });
+  //         resolve({
+  //           discount,
+  //           cart,
+  //           status: true,
+  //           message: "Coupon applied successfully",
+  //         });
+  //       } else {
+  //         resolve({ status: false, message: "This coupon is already used" });
+  //       }
+  //     } else {
+  //       resolve({ status: false, message: "Invalid Coupon code" });
+  //     }
+  //   });
+  // };
+
+  const applyCouponHelper = (userId, couponCode) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        console.log(couponCode);
+        let coupon = await couponModel.findOne({ code: couponCode });
+  
+        console.log("this is apply coupon", coupon);
+        
+        if (coupon && coupon.isActive === "Active") {
+          if (!coupon.usedBy.includes(userId)) {
+            let cart = await cartModel.findOne({ user: new ObjectId(userId) });
+  
+            console.log(cart);
+  
+            const discount = coupon.discount;
+            console.log(cart.totalAmount, discount);
+            
+            cart.totalAmount = cart.totalAmount - discount;
+            cart.coupon = couponCode;
+    
+            await cart.save();
+            console.log(cart);
+    
+            resolve({
+              discount,
+              cart,
+              status: true,
+              message: "Coupon applied successfully",
+            });
+          } else {
+            resolve({ status: false, message: "This coupon is already used" });
+          }
         } else {
-          resolve({ status: false, message: "This coupon is already used" });
+          resolve({ status: false, message: "Invalid Coupon code" });
         }
-      } else {
-        resolve({ status: false, message: "Invalid Coupon code" });
+      } catch (error) {
+        console.error("Error applying coupon:", error);
+        reject(error);
       }
     });
   };
+  
 
 module.exports = {
     findAllCoupons,

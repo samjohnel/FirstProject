@@ -236,6 +236,7 @@
                         <th scope="col" class="text-center">Price</th>
                         <th scope="col" class="text-center">Size</th>
                         <th scope="col" class="text-center">Quantity</th>
+                        <th scope="col" class="text-center">Discount</th>
                         <th scope="col" class="text-center">Status</th>
                         <th scope="col" class="text-center">Action</th>
                       </tr>
@@ -258,8 +259,7 @@
                               
                               <td class="price" data-title="Price">
                                 ₹<span id="price-span<%= productDetails[i].products._id %>">
-                                  <%= Math.round(productDetails[i].product.productPrice - 
-                                  (productDetails[i].product.productPrice * productDetails[i].product.productDiscount / 100)) %>
+                                  <%= productDetails[i].product.productPrice %>
     
                                 </span></td>
                             
@@ -270,6 +270,10 @@
                               
                           <td class="text-center" data-title="Stock">
                             <%= productDetails[i].products.quantity %>
+                          </td>
+
+                          <td class="text-center" data-title="Stock">
+                            <%= productDetails[i].products.discount %>
                           </td>
       
                           <td class="text-center" data-title="status">
@@ -406,18 +410,25 @@
                             <tr>
                               <td class="cart_total_label">Order Subtotal</td>
                               <td class="cart_total_amount">
-                                <span class="font-lg fw-900 text-dark" id="totalAmount" style="color: 2B1754;">
+                                <span class="font-lg fw-900 text-dark" id="totalAmount" style="color: #2B1754;">
                                   <% 
                                     let totalDiscountedPrice = 0;
                                     for (let i = 0; i < productDetails.length; i++) {
                                       let product = productDetails[i].product;
-                                      let quantity = productDetails[i].products.quantity;
-                                      let discountedPrice = Math.round(product.productPrice - (product.productPrice * product.productDiscount / 100)) * quantity;
+                                      let cartProduct = productDetails[i].products;
+                                      let quantity = cartProduct.quantity;
+                                      let discount = cartProduct.discount; // Use the discount from the product in the cart
+                                
+                                      // Calculate the discounted price for the current product
+                                      let discountedPrice = Math.round(product.productPrice - (product.productPrice * discount / 100)) * quantity;
+                                
+                                      // Accumulate the total discounted price
                                       totalDiscountedPrice += discountedPrice;
                                     }
                                   %>
                                   ₹ <%= totalDiscountedPrice %>
                                 </span>
+                                
                               </td>
                               
                             </tr>

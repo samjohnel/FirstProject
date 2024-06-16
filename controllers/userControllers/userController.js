@@ -15,6 +15,7 @@ const wishlistHelper = require('../../helper/wishlistHelper');
 const couponHelper = require('../../helper/couponHelper');
 const couponModel = require('../../models/couponModel');
 const orderModel = require('../../models/orderModel');
+const offerModel = require('../../models/offerModel');
 const ObjectId = require("mongoose").Types.ObjectId;
 const bcrypt = require('bcrypt');
 const moment = require("moment");
@@ -294,34 +295,50 @@ const verifyCredentials = async (req, res) => {
     }
 };
 
+
+
 const userHome = async (req, res) => {
   try {
+      // Fetch cart details
       const cartDocument = await cartModel.findOne({ user: req.session.user });
-      let cartTotalCount = 0;
-      if (cartDocument) {
-          cartTotalCount = cartDocument.products.length;
-      } else {
-          console.log("Cart not found");
-      }
+      const cartTotalCount = cartDocument ? cartDocument.products.length : 0;
 
+      // Fetch wishlist details
       const wishlistDocument = await wishlistModel.findOne({ user: req.session.user });
-      let wishlistTotalCount = 0;
-      if (wishlistDocument) {
-          wishlistTotalCount = wishlistDocument.products.length;
-      } else {
-          console.log("Wishlist not found");
-      }
+      const wishlistTotalCount = wishlistDocument ? wishlistDocument.products.length : 0;
 
-      const products = await productModel
-          .find().populate("productCategory")
-          .lean();
+      // Fetch all products and their categories
+      const products = await productModel.find().populate("productCategory").lean();
 
-      // Pass cartTotalCount and wishlistTotalCount to the view
+      // Fetch all category offers and map them
+      // Fetch all category offers with status true and map them
+      const categoryOffers = await offerModel.find({ status: true }).lean();
+      const categoryOfferMap = {};
+      categoryOffers.forEach(offer => {
+          if (offer.categoryOffer && offer.categoryOffer.category) {
+              const categoryId = offer.categoryOffer.category.toString();
+              categoryOfferMap[categoryId] = offer.categoryOffer.discount;
+          }
+      });
+
+      // Add category offers to each product
+      products.forEach(product => {
+          // Check if productCategory and _id are defined
+          if (product.productCategory && product.productCategory._id) {
+              const categoryId = product.productCategory._id.toString();
+              product.categoryOffer = categoryOfferMap[categoryId] || 0; // Add the category discount if available, otherwise 0
+          } else {
+              product.categoryOffer = 0; // Default to 0 if category or ID is not defined
+          }
+      });
+
+      // Render the homepage view with the updated product details
       res.render("homepage", { products, cartTotalCount, wishlistTotalCount });
   } catch (error) {
-      console.log(error);
+      console.error(error);
+      res.status(500).send("Internal Server Error");
   }
-}
+};
 
 
 
@@ -580,153 +597,111 @@ const addAddress = async (req, res) => {
     console.log(error);
     }
   }
-
   const loadShop = async (req, res) => {
     try {
-        // Fetch the cart document for the logged-in user
-        const cartDocument = await cartModel.findOne({ user: req.session.user });
-        let cartTotalCount = 0;
-        if (cartDocument) {
-            cartTotalCount = cartDocument.products.length;
-        } else {
-            console.log("Cart not found");
+      const userId = req.session.user;
+  
+      // Fetch the cart and wishlist documents for the logged-in user
+      const [cartDocument, wishlistDocument, categoryOffers] = await Promise.all([
+        cartModel.findOne({ user: userId }).lean(),
+        wishlistModel.findOne({ user: userId }).lean(),
+        offerModel.find({ status: true }).lean()
+      ]);
+  
+      let cartTotalCount = cartDocument ? cartDocument.products.length : 0;
+      let wishlistTotalCount = wishlistDocument ? wishlistDocument.products.length : 0;
+  
+      // Create a map of category offers for quick lookup
+      const categoryOfferMap = {};
+      categoryOffers.forEach(offer => {
+        if (offer.categoryOffer && offer.categoryOffer.category) {
+          const categoryId = offer.categoryOffer.category.toString();
+          categoryOfferMap[categoryId] = offer.categoryOffer.discount;
         }
-
-        // Fetch the wishlist document for the logged-in user
-        const wishlistDocument = await wishlistModel.findOne({ user: req.session.user });
-        let wishlistTotalCount = 0;
-        if (wishlistDocument) {
-            wishlistTotalCount = wishlistDocument.products.length;
-        } else {
-            console.log("Wishlist not found");
-        }
-
-        // Initialize default values for sorting variables
-        let sorted = false;
-        let normalSorted = null; // Default value for normalSorted
-
+      });
+  
+      // Initialize variables for rendering
+      let products = [];
+      let categories = await categoryHelper.getAllCategory();
+      let sorted = false;
+      let normalSorted = "None";
+      let payload = req.query.search ? req.query.search.trim() : '';
+  
+      if (payload) {
         // Handle search query
-        if (req.query.search) {
-            let payload = req.query.search.trim();
-            let searchResult = await productModel
-                .find({
-                    productName: { $regex: new RegExp(payload + ".*", "i") },
-                })
-                .populate("productCategory")
-                .exec();
-
-            if (searchResult.length > 0) {
-                // Process search results
-                let userId = req.session.user;
-                const categories = await categoryHelper.getAllCategory();
-                let cartCount = await cartHelper.getCartCount(userId);
-                let products = await productHelper.getAllActiveProducts();
-
-                // Filter products with the same category as the first search result
-                let sameCatProduct = await productModel.aggregate([
-                    {
-                        $match: {
-                            productName: searchResult[0].productName,
-                        },
-                    },
-                    {
-                        $lookup: {
-                            from: "categories",
-                            localField: "productCategory",
-                            foreignField: "_id",
-                            as: "category",
-                        },
-                    },
-                    {
-                        $match: {
-                            productStatus: true,
-                            "category": { $ne: [] },
-                        },
-                    },
-                ]);
-
-                let itemsPerPage = 6;
-                let currentPage = parseInt(req.query.page) || 1;
-                let totalPages = Math.ceil(products.length / itemsPerPage);
-
-                res.render("userShop", {
-                    products: sameCatProduct,
-                    userData: req.session.user,
-                    cartCount,
-                    categories,
-                    sorted: true,
-                    normalSorted: false,
-                    totalPages,
-                    payload,
-                    cartTotalCount, 
-                    wishlistTotalCount,
-                });
-            } else {
-                // No search results
-                res.render("userShop", {
-                    products: [],
-                    userData: req.session.user,
-                    cartCount: 0,
-                    categories: [],
-                    sorted: false,
-                    normalSorted: false,
-                    totalPages: 0,
-                    payload,
-                    cartTotalCount, 
-                    wishlistTotalCount,
-                });
-            }
+        products = await productModel
+          .find({
+            productName: { $regex: new RegExp(payload + ".*", "i") }
+          })
+          .populate("productCategory")
+          .lean();
+      } else {
+        // Fetch all active products if no search query
+        products = await productHelper.getAllActiveProducts();
+      }
+  
+      // Add category offers to each product
+      products.forEach(product => {
+        if (product.productCategory && product.productCategory._id) {
+          const categoryId = product.productCategory._id.toString();
+          product.categoryOffer = categoryOfferMap[categoryId] || 0;
         } else {
-            // No search query
-            const users = req.session.user;
-            const categories = await categoryHelper.getAllCategory();
-            let products = await productHelper.getAllActiveProducts();
-            let totalPages = Math.ceil(products.length / 6);
-
-            // Handle sorting/filtering
-            if (req.query.filter) {
-                const extractPrice = (price) => parseInt(price.replace(/[^\d]/g, ""));
-                if (req.query.filter === "Ascending") {
-                    products.sort(
-                        (a, b) => extractPrice(a.productPrice.toString()) - extractPrice(b.productPrice.toString())
-                    );
-                    normalSorted = "Ascending";
-                } else if (req.query.filter === "Descending") {
-                    products.sort(
-                        (a, b) => extractPrice(b.productPrice.toString()) - extractPrice(a.productPrice.toString())
-                    );
-                    normalSorted = "Descending";
-                } else if (req.query.filter === "Alpha") {
-                    products.sort((a, b) => {
-                        const nameA = a.productName.toUpperCase();
-                        const nameB = b.productName.toUpperCase();
-                        if (nameA < nameB) return -1;
-                        if (nameA > nameB) return 1;
-                        return 0;
-                    });
-                    normalSorted = "Alpha";
-                }
-                sorted = true; // Set sorted to true if any filter is applied
-            } else {
-                normalSorted = "None"; // Indicate no sorting applied
-            }
-
-            res.render("userShop", {
-                products,
-                categories,
-                users,
-                normalSorted,
-                sorted,
-                totalPages,
-                cartTotalCount, 
-                wishlistTotalCount,
-            });
+          product.categoryOffer = 0;
         }
+      });
+  
+      // Sorting products if a filter is applied
+      if (req.query.filter) {
+        const extractPrice = (price) => parseInt(price.replace(/[^\d]/g, ""));
+        switch (req.query.filter) {
+          case "Ascending":
+            products.sort((a, b) => extractPrice(a.productPrice.toString()) - extractPrice(b.productPrice.toString()));
+            normalSorted = "Ascending";
+            break;
+          case "Descending":
+            products.sort((a, b) => extractPrice(b.productPrice.toString()) - extractPrice(a.productPrice.toString()));
+            normalSorted = "Descending";
+            break;
+          case "Alpha":
+            products.sort((a, b) => {
+              const nameA = a.productName.toUpperCase();
+              const nameB = b.productName.toUpperCase();
+              return nameA.localeCompare(nameB);
+            });
+            normalSorted = "Alpha";
+            break;
+          default:
+            normalSorted = "None";
+        }
+        sorted = true;
+      }
+  
+      // Pagination variables
+      const itemsPerPage = 6;
+      const currentPage = parseInt(req.query.page) || 1;
+      const totalPages = Math.ceil(products.length / itemsPerPage);
+      const paginatedProducts = products.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  
+      // Render the shop page with the prepared data
+      res.render("userShop", {
+        products: paginatedProducts,
+        userData: userId,
+        cartCount: cartTotalCount,
+        categories,
+        sorted,
+        normalSorted,
+        totalPages,
+        payload,
+        cartTotalCount,
+        wishlistTotalCount,
+        currentPage
+      });
     } catch (error) {
-        console.log(error);
+      console.error("Error loading shop:", error);
+      res.status(500).send("Internal Server Error");
     }
-};
-
+  };
+  
 
 
 
@@ -809,119 +784,159 @@ const addAddress = async (req, res) => {
   
 
   const LoadUserProduct = async (req, res) => {
-    const cartDocument = await cartModel.findOne({ user: req.session.user });
-        let cartTotalCount = 0;
-        if (cartDocument) {
-            cartTotalCount = cartDocument.products.length;
-        } else {
-            console.log("Cart not found");
-        }
-
-        // Fetch the wishlist document for the logged-in user
-        const wishlistDocument = await wishlistModel.findOne({ user: req.session.user });
-        let wishlistTotalCount = 0;
-        if (wishlistDocument) {
-            wishlistTotalCount = wishlistDocument.products.length;
-        } else {
-            console.log("Wishlist not found");
-        }
-    
-    const id=req.params.id
-    const userData=req.session.user
-    const categories=await categoryHelper.getAllCategory()
-    const product = await productModel
-    .findById({_id:id})
-    .populate("productCategory")
-    .lean()
-     
-
-    const categoryId= product.productCategory;
-    
-    const products = await productModel.find({productCategory:categoryId}) 
-    .populate("productCategory")
-    .lean()
-    
-
-    // const cartStatus = await cartHelper.isAProductInCart(userData, product._id);
-    // product.cartStatus = cartStatus;
-
-    const wishlistStatus = await wishlistHelper.isInWishlist(
-      userData,
-      product._id
-    );
-    
-    product.wishlistStatus = wishlistStatus;
-      
-        res.render('detailProductPage', {
-         product,products,
-         userData,categories,
-         cartTotalCount, wishlistTotalCount })
-   
-}
-
-const userCartLoad = async (req, res) => {
     try {
-
-      const cartDocument = await cartModel.findOne({ user: req.session.user });
-      let cartTotalCount = 0;
-      if (cartDocument) {
-          cartTotalCount = cartDocument.products.length;
-      } else {
-          console.log("Cart not found");
-      }
-
-      // Fetch the wishlist document for the logged-in user
-      const wishlistDocument = await wishlistModel.findOne({ user: req.session.user });
-      let wishlistTotalCount = 0;
-      if (wishlistDocument) {
-          wishlistTotalCount = wishlistDocument.products.length;
-      } else {
-          console.log("Wishlist not found");
-      }
-
+      const id = req.params.id;
       const userData = req.session.user;
+      const categories = await categoryHelper.getAllCategory();
   
-      const cartItems = await cartHelper.getAllCartItems(userData);
+      // Fetch the cart document for the logged-in user
+      const cartDocument = await cartModel.findOne({ user: userData });
+      let cartTotalCount = cartDocument ? cartDocument.products.length : 0;
   
-      const cartCount = await cartHelper.getCartCount(userData._id);
+      // Fetch the wishlist document for the logged-in user
+      const wishlistDocument = await wishlistModel.findOne({ user: userData });
+      let wishlistTotalCount = wishlistDocument ? wishlistDocument.products.length : 0;
   
-    //   const wishListCount = await wishlistHelper.getWishListCount(userData._id);
+      const product = await productModel
+        .findById({ _id: id })
+        .populate("productCategory")
+        .lean();
   
-      let totalandSubTotal = await cartHelper.totalSubtotal(
+      const categoryId = product.productCategory;
+  
+      const products = await productModel.find({ productCategory: categoryId })
+        .populate("productCategory")
+        .lean();
+  
+      // Fetch all category offers and map them
+      const categoryOffers = await offerModel.find({ status: true }).lean();
+      
+      const categoryOfferMap = {};
+      categoryOffers.forEach(offer => {
+        if (offer.categoryOffer && offer.categoryOffer.category) {
+          const categoryId = offer.categoryOffer.category.toString();
+          categoryOfferMap[categoryId] = offer.categoryOffer.discount;
+        }
+      });
+  
+      // Add category offers to each product and calculate the best discount
+      products.forEach(product => {
+        if (product.productCategory && product.productCategory._id) {
+          const categoryId = product.productCategory._id.toString();
+          const categoryOffer = categoryOfferMap[categoryId] || 0;
+          
+          // Determine the better discount: product discount or category offer
+          product.finalDiscount = Math.max(product.productDiscount || 0, categoryOffer);
+          product.categoryOffer = categoryOffer; // Just for reference if needed in the EJS
+          console.log(`Product: ${product._id}, Category ID: ${categoryId}, Category Offer: ${categoryOffer}, Final Discount: ${product.finalDiscount}`);
+        } else {
+          product.finalDiscount = product.productDiscount || 0; // Default to product discount if category is not defined
+        }
+      });
+  
+      // Calculate the final discount for the main product
+      const categoryOfferForMainProduct = categoryOfferMap[product.productCategory._id.toString()] || 0;
+      product.finalDiscount = Math.max(product.productDiscount || 0, categoryOfferForMainProduct);
+  
+      const wishlistStatus = await wishlistHelper.isInWishlist(userData, product._id);
+  
+      product.wishlistStatus = wishlistStatus;
+  
+      console.log("This is the product", product);
+  
+      res.render('detailProductPage', {
+        product,
+        products,
         userData,
-        cartItems
-      );
-  
-      let totalAmountOfEachProduct = [];
-      for (i = 0; i < cartItems.length; i++) {
-        let total =
-          cartItems[i].quantity * parseInt(cartItems[i].product.productPrice);
-        total = total;
-        totalAmountOfEachProduct.push(total);
-      }
-  
-      totalandSubTotal = totalandSubTotal;
-      for (i = 0; i < cartItems.length; i++) {
-        cartItems[i].product.productPrice = 
-          cartItems[i].product.productPrice
-        
-      }
-
-      //add wishlist count when you do the wishlist here 
-  
-      res.render("userCart", {
-        userData: req.session.user,
-        cartItems,
-        cartCount,
-        totalAmount: totalandSubTotal,
-        totalAmountOfEachProduct,
+        categories,
         cartTotalCount,
-        wishlistTotalCount,
+        wishlistTotalCount
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      // Handle errors appropriately
+      res.status(500).send('Internal Server Error');
+    }
+  }
+  
+  
+
+  const userCartLoad = async (req, res) => {
+    try {
+      const userData = req.session.user;
+  
+      // Fetch the cart document for the logged-in user
+      const cartDocument = await cartModel.findOne({ user: userData });
+      let cartTotalCount = cartDocument ? cartDocument.products.length : 0;
+  
+      // Fetch the wishlist document for the logged-in user
+      const wishlistDocument = await wishlistModel.findOne({ user: userData });
+      let wishlistTotalCount = wishlistDocument ? wishlistDocument.products.length : 0;
+  
+      // Get all cart items for the user
+      const cartItems = await cartHelper.getAllCartItems(userData);
+  
+      // Get the cart count
+      const cartCount = await cartHelper.getCartCount(userData._id);
+  
+      // Fetch all category offers and map them
+      const categoryOffers = await offerModel.find({ status: true }).lean();
+
+      const categoryOfferMap = {};
+      categoryOffers.forEach(offer => {
+        if (offer.categoryOffer && offer.categoryOffer.category) {
+          const categoryId = offer.categoryOffer.category.toString();
+          categoryOfferMap[categoryId] = offer.categoryOffer.discount;
+        }
+      });
+  
+      let totalAmountOfEachProduct = [];
+      let totalCartAmount = 0;
+  
+      for (let i = 0; i < cartItems.length; i++) {
+        const item = cartItems[i];
+        const product = item.product;
+  
+        // Determine the applicable category offer
+        const categoryId = product.productCategory ? product.productCategory.toString() : null;
+        const categoryOffer = categoryId ? categoryOfferMap[categoryId] : 0;
+  
+        // Calculate the final discount: the higher of the product's own discount or the category offer
+        const finalDiscount = Math.max(product.productDiscount || 0, categoryOffer || 0);
+  
+        // Calculate the final price after applying the discount
+        const discountedPrice = product.productPrice - (product.productPrice * finalDiscount / 100);
+  
+        // Calculate the total amount for each product in the cart (quantity * discounted price)
+        const total = item.quantity * discountedPrice;
+        totalAmountOfEachProduct.push(total);
+  
+        // Update the total cart amount
+        totalCartAmount += total;
+  
+        // Store the final discounted price and discount used for each product
+        cartItems[i].product.finalDiscount = finalDiscount;
+        cartItems[i].product.discountedPrice = discountedPrice;
+      }
+
+      console.log("THis is the cart Items", cartItems);
+  
+      // Render the cart page with updated information
+      res.render("userCart", {
+        userData,
+        cartItems,
+        cartCount,
+        totalAmount: totalCartAmount, // Total amount for all products in the cart
+        totalAmountOfEachProduct, // Array of total amounts per product
+        cartTotalCount,
+        wishlistTotalCount
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
     }
   };
+  
   
   const addToCart = async (req, res) => {
     const userId = req.session.user;
@@ -988,73 +1003,91 @@ const userCartLoad = async (req, res) => {
       const userId = req.session.user;
       const userData = await user.findById({ _id: userId });
       let cartItems = await cartHelper.getAllCartItems(userId);
-      let totalandSubTotal = await cartHelper.totalSubtotal(userId, cartItems);
+  
+      // Fetch category offers and map them
+      const categoryOffers = await offerModel.find({ status: true }).lean();
+      const categoryOfferMap = {};
+      categoryOffers.forEach(offer => {
+        if (offer.categoryOffer && offer.categoryOffer.category) {
+          const categoryId = offer.categoryOffer.category.toString();
+          categoryOfferMap[categoryId] = offer.categoryOffer.discount;
+        }
+      });
+  
+      // Determine the best discount and calculate the final discounted price for each product
+      cartItems.forEach(item => {
+        const product = item.product;
+        const productDiscount = product.productDiscount || 0;
+  
+        // Check if there's a category offer for this product's category
+        const categoryId = product.productCategory ? product.productCategory.toString() : null;
+        const categoryOffer = categoryId ? (categoryOfferMap[categoryId] || 0) : 0;
+  
+        // Use the higher discount between product discount and category offer
+        const finalDiscount = Math.max(productDiscount, categoryOffer);
+  
+        // Calculate the final discounted price
+        const discountedPrice = product.productPrice - (product.productPrice * finalDiscount / 100);
+  
+        // Store the final discounted price and the discount used
+        item.finalPrice = discountedPrice;
+        item.finalDiscount = finalDiscount;
+  
+      });
+  
+      // Calculate total and subtotal based on the final discounted prices
+      let totalandSubTotal = await cartHelper.totalSubtotal(userId, cartItems.map(item => ({
+        ...item,
+        product: { ...item.product, productPrice: item.finalPrice } // Use the final discounted price
+      })));
+
+  
       const now = new Date();
   
       // Fetch and filter coupons directly from MongoDB using aggregation
       const filteredCoupons = await couponModel.aggregate([
         {
           $match: {
-            expiryDate: { $gt: now }, // Not expired
-            usedBy: { $not: { $elemMatch: { $eq: userId } } } // Not used by the current user
+            expiryDate: { $gt: new Date() },  // Coupons that are not expired
+            usedBy: { $nin: [new ObjectId(userId)] },  // Coupons that are not used by the current user
+            isActive: "Active"  // Coupons that are marked as active
           }
         },
         {
-          $sort: { createdAt: -1 } // Sort by createdAt in descending order
+          $sort: { createdAt: -1 }  // Sort coupons by creation date in descending order
         }
       ]);
-  
-      console.log("This is the filtered coupons", filteredCoupons);
+
   
       let cart = await cartModel.findOne({ user: userId });
   
-      if (cart.coupon != null) {
+      let totalAmountOfEachProduct = [];
+      cartItems.forEach(item => {
+        const total = item.finalPrice * item.quantity;
+        totalAmountOfEachProduct.push(total);
+      });
+  
+      // Check if there's a coupon applied to the cart
+      if (cart && cart.coupon != null) {
         const appliedCoupon = await couponModel.findOne({ code: cart.coupon });
-        cartItems.couponAmount = appliedCoupon.discount;
+        cartItems.couponAmount = appliedCoupon ? appliedCoupon.discount : 0;
         cartItems.coupon = cart.coupon;
-  
-        // Calculate total amount for each product
-        let totalAmountOfEachProduct = [];
-        for (let i = 0; i < cartItems.length; i++) {
-          const product = cartItems[i].product;
-          const quantity = cartItems[i].quantity;
-          const total = product.productPrice * quantity;
-          totalAmountOfEachProduct.push(total);
-        }
-  
-        console.log("This is cartItems.coupon when there is coupon", cart);
-  
-        res.render("checkout", {
-          userData,
-          cartItems,
-          totalandSubTotal,
-          totalAmountOfEachProduct,
-          coupons: filteredCoupons,
-        });
       } else {
-        let totalAmountOfEachProduct = [];
-        // Calculate total amount for each product
-        for (let i = 0; i < cartItems.length; i++) {
-          const product = cartItems[i].product;
-          const quantity = cartItems[i].quantity;
-          const total = product.productPrice * quantity;
-          totalAmountOfEachProduct.push(total);
-        }
-  
-        console.log("This is cartItems.coupon when there is no coupon", cartItems);
-  
-        res.render("checkout", {
-          userData,
-          cartItems,
-          totalandSubTotal,
-          totalAmountOfEachProduct,
-          coupons: filteredCoupons,
-        });
       }
+  
+      res.render("checkout", {
+        userData,
+        cartItems,
+        totalandSubTotal,
+        totalAmountOfEachProduct,
+        coupons: filteredCoupons,
+      });
     } catch (error) {
       console.log(error);
+      res.status(500).send('Internal Server Error');
     }
   };
+  
   
 
 
