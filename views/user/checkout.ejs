@@ -433,7 +433,7 @@
                                         <tr>
                                             <th>Total</th>
                                             <td colspan="2" class="product-subtotal">
-                                                <span class="font-xl text-dark fw-900" id="totalAmount">
+                                                <span class="font-xl text-dark fw-900" id="totalAmount1">
                                                     <%= totalandSubTotal %>
                                                 </span>
                                             </td>
@@ -466,17 +466,18 @@
                                         </tr>
                                         <tr>
                                             <th>Total</th>
-                                            <td colspan="2" class="product-subtotal">₹<span
-                                                    class="font-xl text-dark fw-900" id="totalAmount">
-                                                    <% if (cartItems.couponAmount >0) { %>
-                                                        <%= Math.round(totalandSubTotal - (totalandSubTotal * cartItems.couponAmount / 100)) %>
-
-                                                    <% } else {%>
-                                                        <%= totalandSubTotal %>
-                                                    <% } %>
-                                                </span>
+                                            <td colspan="2" class="product-subtotal">
+                                              ₹<span class="font-xl text-dark fw-900" id="totalAmount">
+                                                <% 
+                                                  let discountedTotal = cartItems.couponAmount > 0
+                                                    ? Math.round(totalandSubTotal - (totalandSubTotal * cartItems.couponAmount / 100))
+                                                    : totalandSubTotal;
+                                                %>
+                                                <%= discountedTotal %>
+                                              </span>
                                             </td>
-                                        </tr>
+                                          </tr>
+                                          
                                     </tbody>
                                 </table>
                                 
@@ -489,23 +490,27 @@
                                 <div class="payment_option">
                                     <div class="custome-radio">
                                         <input class="form-check-input" required="" type="radio" name="payment_option" value="RazorPay" id="exampleRadios3" checked="">
-                                        <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-target="#bankTranfer" aria-controls="bankTranfer">RazorPay</label>
-                                        <div class="form-group collapse in" id="bankTranfer">
-                                            <p class="text-muted mt-5">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration. </p>
+                                        <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-bs-target="#razorPayDetails" aria-controls="razorPayDetails">RazorPay</label>
+                                        <div class="form-group collapse show" id="razorPayDetails">
                                         </div>
                                     </div>
                                     <div class="custome-radio">
-                                        <input class="form-check-input" required="" type="radio" name="payment_option" value="Wallet" id="exampleRadios4" checked="">
-                                        <label class="form-check-label" for="exampleRadios4" data-bs-toggle="collapse" data-target="#checkPayment" aria-controls="checkPayment">Wallet</label>
-                                        <div class="form-group collapse in" id="checkPayment">
-                                            <p class="text-muted mt-5">Please send your cheque to Store Name, Store Street, Store Town, Store State / County, Store Postcode. </p>
+                                        <input class="form-check-input" required="" type="radio" name="payment_option" value="Wallet" id="exampleRadios4">
+                                        <label class="form-check-label" for="exampleRadios4" data-bs-toggle="collapse" data-bs-target="#walletDetails" aria-controls="walletDetails">Wallet</label>
+                                        <div class="form-group collapse" id="walletDetails">
                                         </div>
                                     </div>
-                                    <div class="custome-radio">
-                                        <input class="form-check-input" required="" type="radio" name="payment_option" value="COD" id="exampleRadios5" checked="">
-                                        <label class="form-check-label" for="exampleRadios5" data-bs-toggle="collapse" data-target="#paypal" aria-controls="paypal">COD</label>
-                                    </div>
+                                    <% if (totalandSubTotal < 1000) { %>
+                                        <div class="custome-radio">
+                                            <input class="form-check-input" required="" type="radio" name="payment_option" value="COD" id="exampleRadios5">
+                                            <label class="form-check-label" for="exampleRadios5" data-bs-toggle="collapse" data-bs-target="#codDetails" aria-controls="codDetails">COD</label>
+                                            <div class="form-group collapse" id="codDetails">
+                                                <p class="text-muted mt-5">Cash on Delivery option is available for orders less than ₹1000.</p>
+                                            </div>
+                                        </div>
+                                    <% } %>
                                 </div>
+                                
                             </div>
                             <a id="placeOrder" class="btn btn-fill-out btn-block mt-30">Place Order</a>
                         </div>
@@ -723,6 +728,8 @@
     <script src="/public/user-assets/js/maind134.js?v=3.4"></script>
     <script src="/public/user-assets/js/shopd134.js?v=3.4"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.6.1/toastify.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 
     <script>
         $(document).ready(function () {
@@ -731,6 +738,7 @@
             let payment = $("input[name='payment_option']:checked").val();
             let code = document.getElementById("couponCodeTable").textContent.trim();
             const totalAmount = document.getElementById("totalAmount").innerText.trim();
+            console.log("This is the totlaalsdkfl", totalAmount);
             const data = {
               addressId: address,
               paymentOption: payment,
@@ -862,7 +870,7 @@
                             contentType: 'application/json',
                             data: JSON.stringify({
                                 addressId: address,
-                                paymentOption: paymentMethod,
+                                paymentOption: 'payment pending',
                                 status: "payment pending"
                             }),
                             success: function (data) {

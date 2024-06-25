@@ -18,6 +18,8 @@
     <!-- Template CSS -->
     <link rel="stylesheet" href="/public/user-assets/css/maind134.css?v=3.4">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.6.1/toastify.min.css">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 </head>
 
 <body>
@@ -242,6 +244,12 @@
                       </tr>
                     </thead>
                     <tbody>
+                      <% if (orderDetails.paymentMethod!="payment pending" || orderDetails.status!="cancelled") { %>
+                        <div class="col-lg-6 col-md-6 mb-lg-0  pt-3">
+                          <button class="btn btn- text-end" id="invoice">Download Invoice</button>
+                        </div>
+                        <% } %>
+
                         <% for (let i = 0; i < productDetails.length; i++) { %>
                         <tr>
                             <td class="image product-thumbnail">
@@ -324,24 +332,21 @@
       
       
                           <td class="action" data-title="Remove">
-                            <% if (productDetails[i].products.status=="cancelled" ) { %>
+                            <% if (productDetails[i].products.status == "cancelled") { %>
                               <a href="#" class="text-muted">Cancelled</a>
-                              <% } else if (productDetails[i].products.status=="delivered" ) { %>
-                                <a onclick="returnOrder('<%=productDetails[i]._id%>','<%=productDetails[i].products._id%>')"
-                                  class="text-Primary">Return</a>
-                                <% } else if (productDetails[i].products.status=="return pending" ) { %>
-                                  <a href="#" class="text-muted">Return Pending</a>
-                                  <% } else if (productDetails[i].products.status=="returned" ) { %>
-                                    <a href="#" class="text-muted">Returned</a>
-                                    <% } else if (productDetails[i].products.status=="payment pending" ) { %>
-                                      <a onclick="retryPayment('<%=productDetails[0].orderId%>')"
-                                        class="text-muted">Retry</a>>
-                                      <% } else { %>
-                                        <a onclick="cancelOrder('<%=productDetails[i]._id%>','<%=productDetails[i].products._id%>')"
-                                          class="text-danger">Cancel</a>
-    
-                                        <% } %>
+                            <% } else if (productDetails[i].products.status == "delivered") { %>
+                              <a onclick="returnOrder('<%= productDetails[i]._id %>', '<%= productDetails[i].products._id %>')" class="text-primary">Return</a>
+                            <% } else if (productDetails[i].products.status == "return pending") { %>
+                              <a href="#" class="text-muted">Return Pending</a>
+                            <% } else if (productDetails[i].products.status == "returned") { %>
+                              <a href="#" class="text-muted">Returned</a>
+                            <% } else if (productDetails[i].products.status === "payment pending") { %>
+                              <a onclick="retryPayment('<%= productDetails[i].orderId %>')" class="text-muted">Retry</a>
+                            <% } else { %>
+                              <a onclick="cancelOrder('<%= productDetails[i]._id %>', '<%= productDetails[i].products._id %>')" class="text-danger">Cancel</a>
+                            <% } %>
                           </td>
+                          
                         </tr>
                         <% } %>
       
@@ -627,6 +632,7 @@
     <!-- Template  JS -->
     <script src="/public/user-assets/js/maind134.js?v=3.4"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.6.1/toastify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/easyinvoice/dist/easyinvoice.min.js"></script>
 
     <script>
       const cancelOrder = (orderId, singleOrderId) => {
@@ -665,35 +671,313 @@
 
 <script>
   const returnOrder = (orderId, singleOrderId) => {
-    const prices=parseInt(document.getElementById("price-span"+singleOrderId).textContent);
+    const priceElement = document.getElementById("price-span" + singleOrderId);
+    const prices = parseInt(priceElement ? priceElement.textContent : 0);
+
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'You will not be able to undo this',
+      title: 'Reason for Return?',
+      text: ' Please provide a reason for returning the order',
       icon: 'warning',
+      input: 'text', // Add a text input for the reason
+      inputPlaceholder: 'Enter the reason for return',
       showCancelButton: true,
       confirmButtonText: 'Yes, return it!',
       cancelButtonText: 'Cancel',
       reverseButtons: true,
+      preConfirm: (reason) => {
+        // Validate the reason input, it should not be empty
+        if (!reason) {
+          Swal.showValidationMessage('Please provide a reason for the return');
+          return false; // Prevents the dialog from closing
+        }
+        return reason; // Pass the reason to the then function
+      }
     }).then((response) => {
-      console.log(response);
       if (response.isConfirmed) {
+        const returnReason = response.value; // Get the reason from the user's input
+
+        // Log for debugging
+        console.log('Return Reason:', returnReason);
+
         $.ajax({
-          url: `/returnSingleOrder?orderId=${orderId}&singleOrderId=${singleOrderId}&price=${prices}`,
+          url: `/returnSingleOrder?orderId=${orderId}&singleOrderId=${singleOrderId}&price=${prices}&reason=${encodeURIComponent(returnReason)}`,
           method: "PATCH",
         }).done(response => {
-          Swal.fire("Successfull", `Order Returned`, "success").then(() => {
+          Swal.fire("Success", `Order returned successfully`, "success").then(() => {
             location.reload();
-          })
+          });
         }).fail((error) => {
-          Swal.fire("Successfull", `${error.responseJSON.message}`, "success").then(() => {
-            location.reload()
-          })
-        })
+          Swal.fire("Error", `${error.responseJSON.message}`, "error").then(() => {
+            location.reload();
+          });
+        });
       }
-    })
-
+    });
   }
 </script>
+
+<!-- <script>
+  $(document).ready(function () {
+    $('#invoice').click((e) => {
+
+      let productDetails = JSON.parse(document.getElementById('productDetails').value);
+
+
+      console.log('product',productDetails);
+
+      e.preventDefault();
+      ;
+      Swal.fire({
+        title: 'Do you want to download Invoice?',
+        showCancelButton: true,
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          let filteredProducts = productDetails.filter((product) => {
+            return product.products.status !== "cancelled";
+          });
+          console.log('filter',filteredProducts);
+          let products = filteredProducts.map((product) => ({
+            quantity: product.products.quantity,
+            description: product.product.productName,
+            tax: 0,
+            price: product.product.productPrice
+          }));
+          
+          let totalAmount = products.reduce((total, product) => total + product.price, 0);
+          if (filteredProducts[0].couponAmount > 0) {
+            let couponPercentage = filteredProducts[0].couponAmount;
+            let couponDeduction = (totalAmount * couponPercentage) / 100
+            products.push({
+              quantity: 1,
+              description: "Coupon Deduction",
+              tax: 0,
+              price: -couponDeduction,
+            })
+          }
+
+
+
+          const data = {
+            "apiKey": "free",
+            "mode": "development",
+            "documentTitle": "INVOICE ",
+            "currency": "INR",
+            "taxNotation": "GST",
+            "marginTop": 25,
+            "marginRight": 25,
+            "marginLeft": 25,
+            "marginBottom": 25,
+            "logo": "https://public.easyinvoice.cloud/img/logo_en_original.png",
+            "sender": {
+              "company": "Snatch-It",
+              "address": "Hightech City, Bangalore",
+              "zip": "532576",
+              "city": "Gurgaon",
+              "country": "India"
+            },
+            "client": {
+              "company":  productDetails[0].address.name ,
+              "address": productDetails[0].address.house,
+              "zip": "567855",
+              "city": productDetails[0].address.city,
+              "country": productDetails[0].address.country
+            },
+            "invoiceNumber": "2021.0001",
+            "invoiceDate": "12-03-2024",
+            "products": products,
+            "bottomNotice": "Thank you for your business."
+          };
+          console.log(data)
+
+          easyinvoice.createInvoice(data, function (result) {
+            easyinvoice.download('SnatchIT-invoice.pdf', result.pdf);
+            console.log("success")
+          });
+        }
+      });
+    });
+  }); 
+</script> -->
+
+<script>
+  $(document).ready(function () {
+    $('#invoice').click((e) => {
+      // Prevent the default form submission
+      e.preventDefault();
+
+      // Parse the productDetails JSON from the hidden input field
+      let productDetails = JSON.parse(document.getElementById('productDetails').value);
+
+      console.log('Product Details:', productDetails);
+
+      // Show the Swal confirmation dialog
+      Swal.fire({
+        title: 'Do you want to download the Invoice?',
+        showCancelButton: true,
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Filter out cancelled products
+          let filteredProducts = productDetails.filter((product) => {
+            return product.products.status !== "cancelled";
+          });
+
+          console.log('Filtered Products:', filteredProducts);
+
+          // Map the filtered products to the format required by the invoice
+          let products = filteredProducts.map((product) => ({
+            quantity: product.products.quantity,
+            description: product.product.productName,
+            tax: 0,
+            price: product.products.productPrice, // Apply product-specific discount
+            // discount: product.products.discount
+          }));
+
+          // Calculate the total amount
+          let totalAmount = products.reduce((total, product) => total + product.price * product.quantity, 0);
+
+          // Check if there is a coupon discount to apply
+          if (filteredProducts[0].couponAmount > 0) {
+            let couponAmount = filteredProducts[0].couponAmount;
+            products.push({
+              quantity: 1,
+              description: "Coupon Discount",
+              tax: 0,
+              price: -couponAmount // Subtract the coupon discount from the total amount
+            });
+          }
+
+          // Log the calculated invoice data for debugging
+          console.log('Invoice Products:', products);
+          console.log('Total Amount:', totalAmount);
+
+          // Create the invoice data
+          const data = {
+            "apiKey": "free", // Use your API key here
+            "mode": "development", // Change to "production" for live invoices
+            "documentTitle": "INVOICE", // Title of the document
+            "currency": "INR", // Currency
+            "taxNotation": "GST", // Tax notation
+            "marginTop": 25,
+            "marginRight": 25,
+            "marginLeft": 25,
+            "marginBottom": 25,
+            "logo": "https://public.easyinvoice.cloud/img/logo_en_original.png", // Logo URL
+            "sender": {
+              "company": "Shan Apparels", // Sender company details
+              "address": "Sahayagiri Post, Marayoor",
+              "zip": "685620",
+              "city": "Munnar",
+              "country": "India"
+            },
+            "client": {
+              "company": productDetails[0].address.name, // Client details from productDetails
+              "address": productDetails[0].address.house + ', ' + productDetails[0].address.street + ', ' + productDetails[0].address.area, // Concatenating address details
+              "zip": productDetails[0].address.pin.toString(), // Convert pin to string
+              "city": productDetails[0].address.city,
+              "country": productDetails[0].address.country
+            },
+            "invoiceNumber": productDetails[0].orderId.toString(), // Invoice number from the orderId
+            "invoiceDate": new Date().toLocaleDateString(), // Current date as the invoice date
+            "products": products, // Products array
+            "bottomNotice": "Thank you for your business." // Bottom notice
+          };
+
+          console.log('Invoice Data:', data);
+
+          // Create and download the invoice using easyinvoice
+          easyinvoice.createInvoice(data, function (result) {
+            easyinvoice.download('Shan Apparels-invoice.pdf', result.pdf);
+            console.log("Invoice created and downloaded successfully.");
+          });
+        }
+      });
+    });
+  });
+</script>
+
+
+<script>
+  const retryPayment = (orderId) => {
+    console.log(orderId);
+    fetch(`/createRazorpayOrder?orderId=${orderId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        amount: 100000, // Total amount to be paid in paise (e.g., ₹100 = 10000 paise)
+        currency: 'INR', // Currency code
+        description: 'Test Transaction', // Description of the order
+        orderId: orderId
+      }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Open Razorpay payment modal
+        console.log('Received data from server:', data);
+        const orderId = data.order_id;
+        const totalAmount = data.totalAmount
+        const amount = totalAmount * 100
+
+        var options = {
+          "key": "rzp_test_aGNUOMnoTXmBAS",
+          "amount": amount, // Example amount, replace with actual amount
+          "currency": "INR",
+          "name": "Shan Apparels",
+          "description": 'Test Transaction',
+          "image": "http://localhost:4004/public/user-assets/imgs/theme/icons/logo.png",
+          "order_id": orderId, // Use the order_id received from the server
+          "handler": function (response) {
+            // Handle successful payment
+            console.log('Payment successful:', response);
+            // Send the payment details to your server for verification
+            fetch('/paymentSuccess', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                orderId: orderId, // Use order_id instead of data.id
+                paymentId: response.razorpay_payment_id,
+              }),
+            })
+              .then(response => response.json())
+              .then(data => {
+                console.log('Verification response:', data);
+                // Redirect to a success page or display a success message
+                window.location.href = '/orderSuccessPage';
+
+              })
+              .catch(error => {
+                console.error('Error verifying payment:', error);
+                // Handle payment verification error
+              });
+          },
+          "prefill": {
+            "name": "Gaurav Kumar",
+            "email": "gaurav.kumar@example.com",
+            "contact": "9000090000"
+          },
+          "theme": {
+            "color": "#3399cc"
+          }
+        };
+
+        var rzp = new Razorpay(options);
+        rzp.open();
+      })
+      .catch(error => {
+        console.error('Error creating Razorpay order:', error);
+        // Handle order creation error                                                                                                                                                                                                                 
+      });
+  }
+</script>
+
+
 
 </body>
 

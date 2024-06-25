@@ -3,6 +3,7 @@
 
 
 <!-- Mirrored from wp.alithemes.com/html/evara/evara-frontend/page-account.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 15 Jul 2023 10:11:15 GMT -->
+
 <head>
     <meta charset="utf-8">
     <title>Shan Apparels</title>
@@ -23,8 +24,9 @@
 </head>
 
 <body>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <header class="header-area header-style-1 header-height-2">
-        
+
         <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
             <div class="container">
                 <div class="header-wrap">
@@ -46,10 +48,10 @@
                                             <span class="pro-count blue">
                                                 <%= wishlistTotalCount %>
                                             </span>
-                                        <% } %>
+                                            <% } %>
                                     </a>
                                 </div>
-                                
+
 
                                 <div class="header-action-icon-2">
                                     <a class="mini-cart-icon" href="/cart">
@@ -58,7 +60,7 @@
                                             <span class="pro-count blue">
                                                 <%= cartTotalCount %>
                                             </span>
-                                        <% } %>
+                                            <% } %>
                                     </a>
                                 </div>
                             </div>
@@ -78,22 +80,22 @@
                             <a class="categori-button-active" href="#">
                                 <span class="fi-rs-apps"></span> Browse Categories
                             </a>
-                           
+
                         </div>
                         <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
                             <nav>
                                 <ul>
                                     <li><a class="active" href="/userHome">Home </a>
-                                        
+
                                     </li>
                                     <li>
                                         <a href="#">About</a>
                                     </li>
                                     <li><a href="/userShop">Shop </a>
-                                        
+
                                     </li>
-                                    
-                                    
+
+
                                     <li><a href="#">Pages </a>
                                     </li>
                                     <li>
@@ -118,7 +120,8 @@
                                     <ul>
                                         <li>
                                             <div class="shopping-cart-img">
-                                                <a href="shop-product-right.html"><img alt="Evara" src="/public/user-assets/imgs/shop/thumbnail-3.jpg"></a>
+                                                <a href="shop-product-right.html"><img alt="Evara"
+                                                        src="/public/user-assets/imgs/shop/thumbnail-3.jpg"></a>
                                             </div>
                                             <div class="shopping-cart-title">
                                             </div>
@@ -128,7 +131,8 @@
                                         </li>
                                         <li>
                                             <div class="shopping-cart-img">
-                                                <a href="shop-product-right.html"><img alt="Evara" src="/public/user-assets/imgs/shop/thumbnail-4.jpg"></a>
+                                                <a href="shop-product-right.html"><img alt="Evara"
+                                                        src="/public/user-assets/imgs/shop/thumbnail-4.jpg"></a>
                                             </div>
                                             <div class="shopping-cart-title">
                                             </div>
@@ -170,20 +174,31 @@
                                 <div class="dashboard-menu">
                                     <ul class="nav flex-column" role="tablist">
                                         <li class="nav-item">
-                                            <a class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" href="#dashboard" role="tab" aria-controls="dashboard" aria-selected="false"><i class="fi-rs-settings-sliders mr-10"></i>Dashboard</a>
+                                            <a class="nav-link active" id="dashboard-tab" data-bs-toggle="tab"
+                                                href="#dashboard" role="tab" aria-controls="dashboard"
+                                                aria-selected="false"><i
+                                                    class="fi-rs-settings-sliders mr-10"></i>Dashboard</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="#orders" role="tab" aria-controls="orders" aria-selected="false"><i class="fi-rs-shopping-bag mr-10"></i>Orders</a>
+                                            <a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="#orders"
+                                                role="tab" aria-controls="orders" aria-selected="false"><i
+                                                    class="fi-rs-shopping-bag mr-10"></i>Orders</a>
                                         </li>
-                                        
+
                                         <li class="nav-item">
-                                            <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address" role="tab" aria-controls="address" aria-selected="true"><i class="fi-rs-marker mr-10"></i>My Address</a>
+                                            <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address"
+                                                role="tab" aria-controls="address" aria-selected="true"><i
+                                                    class="fi-rs-marker mr-10"></i>My Address</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" id="account-detail-tab" data-bs-toggle="tab" href="#add-address" role="tab" aria-controls="add-address" aria-selected="true"><i class="fi-rs-user mr-10"></i>Add Address</a>
+                                            <a class="nav-link" id="account-detail-tab" data-bs-toggle="tab"
+                                                href="#add-address" role="tab" aria-controls="add-address"
+                                                aria-selected="true"><i class="fi-rs-user mr-10"></i>Add Address</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" id="account-detail-tab" data-bs-toggle="tab" href="#account-detail" role="tab" aria-controls="account-detail" aria-selected="true"><i class="fi-rs-user mr-10"></i>Account details</a>
+                                            <a class="nav-link" id="account-detail-tab" data-bs-toggle="tab"
+                                                href="#account-detail" role="tab" aria-controls="account-detail"
+                                                aria-selected="true"><i class="fi-rs-user mr-10"></i>Account details</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" id="account-security-tab" data-bs-toggle="tab"
@@ -197,20 +212,33 @@
                                                 aria-selected="false"><i class="fi-rs-user mr-10"></i>Wallet</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="/logout"><i class="fi-rs-sign-out mr-10"></i>Logout</a>
+                                            <a class="nav-link" id="addMoney-detail-tab" data-bs-toggle="tab"
+                                                href="#addMoney" role="tab" aria-controls="addMoney-detail"
+                                                aria-selected="false">
+                                                <i class="fas fa-wallet mr-10"></i>Add Money
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/logout"><i
+                                                    class="fi-rs-sign-out mr-10"></i>Logout</a>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
                             <div class="col-md-8">
                                 <div class="tab-content dashboard-content">
-                                    <div class="tab-pane fade active show" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+                                    <div class="tab-pane fade active show" id="dashboard" role="tabpanel"
+                                        aria-labelledby="dashboard-tab">
                                         <div class="card">
                                             <div class="card-header">
-                                                <h5 class="mb-0">Hello <%= userData.name %> </h5>
+                                                <h5 class="mb-0">Hello <%= userData.name %>
+                                                </h5>
                                             </div>
                                             <div class="card-body">
-                                                <p>From your account dashboard. you can easily check &amp; view your <a href="#">recent orders</a>, manage your <a href="#">shipping and billing addresses</a> and <a href="#">edit your password and account details.</a></p>
+                                                <p>From your account dashboard. you can easily check &amp; view your <a
+                                                        href="#">recent orders</a>, manage your <a href="#">shipping and
+                                                        billing addresses</a> and <a href="#">edit your password and
+                                                        account details.</a></p>
                                             </div>
                                         </div>
                                     </div>
@@ -233,122 +261,158 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody id="ordersTableBody">
-                                                            <% orderDetails.forEach(element => { %>
+                                                            <% orderDetails.forEach(element=> { %>
                                                                 <tr>
-                                                                    <td>#<%= element.orderId %></td>
-                                                                    <td><%= element.formattedDate %></td>
-                                                                    <td>
-                                                                        <% element.products.forEach(product => { %>
-                                                                            <%= product.product.productName %><br> <!-- Display product names -->
-                                                                        <% }) %>
+                                                                    <td>#<%= element.orderId %>
                                                                     </td>
-                                                                    <td><%= element.status %></td> <!-- Assuming you have a status field in element -->
-                                                                    <td><%= element.formattedTotal %></td>
                                                                     <td>
-                                                                        <a href="/orderDetails/<%= element._id %>" class="btn-small d-block text-primary">View</a>
+                                                                        <%= element.formattedDate %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <% element.products.forEach(product=> { %>
+                                                                            <%= product.product.productName %><br>
+                                                                                <!-- Display product names -->
+                                                                                <% }) %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= element.status %>
+                                                                    </td>
+                                                                    <!-- Assuming you have a status field in element -->
+                                                                    <td>
+                                                                        <%= element.formattedTotal %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <a href="/orderDetails/<%= element._id %>"
+                                                                            class="btn-small d-block text-primary">View</a>
                                                                     </td>
                                                                 </tr>
-                                                            <% }) %>
+                                                                <% }) %>
                                                         </tbody>
-                                                        
+
                                                     </table>
                                                 </div>
                                                 <nav aria-label="Page navigation">
                                                     <ul class="pagination justify-content-center" id="pagination">
-                                                        <% if (currentPage > 1) { %>
+                                                        <% if (currentPage> 1) { %>
                                                             <li class="page-item">
-                                                                <a class="page-link" href="#" data-page="<%= currentPage - 1 %>">&laquo;</a>
+                                                                <a class="page-link" href="#"
+                                                                    data-page="<%= currentPage - 1 %>">&laquo;</a>
                                                             </li>
-                                                        <% } %>
-                                                        <% for (let i = 1; i <= totalPages; i++) { %>
-                                                            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                                                                <a class="page-link" href="#" data-page="<%= i %>"><%= i %></a>
-                                                            </li>
-                                                        <% } %>
-                                                        <% if (currentPage < totalPages) { %>
-                                                            <li class="page-item">
-                                                                <a class="page-link" href="#" data-page="<%= currentPage + 1 %>">&raquo;</a>
-                                                            </li>
-                                                        <% } %>
+                                                            <% } %>
+                                                                <% for (let i=1; i <=totalPages; i++) { %>
+                                                                    <li
+                                                                        class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                                                        <a class="page-link" href="#"
+                                                                            data-page="<%= i %>">
+                                                                            <%= i %>
+                                                                        </a>
+                                                                    </li>
+                                                                    <% } %>
+                                                                        <% if (currentPage < totalPages) { %>
+                                                                            <li class="page-item">
+                                                                                <a class="page-link" href="#"
+                                                                                    data-page="<%= currentPage + 1 %>">&raquo;</a>
+                                                                            </li>
+                                                                            <% } %>
                                                     </ul>
                                                 </nav>
                                             </div>
                                         </div>
                                     </div>
-                                    
-                                      
-                                    <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
+
+
+                                    <div class="tab-pane fade" id="address" role="tabpanel"
+                                        aria-labelledby="address-tab">
                                         <div class="row">
-                                                <% userData.address.forEach(function(address, index) { %>
-                                                    <div class="col-lg-6">
-                                                        <div class="card mb-3">
-                                                            <div class="card-header">
-                                                                <h5 class="mb-0">Address</h5>
-                                                            </div>
-                                                            <div class="card-body">
-                                                                <input class="hidden" name="selectedAddress" value="<%= address._id %>">
-                                                                <address>
-                                                                    <%= address.housename %> <%= address.streetname %>,<br>
-                                                                    <%= address.areaname %>,<br>
-                                                                    <%= address.districtname %>,<br>
-                                                                    <%= address.statename %>, <%= address.pin %>
-                                                                </address>
-                                                                <p><%= address.countryname %></p>
-                                                                <button href="#" class="btn-small" onclick="editAddress('<%= userData._id%>','<%= address._id %>')" style="background-color: #2B1754; color: white;">Edit</button>
-                                                                <button href="#" class="btn-small" onclick="deleteAddress('<%= address._id %>')" style="background-color: #ff0000; color: white;">Delete</button>
-                                                            </div>
+                                            <% userData.address.forEach(function(address, index) { %>
+                                                <div class="col-lg-6">
+                                                    <div class="card mb-3">
+                                                        <div class="card-header">
+                                                            <h5 class="mb-0">Address</h5>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <input class="hidden" name="selectedAddress"
+                                                                value="<%= address._id %>">
+                                                            <address>
+                                                                <%= address.housename %>
+                                                                    <%= address.streetname %>,<br>
+                                                                        <%= address.areaname %>,<br>
+                                                                            <%= address.districtname %>,<br>
+                                                                                <%= address.statename %>, <%=
+                                                                                        address.pin %>
+                                                            </address>
+                                                            <p>
+                                                                <%= address.countryname %>
+                                                            </p>
+                                                            <button href="#" class="btn-small"
+                                                                onclick="editAddress('<%= userData._id%>','<%= address._id %>')"
+                                                                style="background-color: #2B1754; color: white;">Edit</button>
+                                                            <button href="#" class="btn-small"
+                                                                onclick="deleteAddress('<%= address._id %>')"
+                                                                style="background-color: #ff0000; color: white;">Delete</button>
                                                         </div>
                                                     </div>
+                                                </div>
                                                 <% }); %>
                                         </div>
                                     </div>
 
-                                    <div class="tab-pane fade" id="add-address" role="tabpanel" aria-labelledby="add-address-tab">
+                                    <div class="tab-pane fade" id="add-address" role="tabpanel"
+                                        aria-labelledby="add-address-tab">
                                         <div class="card">
                                             <div class="card-header">
                                                 <h5 class="mb-0">Add Address</h5>
                                             </div>
                                             <div class="card-body">
                                                 <!-- <form  name="formAddress" id="formAddress"> -->
-                                                <form method="post" action="/addAddress" name="formAddress" id="formAddress">
+                                                <form method="post" action="/addAddress" name="formAddress"
+                                                    id="formAddress">
                                                     <div class="row">
                                                         <div class="form-group col-md-12">
                                                             <label>House Name/No.<span class="required">*</span></label>
-                                                            <input class="form-control square" name="housename" type="text" id="housename">
+                                                            <input class="form-control square" name="housename"
+                                                                type="text" id="housename">
                                                             <span id="house-error" class="text-danger"></span>
                                                         </div>
                                                         <div class="form-group col-md-6">
                                                             <label>Street Name <span class="required">*</span></label>
-                                                            <input class="form-control square" name="streetname" type="text" id="streetname">
+                                                            <input class="form-control square" name="streetname"
+                                                                type="text" id="streetname">
                                                             <span id="street-error" class="text-danger"></span>
                                                         </div>
                                                         <div class="form-group col-md-6">
                                                             <label>Area/Locality<span class="required">*</span></label>
-                                                            <input class="form-control square" name="areaname" type="text" id="areaname">
+                                                            <input class="form-control square" name="areaname"
+                                                                type="text" id="areaname">
                                                             <span id="area-error" class="text-danger"></span>
                                                         </div>
                                                         <div class="form-group col-md-6">
                                                             <label>District<span class="required">*</span></label>
-                                                            <input class="form-control square" name="districtname" type="text" id="districtname">
+                                                            <input class="form-control square" name="districtname"
+                                                                type="text" id="districtname">
                                                             <span id="district-error" class="text-danger"></span>
                                                         </div>
                                                         <div class="form-group col-md-6">
                                                             <label>State<span class="required">*</span></label>
-                                                            <input class="form-control square" name="statename" type="text" id="statename">
+                                                            <input class="form-control square" name="statename"
+                                                                type="text" id="statename">
                                                             <span id="state-error" class="text-danger"></span>
                                                         </div>
                                                         <div class="form-group col-md-6">
                                                             <label>Country<span class="required">*</span></label>
-                                                            <input class="form-control square" name="countryname" type="text" id="countryname">
+                                                            <input class="form-control square" name="countryname"
+                                                                type="text" id="countryname">
                                                             <span id="country-error" class="text-danger"></span>
                                                         </div>
                                                         <div class="form-group col-md-6">
                                                             <label>PIN <span class="required">*</span></label>
-                                                            <input class="form-control square" name="pin" type="text" id="pin">
+                                                            <input class="form-control square" name="pin" type="text"
+                                                                id="pin">
                                                             <span id="pin-error" class="text-danger"></span>
                                                         </div>
                                                         <div class="col-md-12">
-                                                            <button type="submit" class="btn btn-fill-out submit" >Save</button>
+                                                            <button type="submit"
+                                                                class="btn btn-fill-out submit">Save</button>
                                                         </div>
                                                     </div>
                                                 </form>
@@ -367,31 +431,38 @@
                                                     <div class="row">
                                                         <div class="form-group col-md-6">
                                                             <label>Full Name <span class="required"></span></label>
-                                                            <input required="" class="form-control square" name="name" type="text" id="name" value="<%= userData.name %>" >
+                                                            <input required="" class="form-control square" name="name"
+                                                                type="text" id="name" value="<%= userData.name %>">
                                                             <span id="nameError" class="text-danger"></span>
                                                         </div>
                                                         <div class="form-group col-md-6">
                                                             <label>Email Address <span class="required"></span></label>
-                                                            <input required="" class="form-control square" name="email" type="email" id="email" value="<%= userData.email %>" readonly>
+                                                            <input required="" class="form-control square" name="email"
+                                                                type="email" id="email" value="<%= userData.email %>"
+                                                                readonly>
                                                             <span id="emailError" class="text-danger"></span>
                                                         </div>
                                                         <div class="form-group col-md-6">
                                                             <label>Phone <span class="required"></span></label>
-                                                            <input required="" class="form-control square" name="phone" type="phone" id="mobile" value="<%= userData.mobile %>" >
+                                                            <input required="" class="form-control square" name="phone"
+                                                                type="phone" id="mobile" value="<%= userData.mobile %>">
                                                             <span id="mobileError" class="text-danger"></span>
                                                         </div>
                                                         <div class="form-group col-md-6">
-                                                            <label>Current Password (enter before save)<spanclass="required">*</span></label>
-                                                            <input required="" class="form-control square"name="password" id="password" type="password">
-                                                            <span id="passwordError" class="text-danger" ></span>
+                                                            <label>Current Password (enter before save)
+                                                                <spanclass="required">*</span></label>
+                                                            <input required="" class="form-control square"
+                                                                name="password" id="password" type="password">
+                                                            <span id="passwordError" class="text-danger"></span>
                                                         </div>
-                                                        
+
                                                         <!-- Add more address fields as needed -->
                                                     </div>
                                                     <div class="d-flex">
                                                         <div class="col-md-4">
-                                                            <button type="submit" class="btn btn-fill-out submit" value="Submit" >Save</button>
-                                                    </div>
+                                                            <button type="submit" class="btn btn-fill-out submit"
+                                                                value="Submit">Save</button>
+                                                        </div>
                                                 </form>
                                             </div>
 
@@ -400,103 +471,139 @@
 
                                 </div>
 
-                            <div class="tab-pane fade" id="account-security" role="tabpanel"
-                                aria-labelledby="account-security-tab">
+                                <div class="tab-pane fade" id="account-security" role="tabpanel"
+                                    aria-labelledby="account-security-tab">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Account Security</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <form name="changePasswordForm" id="changePasswordForm">
+                                                <div>
+                                                    <div class="form-group col-md-6">
+                                                        <label>Old Password<span class="required"></span></label>
+                                                        <input required="" class="form-control square"
+                                                            name="oldPassword" id="oldPassword" type="password">
+                                                        <span id="oldPasswordError" class="text-danger"></span>
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label>New Password<span class="required"></span></label>
+                                                        <input required="" class="form-control square"
+                                                            name="newPassword" id="newPassword" type="password">
+                                                        <span id="newPasswordError" class="text-danger"></span>
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label>Confirm Password<span class="required"></span></label>
+                                                        <input required="" class="form-control square"
+                                                            name="confirmPassword" id="confirmPassword" type="password">
+                                                        <span id="confirmPasswordError" class="text-danger"></span>
+                                                    </div>
+
+                                                    <!-- Add more address fields as needed -->
+                                                </div>
+                                                <div class="d-flex">
+                                                    <div class="col-md-4">
+                                                        <button type="submit" class="btn btn-fill-out submit"
+                                                            value="Submit">Save</button>
+                                                    </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="tab-pane fade show" id="wallet" role="tabpanel"
+                                aria-labelledby="wallet-detail-tab">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h5>Account Security</h5>
+                                        <h4 class="mb-0">Your Wallet <br> (Available Balance: <%= sum %><span
+                                                    class="text-primary"></span> )</h4>
                                     </div>
                                     <div class="card-body">
-                                        <form name="changePasswordForm" id="changePasswordForm">
-                                            <div>
-                                                <div class="form-group col-md-6">
-                                                    <label>Old Password<span class="required"></span></label>
-                                                    <input required="" class="form-control square"
-                                                        name="oldPassword" id="oldPassword" type="password">
-                                                    <span id="oldPasswordError" class="text-danger"></span>
-                                                </div>
-                                                <div class="form-group col-md-6">
-                                                    <label>New Password<span class="required"></span></label>
-                                                    <input required="" class="form-control square"
-                                                        name="newPassword" id="newPassword" type="password">
-                                                    <span id="newPasswordError" class="text-danger"></span>
-                                                </div>
-                                                <div class="form-group col-md-6">
-                                                    <label>Confirm Password<span
-                                                            class="required"></span></label>
-                                                    <input required="" class="form-control square"
-                                                        name="confirmPassword" id="confirmPassword"
-                                                        type="password">
-                                                    <span id="confirmPasswordError" class="text-danger"></span>
-                                                </div>
+                                        <div class="table-responsive container">
+                                            <table class="table" id="walletTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Transaction Id</th>
+                                                        <th>Date</th>
+                                                        <th>Amount</th>
+                                                        <th>Transaction Type</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="walletTableBody">
+                                                    <% for (let i=0; i < walletData.wallet.details.length; i++) { %>
+                                                        <tr>
+                                                            <td>
+                                                                <%= walletData.wallet.details[i].transactionId %>
+                                                            </td>
+                                                            <td>
+                                                                <%= walletData.wallet.details[i].formattedDate %>
+                                                            </td>
+                                                            <td>₹ <%= walletData.wallet.details[i].amount %>
+                                                            </td>
+                                                            <td width="10%">
+                                                                <%= walletData.wallet.details[i].type %>
+                                                            </td>
+                                                        </tr>
+                                                        <% } %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <nav aria-label="Wallet Transaction Pagination">
+                                            <ul class="pagination" id="walletPagination">
+                                                <% if (walletCurrentPage> 1) { %>
+                                                    <li class="page-item"><a class="page-link" href="#"
+                                                            data-page="<%= walletCurrentPage - 1 %>">Previous</a></li>
+                                                    <% } %>
+                                                        <% for (let i=1; i <=totalWalletPages; i++) { %>
+                                                            <li
+                                                                class="page-item <%= i === walletCurrentPage ? 'active' : '' %>">
+                                                                <a class="page-link" href="#" data-page="<%= i %>">
+                                                                    <%= i %>
+                                                                </a>
+                                                            </li>
+                                                            <% } %>
+                                                                <% if (walletCurrentPage < totalWalletPages) { %>
+                                                                    <li class="page-item"><a class="page-link" href="#"
+                                                                            data-page="<%= walletCurrentPage + 1 %>">Next</a>
+                                                                    </li>
+                                                                    <% } %>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
 
-                                                <!-- Add more address fields as needed -->
-                                            </div>
-                                            <div class="d-flex">
-                                                <div class="col-md-4">
-                                                    <button type="submit" class="btn btn-fill-out submit"
-                                                        value="Submit">Save</button>
+                            <div class="tab-pane fade" id="addMoney" role="tabpanel"
+                                aria-labelledby="addMoney-detail-tab">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>Add Money to Wallet</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="addMoneyForm">
+                                            <div class="row">
+                                                <div class="form-group col-md-12">
+                                                    <label for="amount">Enter Amount</label>
+                                                    <input type="number" class="form-control" id="amount" name="amount"
+                                                        required placeholder="Enter amount to add">
                                                 </div>
+                                            </div>
+                                            <div class="mt-3">
+                                                <button type="submit" class="btn btn-fill-out">Add Money</button>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>
-
-                            </div>
-                           
                             </div>
 
-                            <div class="tab-pane fade show" id="wallet" role="tabpanel" aria-labelledby="wallet-detail-tab">
-                                <div class="card">
-                                  <div class="card-header">
-                                    <h4 class="mb-0">Your Wallet <br> (Available Balance: <%= sum %><span class="text-primary"></span> )</h4>
-                                  </div>
-                                  <div class="card-body">
-                                    <div class="table-responsive container">
-                                      <table class="table" id="walletTable">
-                                        <thead>
-                                          <tr>
-                                            <th>Transaction Id</th>
-                                            <th>Date</th>
-                                            <th>Amount</th>
-                                            <th>Transaction Type</th>
-                                          </tr>
-                                        </thead>
-                                        <tbody id="walletTableBody">
-                                          <% for (let i = 0; i < walletData.wallet.details.length; i++) { %>
-                                            <tr>
-                                              <td><%= walletData.wallet.details[i].transactionId %></td>
-                                              <td><%= walletData.wallet.details[i].formattedDate %></td>
-                                              <td>₹ <%= walletData.wallet.details[i].amount %></td>
-                                              <td width="10%"><%= walletData.wallet.details[i].type %></td>
-                                            </tr>
-                                          <% } %>
-                                        </tbody>
-                                      </table>
-                                    </div>
-                                    <nav aria-label="Wallet Transaction Pagination">
-                                      <ul class="pagination" id="walletPagination">
-                                        <% if (walletCurrentPage > 1) { %>
-                                          <li class="page-item"><a class="page-link" href="#" data-page="<%= walletCurrentPage - 1 %>">Previous</a></li>
-                                        <% } %>
-                                        <% for (let i = 1; i <= totalWalletPages; i++) { %>
-                                          <li class="page-item <%= i === walletCurrentPage ? 'active' : '' %>">
-                                            <a class="page-link" href="#" data-page="<%= i %>"><%= i %></a>
-                                          </li>
-                                        <% } %>
-                                        <% if (walletCurrentPage < totalWalletPages) { %>
-                                          <li class="page-item"><a class="page-link" href="#" data-page="<%= walletCurrentPage + 1 %>">Next</a></li>
-                                        <% } %>
-                                      </ul>
-                                    </nav>
-                                  </div>
-                                </div>
-                              </div>
-                              
 
-                        
+
+                        </div>
                     </div>
                 </div>
-            </div>
         </section>
     </main>
     <footer class="main">
@@ -506,11 +613,13 @@
                     <div class="col-lg-7 mb-md-3 mb-lg-0">
                         <div class="row align-items-center">
                             <div class="col flex-horizontal-center">
-                                <img class="icon-email" src="/public/user-assets/imgs/theme/icons/icon-email.svg" alt="">
+                                <img class="icon-email" src="/public/user-assets/imgs/theme/icons/icon-email.svg"
+                                    alt="">
                                 <h4 class="font-size-20 mb-0 ml-3">Sign up to Newsletter</h4>
                             </div>
                             <div class="col my-4 my-md-0 des">
-                                <h5 class="font-size-15 ml-4 mb-0">...and receive <strong>$25 coupon for first shopping.</strong></h5>
+                                <h5 class="font-size-15 ml-4 mb-0">...and receive <strong>$25 coupon for first
+                                        shopping.</strong></h5>
                             </div>
                         </div>
                     </div>
@@ -531,7 +640,8 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="widget-about font-md mb-md-5 mb-lg-0">
                             <div class="logo logo-width-1 wow fadeIn animated">
-                                <a href="index.html"><img src="/public/user-assets/imgs/theme/icons/logo.png" alt="logo"></a>
+                                <a href="index.html"><img src="/public/user-assets/imgs/theme/icons/logo.png"
+                                        alt="logo"></a>
                             </div>
                             <h5 class="mt-20 mb-10 fw-600 text-grey-4 wow fadeIn animated">Contact</h5>
                             <p class="wow fadeIn animated">
@@ -545,10 +655,13 @@
                             </p>
                             <h5 class="mb-10 mt-30 fw-600 text-grey-4 wow fadeIn animated">Follow Us</h5>
                             <div class="mobile-social-icon wow fadeIn animated mb-sm-5 mb-md-0">
-                                <a href="#"><img src="/public/user-assets/imgs/theme/icons/icon-facebook.svg" alt=""></a>
+                                <a href="#"><img src="/public/user-assets/imgs/theme/icons/icon-facebook.svg"
+                                        alt=""></a>
                                 <a href="#"><img src="/public/user-assets/imgs/theme/icons/icon-twitter.svg" alt=""></a>
-                                <a href="#"><img src="/public/user-assets/imgs/theme/icons/icon-instagram.svg" alt=""></a>
-                                <a href="#"><img src="/public/user-assets/imgs/theme/icons/icon-pinterest.svg" alt=""></a>
+                                <a href="#"><img src="/public/user-assets/imgs/theme/icons/icon-instagram.svg"
+                                        alt=""></a>
+                                <a href="#"><img src="/public/user-assets/imgs/theme/icons/icon-pinterest.svg"
+                                        alt=""></a>
                                 <a href="#"><img src="/public/user-assets/imgs/theme/icons/icon-youtube.svg" alt=""></a>
                             </div>
                         </div>
@@ -581,13 +694,16 @@
                             <div class="col-md-8 col-lg-12">
                                 <p class="wow fadeIn animated">From App Store or Google Play</p>
                                 <div class="download-app wow fadeIn animated">
-                                    <a href="#" class="hover-up mb-sm-4 mb-lg-0"><img class="active" src="/public/user-assets/imgs/theme/app-store.jpg" alt=""></a>
-                                    <a href="#" class="hover-up"><img src="/public/user-assets/imgs/theme/google-play.jpg" alt=""></a>
+                                    <a href="#" class="hover-up mb-sm-4 mb-lg-0"><img class="active"
+                                            src="/public/user-assets/imgs/theme/app-store.jpg" alt=""></a>
+                                    <a href="#" class="hover-up"><img
+                                            src="/public/user-assets/imgs/theme/google-play.jpg" alt=""></a>
                                 </div>
                             </div>
                             <div class="col-md-4 col-lg-12 mt-md-3 mt-lg-0">
                                 <p class="mb-20 wow fadeIn animated">Secured Payment Gateways</p>
-                                <img class="wow fadeIn animated" src="/public/user-assets/imgs/theme/payment-method.png" alt="">
+                                <img class="wow fadeIn animated" src="/public/user-assets/imgs/theme/payment-method.png"
+                                    alt="">
                             </div>
                         </div>
                     </div>
@@ -600,71 +716,73 @@
                     <div class="footer-bottom"></div>
                 </div>
                 <div class="col-lg-6">
-                    <p class="float-md-left font-sm text-muted mb-0">&copy; 2022, <strong class="text-brand">Shan Apparels</strong> - Shan Apparels </p>
+                    <p class="float-md-left font-sm text-muted mb-0">&copy; 2022, <strong class="text-brand">Shan
+                            Apparels</strong> - Shan Apparels </p>
                 </div>
                 <div class="col-lg-6">
                     <p class="text-lg-end text-start font-sm text-muted mb-0">
-                        Designed by <a href="http://alithemes.com/" target="_blank">Alithemes.com</a>. All rights reserved
+                        Designed by <a href="http://alithemes.com/" target="_blank">Alithemes.com</a>. All rights
+                        reserved
                     </p>
                 </div>
-            </div>  
+            </div>
         </div>
 
         <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="editCategoryModalLabel">Edit Address</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="editAddressForm">
-                                <input class="form-control square" name="addressid" type="text" id="addressid1" hidden>
-                                <div class="form-group col-md-12">
-                                    <label>House Name/No.<span class="required">*</span></label>
-                                    <input class="form-control square" name="housename" type="text" id="housename1">
-                                    <span id="house-error1" class="text-danger"></span>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>Street Name <span class="required">*</span></label>
-                                    <input class="form-control square" name="streetname" type="text" id="streetname1">
-                                    <span id="street-error1" class="text-danger"></span>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>Area/Locality<span class="required">*</span></label>
-                                    <input class="form-control square" name="areaname" type="text" id="areaname1">
-                                    <span id="area-error1" class="text-danger"></span>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>District<span class="required">*</span></label>
-                                    <input class="form-control square" name="districtname" type="text" id="districtname1">
-                                    <span id="district-error1" class="text-danger"></span>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>State<span class="required">*</span></label>
-                                    <input class="form-control square" name="statename" type="text" id="statename1">
-                                    <span id="state-error1" class="text-danger"></span>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>Country<span class="required">*</span></label>
-                                    <input class="form-control square" name="countryname" type="text" id="countryname1">
-                                    <span id="country-error1" class="text-danger"></span>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>PIN <span class="required">*</span></label>
-                                    <input class="form-control square" name="pin" type="text" id="pin1">
-                                    <span id="pin-error1" class="text-danger"></span>
-                                </div>
-                                <div class="col-md-12">
-                                    <button type="submit" class="btn btn-fill-out submit">Save</button>
-                                </div>
-                            </form>
-                        </div>
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editCategoryModalLabel">Edit Address</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-
+                    <div class="modal-body">
+                        <form id="editAddressForm">
+                            <input class="form-control square" name="addressid" type="text" id="addressid1" hidden>
+                            <div class="form-group col-md-12">
+                                <label>House Name/No.<span class="required">*</span></label>
+                                <input class="form-control square" name="housename" type="text" id="housename1">
+                                <span id="house-error1" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Street Name <span class="required">*</span></label>
+                                <input class="form-control square" name="streetname" type="text" id="streetname1">
+                                <span id="street-error1" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Area/Locality<span class="required">*</span></label>
+                                <input class="form-control square" name="areaname" type="text" id="areaname1">
+                                <span id="area-error1" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>District<span class="required">*</span></label>
+                                <input class="form-control square" name="districtname" type="text" id="districtname1">
+                                <span id="district-error1" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>State<span class="required">*</span></label>
+                                <input class="form-control square" name="statename" type="text" id="statename1">
+                                <span id="state-error1" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Country<span class="required">*</span></label>
+                                <input class="form-control square" name="countryname" type="text" id="countryname1">
+                                <span id="country-error1" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>PIN <span class="required">*</span></label>
+                                <input class="form-control square" name="pin" type="text" id="pin1">
+                                <span id="pin-error1" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-fill-out submit">Save</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-    </div>
+
+            </div>
+        </div>
 
     </footer>
     <!-- Preloader Start -->
@@ -714,7 +832,7 @@
 
 
         function validateForm2() {
-    
+
             const houseRegex = /^(?!\s*$)[a-zA-Z0-9\s]+$/;
             const streetRegex = /^(?!\s*$)[a-zA-Z\s]+$/;
             const areaRegex = /^(?!\s*$)[a-zA-Z\s]+$/;
@@ -723,57 +841,57 @@
             const countryRegex = /^(?!\s*$)[a-zA-Z ]+$/;
             const pincodeRegex = /^\d{6}$/;
             let isValid = true;
-    
-    
+
+
             if (!houseRegex.test(document.getElementById("housename").value)) {
                 document.getElementById("house-error").innerHTML = "Invalid Format";
                 isValid = false;
             } else {
                 document.getElementById("house-error").innerHTML = "";
             }
-    
+
             if (!streetRegex.test(document.getElementById("streetname").value)) {
                 document.getElementById("street-error").innerHTML = "Invalid";
                 isValid = false;
             } else {
                 document.getElementById("street-error").innerHTML = "";
             }
-    
+
             if (!areaRegex.test(document.getElementById("areaname").value)) {
                 document.getElementById("area-error").innerHTML = "Invalid";
                 isValid = false;
             } else {
                 document.getElementById("area-error").innerHTML = "";
             }
-    
+
             if (!districtRegex.test(document.getElementById("districtname").value)) {
                 document.getElementById("district-error").innerHTML = "Invalid";
                 isValid = false;
             } else {
                 document.getElementById("district-error").innerHTML = "";
             }
-    
+
             if (!stateRegex.test(document.getElementById("statename").value)) {
                 document.getElementById("state-error").innerHTML = "Invalid";
                 isValid = false;
             } else {
                 document.getElementById("state-error").innerHTML = "";
             }
-    
+
             if (!countryRegex.test(document.getElementById("countryname").value)) {
                 document.getElementById("country-error").innerHTML = "Invalid";
                 isValid = false;
             } else {
                 document.getElementById("country-error").innerHTML = "";
             }
-    
+
             if (!pincodeRegex.test(document.getElementById("pin").value)) {
                 document.getElementById("pin-error").innerHTML = "Invalid Pincode (should be 6 digits)";
                 isValid = false;
             } else {
                 document.getElementById("pin-error").innerHTML = "";
             }
-    
+
             return isValid;
         }
         document.getElementById("formAddress").addEventListener("submit", (e) => {
@@ -781,272 +899,272 @@
             if (!result) {
                 console.log("there is error")
                 e.preventDefault();
-            }else{
+            } else {
                 console.log("validation passed")
             }
         })
     </script>
-    
-
-<script>
-    ///////////////////EDIT-IN-MODAL////////////////////
-    document.getElementById("editAddressForm").addEventListener("submit", function (event) {
-        event.preventDefault();
-        let formdata = $(this).serialize();
-        let addressId = $(this).find('input[name="addressid"]').val();
-        const valid = validateForm4()
-        console.log("address id :", addressId)
-        if (valid) {
-        $.ajax({
-            url: "/editAddress/" + addressId,
-            method: "PUT",
-            data: formdata,
-            success: (response) => {
-                console.log(response);
-                Toastify({
-                    text: "Address Updated",
-                    duration: 3000,
-                    gravity: "top",
-                    position: "center",
-                    backgroundColor: "green",
-                }).showToast();
-
-                $("#editAddressModal").modal("hide");
-                setTimeout(() => {
-                    location.reload();
-                }, 1000);
-
-            },
-            error: (xhr, status, error) => {
-                console.log(error);
-
-            }
-        });
-    }
-    })
-</script>
-
-<script>////////MODAL////////////////
-    function editAddress(userId, addressId) {
-        console.log("clicked addressEdit", userId, addressId);
-        $.ajax({
-            url: "/addressEditor/" + userId + "/" + addressId,
-            method: 'GET',
-        })
-            .done((response) => {
-                console.log("this is ajax for add modal", response);
-                if (response) {
-                    document.getElementById('addressid1').value = response.address._id;
-                    document.getElementById('housename1').value = response.address.housename;
-                    document.getElementById('streetname1').value = response.address.streetname;
-                    document.getElementById('areaname1').value = response.address.areaname;
-                    document.getElementById('districtname1').value = response.address.districtname;
-                    document.getElementById('statename1').value = response.address.statename;
-                    document.getElementById('countryname1').value = response.address.countryname;
-                    document.getElementById('pin1').value = response.address.pin;
-                    $("#editAddressModal").modal("show");
-
-                }
-            })
-            .fail((error) => {
-                console.log(error);
-            })
-
-    }
 
 
-</script>
-
-<!-- //delete address -->
-<script>
-    const deleteAddress = (addressId) => {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: 'You will not be able to recover this address!',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'Cancel',
-            reverseButtons: true,
-        }).then((response) => {
-            console.log(response);
-
-            if (response.isConfirmed) {
-                console.log(response.isConfirmed);
-                $.ajax({
-                    url:` /deleteAddress/${addressId}`,
-                    type: 'PUT'
-                }).done(response => {
-                    Swal.fire("Successfull", `Address Deleted`, "success").then(() => {
-                        location.reload();
-                    })
-                }).fail((error) => {
-                    Swal.fire("Successfull", `${error.responseJSON.message}`, "success").then(() => {
-                        location.reload()
-                    })
-                })
-            }
-        })
-    }
-
-</script>
-
-<!-- Edit account info ajax -->
-<script>
-    $(document).ready(function () {
-        $("#userDetailsForm").submit(function (event) {
+    <script>
+        ///////////////////EDIT-IN-MODAL////////////////////
+        document.getElementById("editAddressForm").addEventListener("submit", function (event) {
             event.preventDefault();
-            const validate = validateForm();
-            if (validate) {
-                let data = $(this).serialize();
+            let formdata = $(this).serialize();
+            let addressId = $(this).find('input[name="addressid"]').val();
+            const valid = validateForm4()
+            console.log("address id :", addressId)
+            if (valid) {
                 $.ajax({
-                    url: "/updateUser",
+                    url: "/editAddress/" + addressId,
                     method: "PUT",
-                    data: data,
+                    data: formdata,
                     success: (response) => {
-                        if (response.status) {
-                            Toastify({
-                                text: `Account Details Updated`,
-                                duration: 3000,
-                                gravity: "top",
-                                position: "center",
-                                stopOnFocus: true,
-                                style: {
-                                    background: "linear-gradient(to right, aqua, blue)",
-                                },
-                            }).showToast();
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1000);
-                        } else {
-                            document.getElementById("passwordError").innerHTML = `${response.message}`;
+                        console.log(response);
+                        Toastify({
+                            text: "Address Updated",
+                            duration: 3000,
+                            gravity: "top",
+                            position: "center",
+                            backgroundColor: "green",
+                        }).showToast();
 
-                        }
+                        $("#editAddressModal").modal("hide");
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+
+                    },
+                    error: (xhr, status, error) => {
+                        console.log(error);
+
+                    }
+                });
+            }
+        })
+    </script>
+
+    <script>////////MODAL////////////////
+        function editAddress(userId, addressId) {
+            console.log("clicked addressEdit", userId, addressId);
+            $.ajax({
+                url: "/addressEditor/" + userId + "/" + addressId,
+                method: 'GET',
+            })
+                .done((response) => {
+                    console.log("this is ajax for add modal", response);
+                    if (response) {
+                        document.getElementById('addressid1').value = response.address._id;
+                        document.getElementById('housename1').value = response.address.housename;
+                        document.getElementById('streetname1').value = response.address.streetname;
+                        document.getElementById('areaname1').value = response.address.areaname;
+                        document.getElementById('districtname1').value = response.address.districtname;
+                        document.getElementById('statename1').value = response.address.statename;
+                        document.getElementById('countryname1').value = response.address.countryname;
+                        document.getElementById('pin1').value = response.address.pin;
+                        $("#editAddressModal").modal("show");
+
                     }
                 })
-            }
+                .fail((error) => {
+                    console.log(error);
+                })
+
+        }
 
 
+    </script>
+
+    <!-- //delete address -->
+    <script>
+        const deleteAddress = (addressId) => {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You will not be able to recover this address!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+            }).then((response) => {
+                console.log(response);
+
+                if (response.isConfirmed) {
+                    console.log(response.isConfirmed);
+                    $.ajax({
+                        url: ` /deleteAddress/${addressId}`,
+                        type: 'PUT'
+                    }).done(response => {
+                        Swal.fire("Successfull", `Address Deleted`, "success").then(() => {
+                            location.reload();
+                        })
+                    }).fail((error) => {
+                        Swal.fire("Successfull", `${error.responseJSON.message}`, "success").then(() => {
+                            location.reload()
+                        })
+                    })
+                }
+            })
+        }
+
+    </script>
+
+    <!-- Edit account info ajax -->
+    <script>
+        $(document).ready(function () {
+            $("#userDetailsForm").submit(function (event) {
+                event.preventDefault();
+                const validate = validateForm();
+                if (validate) {
+                    let data = $(this).serialize();
+                    $.ajax({
+                        url: "/updateUser",
+                        method: "PUT",
+                        data: data,
+                        success: (response) => {
+                            if (response.status) {
+                                Toastify({
+                                    text: `Account Details Updated`,
+                                    duration: 3000,
+                                    gravity: "top",
+                                    position: "center",
+                                    stopOnFocus: true,
+                                    style: {
+                                        background: "linear-gradient(to right, aqua, blue)",
+                                    },
+                                }).showToast();
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
+                            } else {
+                                document.getElementById("passwordError").innerHTML = `${response.message}`;
+
+                            }
+                        }
+                    })
+                }
+
+
+            })
         })
-    })
-</script>
+    </script>
 
 
-<script>
-    function validateForm() {
-        const inputs = [
-            { id: "name", regex: /^[a-zA-Z\s]+$/, errorMsg: "Invalid Format (should only contain letters and spaces)" },
-            { id: "email", regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, errorMsg: "Invalid Email" },
-            { id: "mobile", regex: /^(?!0{10})\d{10}$/, errorMsg: "Invalid Mobile Number" }
-        ];
-    
-        let isValid = true;
-    
-        inputs.forEach(input => {
-            const inputValue = document.getElementById(input.id).value.trim();
-            const errorElement = document.getElementById(input.id + "Error");
-    
-            if (!input.regex.test(inputValue)) {
-                showError(errorElement, input.errorMsg);
+    <script>
+        function validateForm() {
+            const inputs = [
+                { id: "name", regex: /^[a-zA-Z\s]+$/, errorMsg: "Invalid Format (should only contain letters and spaces)" },
+                { id: "email", regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, errorMsg: "Invalid Email" },
+                { id: "mobile", regex: /^(?!0{10})\d{10}$/, errorMsg: "Invalid Mobile Number" }
+            ];
+
+            let isValid = true;
+
+            inputs.forEach(input => {
+                const inputValue = document.getElementById(input.id).value.trim();
+                const errorElement = document.getElementById(input.id + "Error");
+
+                if (!input.regex.test(inputValue)) {
+                    showError(errorElement, input.errorMsg);
+                    isValid = false;
+                } else {
+                    hideError(errorElement);
+                }
+            });
+
+            return isValid;
+        }
+
+        function showError(element, message) {
+            element.innerHTML = message;
+            element.style.display = "block";
+        }
+
+        function hideError(element) {
+            element.innerHTML = "";
+            element.style.display = "none";
+        }
+    </script>
+
+
+
+    <!-- Add address validation -->
+
+    <script>/////////////////add address VALIDATION//////////////////////////
+
+
+        function validateForm4() {
+
+            const houseRegex = /^(?!\s*$)[a-zA-Z0-9\s]+$/;
+            const streetRegex = /^(?!\s*$)[a-zA-Z\s]+$/;
+            const areaRegex = /^(?!\s*$)[a-zA-Z\s]+$/;
+            const districtRegex = /^(?!\s*$)[a-zA-Z\s]+$/;
+            const stateRegex = /^(?!\s*$)[a-zA-Z ]+$/;
+            const countryRegex = /^(?!\s*$)[a-zA-Z ]+$/;
+            const pincodeRegex = /^(?!000000)\d{6}$/;
+            let isValid = true;
+
+
+            if (!houseRegex.test(document.getElementById("housename1").value)) {
+                document.getElementById("house-error1").innerHTML = "Invalid Format";
                 isValid = false;
             } else {
-                hideError(errorElement);
+                document.getElementById("house-error1").innerHTML = "";
             }
-        });
-    
-        return isValid;
-    }
-    
-    function showError(element, message) {
-        element.innerHTML = message;
-        element.style.display = "block";
-    }
-    
-    function hideError(element) {
-        element.innerHTML = "";
-        element.style.display = "none";
-    }
+
+            if (!streetRegex.test(document.getElementById("streetname1").value)) {
+                document.getElementById("street-error1").innerHTML = "Invalid";
+                isValid = false;
+            } else {
+                document.getElementById("street-error1").innerHTML = "";
+            }
+
+            if (!areaRegex.test(document.getElementById("areaname1").value)) {
+                document.getElementById("area-error1").innerHTML = "Invalid";
+                isValid = false;
+            } else {
+                document.getElementById("area-error1").innerHTML = "";
+            }
+
+            if (!districtRegex.test(document.getElementById("districtname1").value)) {
+                document.getElementById("district-error1").innerHTML = "Invalid";
+                isValid = false;
+            } else {
+                document.getElementById("district-error1").innerHTML = "";
+            }
+
+            if (!stateRegex.test(document.getElementById("statename1").value)) {
+                document.getElementById("state-error1").innerHTML = "Invalid";
+                isValid = false;
+            } else {
+                document.getElementById("state-error1").innerHTML = "";
+            }
+
+            if (!countryRegex.test(document.getElementById("countryname1").value)) {
+                document.getElementById("country-error1").innerHTML = "Invalid";
+                isValid = false;
+            } else {
+                document.getElementById("country-error1").innerHTML = "";
+            }
+
+            if (!pincodeRegex.test(document.getElementById("pin1").value)) {
+                document.getElementById("pin-error1").innerHTML = "Invalid Pincode (should be 6 digits and shouldn't be 6 zeros)";
+                isValid = false;
+            } else {
+                document.getElementById("pin-error1").innerHTML = "";
+            }
+
+            return isValid;
+        }
+        document.getElementById("formAddress").addEventListener("submit", (e) => {
+            const result = validateForm2();
+            if (!result) {
+                e.preventDefault();
+            }
+        })
     </script>
-    
-    
 
-<!-- Add address validation -->
-
-<script>/////////////////add address VALIDATION//////////////////////////
-
-
-    function validateForm4() {
-
-        const houseRegex = /^(?!\s*$)[a-zA-Z0-9\s]+$/;
-        const streetRegex = /^(?!\s*$)[a-zA-Z\s]+$/;
-        const areaRegex = /^(?!\s*$)[a-zA-Z\s]+$/;
-        const districtRegex = /^(?!\s*$)[a-zA-Z\s]+$/;
-        const stateRegex = /^(?!\s*$)[a-zA-Z ]+$/;
-        const countryRegex = /^(?!\s*$)[a-zA-Z ]+$/;
-        const pincodeRegex = /^(?!000000)\d{6}$/;
-        let isValid = true;
-
-
-        if (!houseRegex.test(document.getElementById("housename1").value)) {
-            document.getElementById("house-error1").innerHTML = "Invalid Format";
-            isValid = false;
-        } else {
-            document.getElementById("house-error1").innerHTML = "";
-        }
-
-        if (!streetRegex.test(document.getElementById("streetname1").value)) {
-            document.getElementById("street-error1").innerHTML = "Invalid";
-            isValid = false;
-        } else {
-            document.getElementById("street-error1").innerHTML = "";
-        }
-
-        if (!areaRegex.test(document.getElementById("areaname1").value)) {
-            document.getElementById("area-error1").innerHTML = "Invalid";
-            isValid = false;
-        } else {
-            document.getElementById("area-error1").innerHTML = "";
-        }
-
-        if (!districtRegex.test(document.getElementById("districtname1").value)) {
-            document.getElementById("district-error1").innerHTML = "Invalid";
-            isValid = false;
-        } else {
-            document.getElementById("district-error1").innerHTML = "";
-        }
-
-        if (!stateRegex.test(document.getElementById("statename1").value)) {
-            document.getElementById("state-error1").innerHTML = "Invalid";
-            isValid = false;
-        } else {
-            document.getElementById("state-error1").innerHTML = "";
-        }
-
-        if (!countryRegex.test(document.getElementById("countryname1").value)) {
-            document.getElementById("country-error1").innerHTML = "Invalid";
-            isValid = false;
-        } else {
-            document.getElementById("country-error1").innerHTML = "";
-        }
-
-        if (!pincodeRegex.test(document.getElementById("pin1").value)) {
-            document.getElementById("pin-error1").innerHTML = "Invalid Pincode (should be 6 digits and shouldn't be 6 zeros)";
-            isValid = false;
-        } else {
-            document.getElementById("pin-error1").innerHTML = "";
-        }
-
-        return isValid;
-    }
-    document.getElementById("formAddress").addEventListener("submit", (e) => {
-        const result = validateForm2();
-        if (!result) {
-            e.preventDefault();
-        }
-    })
-</script>
-
-<!-- <script>/////////////////account security validation//////////////////////////
+    <!-- <script>/////////////////account security validation//////////////////////////
     function validateForm1() {
         let isValid = true;
         const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d|[^A-Za-z0-9\s])[\S]{8,}$/;
@@ -1084,130 +1202,130 @@
 
 </script> -->
 
-<script>
-    function validateForm1() {
-        const oldPassword = document.getElementById("oldPassword").value.trim();
-        const newPassword = document.getElementById("newPassword").value.trim();
-        const confirmPassword = document.getElementById("confirmPassword").value.trim();
-        const oldPasswordError = document.getElementById("oldPasswordError");
-        const newPasswordError = document.getElementById("newPasswordError");
-        const confirmPasswordError = document.getElementById("confirmPasswordError");
-        let isValid = true;
-    
-        // Check if any field is empty
-        if (oldPassword === "") {
-            showError(oldPasswordError, "Required*");
-            isValid = false;
-        } else {
-            hideError(oldPasswordError);
+    <script>
+        function validateForm1() {
+            const oldPassword = document.getElementById("oldPassword").value.trim();
+            const newPassword = document.getElementById("newPassword").value.trim();
+            const confirmPassword = document.getElementById("confirmPassword").value.trim();
+            const oldPasswordError = document.getElementById("oldPasswordError");
+            const newPasswordError = document.getElementById("newPasswordError");
+            const confirmPasswordError = document.getElementById("confirmPasswordError");
+            let isValid = true;
+
+            // Check if any field is empty
+            if (oldPassword === "") {
+                showError(oldPasswordError, "Required*");
+                isValid = false;
+            } else {
+                hideError(oldPasswordError);
+            }
+            if (newPassword === "") {
+                showError(newPasswordError, "Required*");
+                isValid = false;
+            } else {
+                hideError(newPasswordError);
+            }
+            if (confirmPassword === "") {
+                showError(confirmPasswordError, "Required*");
+                isValid = false;
+            } else {
+                hideError(confirmPasswordError);
+            }
+
+            // Check complexity of new password
+            const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d|[^A-Za-z0-9\s])[\S]{8,}$/;
+            if (!passwordRegex.test(newPassword)) {
+                showError(newPasswordError, "Password must be at least 8 characters and should contain an uppercase letter, number, or special symbol.");
+                isValid = false;
+            } else {
+                hideError(newPasswordError);
+            }
+
+            // Check if new password is the same as old password
+            if (newPassword === oldPassword) {
+                showError(confirmPasswordError, "Please enter a new password different from the old one.");
+                isValid = false;
+            } else {
+                hideError(confirmPasswordError);
+            }
+
+            // Check if confirmation password matches new password
+            if (newPassword !== confirmPassword) {
+                showError(confirmPasswordError, "Password doesn't match");
+                isValid = false;
+            } else {
+                hideError(confirmPasswordError);
+            }
+
+            return isValid;
         }
-        if (newPassword === "") {
-            showError(newPasswordError, "Required*");
-            isValid = false;
-        } else {
-            hideError(newPasswordError);
+
+        function showError(element, message) {
+            element.innerHTML = message;
+            element.style.display = "block";
         }
-        if (confirmPassword === "") {
-            showError(confirmPasswordError, "Required*");
-            isValid = false;
-        } else {
-            hideError(confirmPasswordError);
+
+        function hideError(element) {
+            element.innerHTML = "";
+            element.style.display = "none";
         }
-    
-        // Check complexity of new password
-        const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d|[^A-Za-z0-9\s])[\S]{8,}$/;
-        if (!passwordRegex.test(newPassword)) {
-            showError(newPasswordError, "Password must be at least 8 characters and should contain an uppercase letter, number, or special symbol.");
-            isValid = false;
-        } else {
-            hideError(newPasswordError);
-        }
-    
-        // Check if new password is the same as old password
-        if (newPassword === oldPassword) {
-            showError(confirmPasswordError, "Please enter a new password different from the old one.");
-            isValid = false;
-        } else {
-            hideError(confirmPasswordError);
-        }
-    
-        // Check if confirmation password matches new password
-        if (newPassword !== confirmPassword) {
-            showError(confirmPasswordError, "Password doesn't match");
-            isValid = false;
-        } else {
-            hideError(confirmPasswordError);
-        }
-    
-        return isValid;
-    }
-    
-    function showError(element, message) {
-        element.innerHTML = message;
-        element.style.display = "block";
-    }
-    
-    function hideError(element) {
-        element.innerHTML = "";
-        element.style.display = "none";
-    }
     </script>
-    
 
-<script>/////////////////Account security A.K.A Change Password//////////////////////////
-    document.getElementById("changePasswordForm").addEventListener("submit", function (event) {
-        event.preventDefault();
-        const valid = validateForm1();
-        if (valid) {
-            let formdata = $(this).serialize();
-            console.log("hey " + formdata);
-            $.ajax({
-                url: "/updatePassword",
-                method: "PUT",
-                data: formdata,
-                success: (response) => {
-                    console.log(response);
-                    Toastify({
-                        text: "Password Updated",
-                        duration: 3000, // 3 seconds
-                        gravity: "top", // Display at the top of the screen
-                        position: "center", // Centered horizontally
-                        backgroundColor: "green", // Set the background color to green
-                    }).showToast();
-                    // Handle success, e.g., close the modal and refresh the page
 
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
+    <script>/////////////////Account security A.K.A Change Password//////////////////////////
+        document.getElementById("changePasswordForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const valid = validateForm1();
+            if (valid) {
+                let formdata = $(this).serialize();
+                console.log("hey " + formdata);
+                $.ajax({
+                    url: "/updatePassword",
+                    method: "PUT",
+                    data: formdata,
+                    success: (response) => {
+                        console.log(response);
+                        Toastify({
+                            text: "Password Updated",
+                            duration: 3000, // 3 seconds
+                            gravity: "top", // Display at the top of the screen
+                            position: "center", // Centered horizontally
+                            backgroundColor: "green", // Set the background color to green
+                        }).showToast();
+                        // Handle success, e.g., close the modal and refresh the page
 
-                },
-                error: (xhr, status, error) => {
-                    console.log(error);
-                    // Handle the error and provide user feedback if necessary
-                }
-            });
-        }
-    })
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
 
-</script>
+                    },
+                    error: (xhr, status, error) => {
+                        console.log(error);
+                        // Handle the error and provide user feedback if necessary
+                    }
+                });
+            }
+        })
 
-<script>
-    $(document).ready(function() {
-        $('#pagination').on('click', 'a', function(e) {
-            e.preventDefault();
-            const page = $(this).data('page');
-            $.ajax({
-                url: '/getOrderData',
-                data: { page: page },
-                success: function(response) {
-                    const ordersTableBody = $('#ordersTableBody');
-                    ordersTableBody.empty();
-                    response.orderDetails.forEach(element => {
-                        let productNames = '';
-                        element.products.forEach(product => {
-                            productNames += product.product.productName + '<br>'; // Append each product name
-                        });
-                        ordersTableBody.append(`
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#pagination').on('click', 'a', function (e) {
+                e.preventDefault();
+                const page = $(this).data('page');
+                $.ajax({
+                    url: '/getOrderData',
+                    data: { page: page },
+                    success: function (response) {
+                        const ordersTableBody = $('#ordersTableBody');
+                        ordersTableBody.empty();
+                        response.orderDetails.forEach(element => {
+                            let productNames = '';
+                            element.products.forEach(product => {
+                                productNames += product.product.productName + '<br>'; // Append each product name
+                            });
+                            ordersTableBody.append(`
                             <tr>
                                 <td>#${element.orderId}</td>
                                 <td>${element.formattedDate}</td>
@@ -1219,80 +1337,183 @@
                                 </td>
                             </tr>
                         `);
-                    });
-                    updatePagination(response.currentPage, response.totalPages);
-                }
+                        });
+                        updatePagination(response.currentPage, response.totalPages);
+                    }
+                });
             });
-        });
 
-        function updatePagination(currentPage, totalPages) {
-            const pagination = $('#pagination');
-            pagination.empty();
-            if (currentPage > 1) {
-                pagination.append(`
+            function updatePagination(currentPage, totalPages) {
+                const pagination = $('#pagination');
+                pagination.empty();
+                if (currentPage > 1) {
+                    pagination.append(`
                     <li class="page-item">
                         <a class="page-link" href="#" data-page="${currentPage - 1}">&laquo;</a>
                     </li>
                 `);
-            }
-            for (let i = 1; i <= totalPages; i++) {
-                pagination.append(`
+                }
+                for (let i = 1; i <= totalPages; i++) {
+                    pagination.append(`
                     <li class="page-item ${i === currentPage ? 'active' : ''}">
                         <a class="page-link" href="#" data-page="${i}">${i}</a>
                     </li>
                 `);
-            }
-            if (currentPage < totalPages) {
-                pagination.append(`
+                }
+                if (currentPage < totalPages) {
+                    pagination.append(`
                     <li class="page-item">
                         <a class="page-link" href="#" data-page="${currentPage + 1}">&raquo;</a>
                     </li>
                 `);
+                }
             }
+        });
+    </script>
+
+
+
+    <script>
+        $(document).ready(function () {
+            $('#walletPagination').on('click', 'a', function (e) {
+                e.preventDefault();
+                var page = $(this).data('page');
+                $.ajax({
+                    url: '/accountView', // Replace with your actual URL
+                    method: 'GET',
+                    data: { walletPage: page },
+                    success: function (response) {
+                        var walletTableBody = $('#walletTableBody');
+                        walletTableBody.empty();
+                        response.walletData.wallet.details.forEach(function (detail) {
+                            var row = '<tr>' +
+                                '<td>' + detail.transactionId + '</td>' +
+                                '<td>' + detail.formattedDate + '</td>' +
+                                '<td>₹ ' + detail.amount + '</td>' +
+                                '<td width="10%">' + detail.type + '</td>' +
+                                '</tr>';
+                            walletTableBody.append(row);
+                        });
+
+                        var pagination = $('#walletPagination');
+                        pagination.empty();
+                        if (response.walletCurrentPage > 1) {
+                            pagination.append('<li class="page-item"><a class="page-link" href="#" data-page="' + (response.walletCurrentPage - 1) + '">Previous</a></li>');
+                        }
+                        for (var i = 1; i <= response.totalWalletPages; i++) {
+                            pagination.append('<li class="page-item ' + (i === response.walletCurrentPage ? 'active' : '') + '"><a class="page-link" href="#" data-page="' + i + '">' + i + '</a></li>');
+                        }
+                        if (response.walletCurrentPage < response.totalWalletPages) {
+                            pagination.append('<li class="page-item"><a class="page-link" href="#" data-page="' + (response.walletCurrentPage + 1) + '">Next</a></li>');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        // Ensure the document is ready
+$(document).ready(function() {
+    // Handle the form submission
+    $('#addMoneyForm').on('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Get the amount entered by the user
+        let amount = $('#amount').val();
+        
+        if (amount && amount > 0) {
+            // Convert amount to paise (Razorpay requires amount in paise)
+            let amountInPaise = amount * 100;
+
+            // Create order via AJAX
+            $.ajax({
+                url: `/createWalletOrder`, // Server endpoint to create Razorpay order
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({ amount: amountInPaise }),
+                success: function (data) {
+                    if (data.status) {
+                        // Initialize Razorpay payment options
+                        var options = {
+                            "key": "rzp_test_aGNUOMnoTXmBAS", // Your Razorpay key
+                            "amount": amountInPaise, // Amount in paise
+                            "currency": "INR",
+                            "name": "Shan Apparels",
+                            "description": "Add Money to Wallet",
+                            "image": "http://localhost:4004/public/user-assets/imgs/theme/icons/logo.png",
+                            "order_id": data.orderId.id, // Order ID from server
+                            "handler": function (response) {
+                                // Payment was successful
+                                verifyPayment(response, data.orderId.id, amount);
+                            },
+                            "prefill": {
+                                "name": "User Name", // Prefill with user data
+                                "email": "user@example.com", // Prefill with user data
+                                "contact": "9000090000" // Prefill with user data
+                            },
+                            "notes": {
+                                "address": "Your Company Address"
+                            },
+                            "theme": {
+                                "color": "#3399cc"
+                            }
+                        };
+
+                        var rzp = new Razorpay(options);
+                        rzp.open();
+                        rzp.on("payment.failed", function (response) {
+                            // Handle payment failure
+                            alert('Payment failed. Please try again.');
+                            console.log('Payment failed:', response.error.description);
+                        });
+                    } else {
+                        // Handle server-side order creation failure
+                        alert('Order creation failed. Please try again.');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // Handle AJAX errors
+                    console.error('Error:', error);
+                }
+            });
+        } else {
+            alert('Please enter a valid amount.');
         }
     });
-</script>
 
-
-
-<script>
-    $(document).ready(function() {
-      $('#walletPagination').on('click', 'a', function(e) {
-        e.preventDefault();
-        var page = $(this).data('page');
-        $.ajax({
-          url: '/accountView', // Replace with your actual URL
-          method: 'GET',
-          data: { walletPage: page },
-          success: function(response) {
-            var walletTableBody = $('#walletTableBody');
-            walletTableBody.empty();
-            response.walletData.wallet.details.forEach(function(detail) {
-              var row = '<tr>' +
-                '<td>' + detail.transactionId + '</td>' +
-                '<td>' + detail.formattedDate + '</td>' +
-                '<td>₹ ' + detail.amount + '</td>' +
-                '<td width="10%">' + detail.type + '</td>' +
-                '</tr>';
-              walletTableBody.append(row);
-            });
-
-            var pagination = $('#walletPagination');
-            pagination.empty();
-            if (response.walletCurrentPage > 1) {
-              pagination.append('<li class="page-item"><a class="page-link" href="#" data-page="' + (response.walletCurrentPage - 1) + '">Previous</a></li>');
+    // Function to verify the payment
+    function verifyPayment(response, orderId, amount) {
+    $.ajax({
+        url: '/verifyWalletPayment', // Server endpoint to verify payment
+        type: 'POST',
+        data: {
+            paymentid: response.razorpay_payment_id,  // Match with the backend
+            signature: response.razorpay_signature,  // Match with the backend
+            orderId: orderId,                        // Provided by your server in the creation step
+            amount: amount                           // Original amount for verification
+        },
+        success: function (data) {
+            if (data.success) {
+                // Payment verified and wallet updated
+                alert('Money successfully added to your wallet.');
+                window.location.href = '/walletSuccessPage'; // Redirect or update UI
+            } else {
+                // Verification failed
+                alert('Payment verification failed. Please contact support.');
             }
-            for (var i = 1; i <= response.totalWalletPages; i++) {
-              pagination.append('<li class="page-item ' + (i === response.walletCurrentPage ? 'active' : '') + '"><a class="page-link" href="#" data-page="' + i + '">' + i + '</a></li>');
-            }
-            if (response.walletCurrentPage < response.totalWalletPages) {
-              pagination.append('<li class="page-item"><a class="page-link" href="#" data-page="' + (response.walletCurrentPage + 1) + '">Next</a></li>');
-            }
-          }
-        });
-      });
+        },
+        error: function (xhr, status, error) {
+            // Handle AJAX errors
+            console.error('Error:', error);
+        }
     });
-  </script>
+}
+
+});
+
+    </script>
 
 
 
@@ -1300,5 +1521,5 @@
 
 
 <!-- Mirrored from wp.alithemes.com/html/evara/evara-frontend/page-account.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 15 Jul 2023 10:11:15 GMT -->
-</html>
 
+</html>

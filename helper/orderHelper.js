@@ -4,7 +4,6 @@ const productModel = require("../models/productModel");
 const orderModel = require("../models/orderModel");
 const walletHelper = require("../helper/walletHelper");
 const ObjectId = require("mongoose").Types.ObjectId;
-// const { Types: { ObjectId } } = require("mongoose");
 const mongoose = require("mongoose");
 
 
@@ -23,6 +22,7 @@ const placeOrder = (body, userId, discount) => {
       const user = await userModel.findOne({ _id: userId });
       let products = [];
       let status = "pending";
+      console.log("This is the body.status", body.status);
       if (body.status) {
         status = "payment pending";
       }
@@ -229,23 +229,96 @@ const placeOrder = (body, userId, discount) => {
   };
 
 
-  const changeOrderStatusOfEachProduct = (orderId, productId, status) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const result = await orderModel.findOneAndUpdate(
-          { _id: new ObjectId(orderId), "products._id": new ObjectId(productId) },
-          {
-            $set: { "products.$.status": status },
-          },
+  // const changeOrderStatusOfEachProduct = async (orderId, productId, status) => {
+  //   try {
+  //     const result = await orderModel.findOneAndUpdate(
+  //       { _id: new ObjectId(orderId), "products._id": new ObjectId(productId) },
+  //       {
+  //         $set: { "products.$.status": status },
+  //       },
+  //       { new: true }
+  //     );
+  
+  //     if (!result) {
+  //       throw new Error('Order or Product not found');
+  //     }
+  
+  //     const allProducts = result.products;
+  //     const allSameStatus = allProducts.every(product => product.status === status);
+
+  //     const userId = result.user;
+  //       console.log("This is the userId", userId);
+
+  //     if (status === "Returned") {
+  //       const userId = result.user;
+  //       console.log("This is the userId", userId);
+  //     }
+  
+  //     if (allSameStatus) {
+  //       const updatedOrder = await orderModel.findByIdAndUpdate(
+  //         orderId,
+  //         { $set: { status: status } },
+  //         { new: true }
+  //       );
+  //       return updatedOrder;
+  //     }
+  
+  //     return result;
+  //   } catch (error) {
+  //     console.log(error);
+  //     throw error;
+  //   }
+  // };
+  
+
+  const changeOrderStatusOfEachProduct = async (orderId, productId, status) => {
+    try {
+      const result = await orderModel.findOneAndUpdate(
+        { _id: new ObjectId(orderId), "products._id": new ObjectId(productId) },
+        {
+          $set: { "products.$.status": status },
+        },
+        { new: true }
+      );
+  
+      if (!result) {
+        throw new Error('Order or Product not found');
+      }
+  
+      const allProducts = result.products;
+      const allSameStatus = allProducts.every(product => product.status === status);
+
+      if (status === "returned") {
+        const userId = result.user;
+
+        const returnedProduct = allProducts.find(product => product._id.toString() === productId);
+        
+        if (returnedProduct) {
+          const refundAmount = returnedProduct.productPrice;
+          await walletHelper.walletAmountAdding(userId, refundAmount);
+        } else {
+          throw new Error('Returned product not found in the order');
+        }
+      }
+ 
+      if (allSameStatus) {
+        const updatedOrder = await orderModel.findByIdAndUpdate(
+          orderId,
+          { $set: { status: status } },
           { new: true }
         );
-        console.log(result);
-        resolve(result);
-      } catch (error) {
-        console.log(error);
+        return updatedOrder;
       }
-    });
+  
+      return result;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   };
+  
+
+  
 
   const cancelSingleOrder = (orderId, singleOrderId, price) => {
     return new Promise(async (resolve, reject) => {
@@ -300,7 +373,6 @@ const placeOrder = (body, userId, discount) => {
           }
         );        
   
-        // Retrieve the order to check the payment method
         const response = await orderModel.findOne({ _id: orderId });
         
         // Calculate the total refund amount based on the product quantity and price
@@ -374,7 +446,7 @@ const placeOrder = (body, userId, discount) => {
     }
   };
 
-  const returnSingleOrder = (orderId, singleOrderId,price) => {
+  const returnSingleOrder = (orderId, singleOrderId, price, reason) => {
     return new Promise(async (resolve, reject) => {
       try {
         const cancelled = await orderModel.findOneAndUpdate(
@@ -383,12 +455,16 @@ const placeOrder = (body, userId, discount) => {
             "products._id": new ObjectId(singleOrderId),
           },
           {
-            $set: { "products.$.status": "return pending" },
+            $set: { 
+              "products.$.status": "return pending",
+              "products.$.returnReason": reason || null  // Update returnReason if provided, otherwise set to null
+            },
           },
           {
-            new: true,
+            new: true, // Return the updated document
           }
         );
+        
         const result = await orderModel.aggregate([
           {
             $unwind: "$products",

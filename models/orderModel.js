@@ -4,24 +4,30 @@ const orderSchema = new mongoose.Schema({
   user: {
     type: mongoose.Types.ObjectId,
     ref: "User",
+    required: true,
   },
   products: [
     {
       product: {
         type: mongoose.Types.ObjectId,
         ref: "Product",
+        required: true,
       },
       quantity: {
         type: Number,
+        required: true,
       },
       size: {
         type: String,
+        required: true,
       },
       discount: {
         type: Number,
+        default: 0, // Assuming discount is optional
       },
       productPrice: {
         type: Number,
+        required: true,
       },
       status: {
         type: String,
@@ -39,23 +45,26 @@ const orderSchema = new mongoose.Schema({
         ],
         default: "pending",
       },
+      returnReason: {
+        type: String,
+        default: null, // Make it optional
+      },
     },
   ],
-  address:
-    {
-      name: String,
-      house: String,
-      street:String,
-      area: String,
-      district: String,
-      state: String,
-      country: String,
-      pin: Number,
-      phone: Number,
-    }
-  ,
+  address: {
+    name: String,
+    house: String,
+    street: String,
+    area: String,
+    district: String,
+    state: String,
+    country: String,
+    pin: Number,
+    phone: Number,
+  },
   paymentMethod: {
     type: String,
+    required: true,
   },
   orderedOn: {
     type: Date,
@@ -86,6 +95,7 @@ const orderSchema = new mongoose.Schema({
   },
   totalAmount: {
     type: Number,
+    required: true,
   },
   couponAmount: {
     type: Number,

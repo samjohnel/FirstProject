@@ -200,6 +200,17 @@ const checkDuplicateFunction = (body, productId) => {
         parseInt(req.body.smallQuantity) +
         parseInt(req.body.mediumQuantity) +
         parseInt(req.body.largeQuantity);
+
+      // const validate = true;
+      // if (req.body.smallQuantity < 0) {
+      //   validate = false;
+      // }
+      // if (req.body.mediumQuantity < 0) {
+      //   validate = false;
+      // } 
+      // if (req.body.largeQuantity < 0) {
+      //   validate = false;
+      // }
   
       const check = await checkDuplicateFunction(
         req.body,

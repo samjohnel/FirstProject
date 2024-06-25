@@ -73,5 +73,8 @@ router.post("/categoryEditOffer", offerController.categoryEditOffer);
 
 router.patch('/deleteCategoryOffer/:id', adminAuth.isLogout, offerController.deleteCategoryOffer);
 
+router.get("/dashboard", adminAuth.isLogout, adminController.loadDashboard);
+
+router.post("/showChart", adminController.showChart)
 
 module.exports = router;    

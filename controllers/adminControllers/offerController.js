@@ -103,7 +103,7 @@ const productOfferLoad = async (req, res) => {
       const result = await offerHelper.editCategoryOffer(req.body);
       if (result) {
         req.flash("message", "Offer edited");
-        res.redirect("/admin/productOffers");
+        res.redirect("/admin/categoryOffers");
       }
     } catch (error) {
       console.log(error);

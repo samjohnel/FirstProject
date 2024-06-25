@@ -74,19 +74,15 @@ const otpPost = async (req, res) => {
             throw new Error('Session data not found');
         }
 
-        const userEnteredOtp = req.body.otp; // Assuming userEnteredOtp is the key for OTP in the request body
+        const userEnteredOtp = req.body.otp;  
         const userData = req.session.userData;
         const storedOtp = req.session.otp;
 
-        // Compare the user-entered OTP with the stored OTP
         if (userEnteredOtp === storedOtp && Date.now() < req.session.otpExpiryTime){
-            // Create a new user using the session data
  
             const hashedPassword = await bcrypt.hash(userData.password, 10); // Using a salt factor of 10
-
             // Save hashed password to user data
              userData.password = hashedPassword;
-
 
             const newUser = await user.create(userData);
             res.redirect('/login');
@@ -97,12 +93,9 @@ const otpPost = async (req, res) => {
             // You may want to redirect the user to a different page or show an error message
             res.redirect('/otpPage');
         }
-
-        // Redirect the user after OTP verification
         
     } catch (error) {
         console.log('Error:', error);
-        // Handle the error appropriately, such as displaying an error page or message
         res.status(500).send('Internal Server Error');
     }
 };
@@ -115,7 +108,7 @@ const registerPost = async (req, res, next) => {
         // Extract user data from request body
         const userData = {
             name: req.body.name,
-            mobile: req.body.mobile, // Assuming the phone field corresponds to mobile
+            mobile: req.body.mobile,
             email: req.body.email,
             password: req.body.password,
             cpassword: req.body.confpassword,
@@ -136,36 +129,11 @@ const registerPost = async (req, res, next) => {
         
 
     } catch (error) {
-        // Handle error
         console.error('Error creating user:', error);
-        // Render an error page or handle error response
-        res.status(500).send('Internal Server Error'); // Render an error page or send an error response
+        res.status(500).send('Internal Server Error'); 
     }
 };
 
-// const loginPost = async (req, res) => {
-
-//     const logemail = req.body.email;
-//     const logpassword = req.body.password;
-
-//     try {
-      
-//             let userInfo = await user.findOne({email: logemail});
-//             if(userInfo.password === logpassword) {
-//                 req.session.user = userInfo._id; 
-//                 res.redirect("/userhome");
-//             } else {
-//                 res.send("error");
-//             }
-
-
-//         } 
-
-//      catch (error) {
-//         console.log(error);
-//     }
-
-// }
 
 
 const resendOtp = async (email) => {
@@ -192,40 +160,6 @@ const resendOtpRedirect = async (req, res) => {
       res.status(500).send("Failed to resend OTP");
   }
 };
-
-// const resendOtpNew = (req, res) => {
-//   try {
-
-//       const otp = generateRandomOtp();
-//       console.log(otp);
-//       const email = req.session.email
-
-//       const mailOptions = {
-//           from: 'hafismhdthaleekara764@gmail.com',
-//           to: email,
-//           subject: 'OTP Verification In Register Side',
-//           text: Your OTP is: ${otp}
-//       };
-//       console.log("email, otp",email, otp)
-//       transporter.sendMail(mailOptions, (error, info) => {
-//           if (error) {
-//               console.error("Error sending OTP email", error.message);
-//           } else {
-//               console.log("Register Side OTP mail sent", info.response);
-//           }
-//       });
-
-
-//        console.log("This is resended otp: ",otp);
-//       // Store OTP in session
-//       req.session.otp = otp;
-      
-//       req.session.otpExpirationTime = Date.now() + 20 * 1000
-//       res.redirect("/otpRegister")
-//   } catch (error) {
-//       console.log(error);
-//   }
-// }
 
 
 
@@ -307,8 +241,8 @@ const userHome = async (req, res) => {
       const wishlistDocument = await wishlistModel.findOne({ user: req.session.user });
       const wishlistTotalCount = wishlistDocument ? wishlistDocument.products.length : 0;
 
-      // Fetch all products and their categories
-      const products = await productModel.find().populate("productCategory").lean();
+      // Fetch products where productStatus is true and populate the productCategory
+      const products = await productModel.find({ productStatus: true }).populate("productCategory").lean();
 
       // Fetch all category offers and map them
       // Fetch all category offers with status true and map them

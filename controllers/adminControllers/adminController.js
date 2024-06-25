@@ -1,58 +1,9 @@
 const admin = require("../../models/adminModel");
 const users = require("../../models/userModel");
+const orderModel = require("../../models/orderModel");
+const productModel = require("../../models/productModel");
+const categoryModel = require("../../models/categoryModel");
 
-
-
-// const loadLogin = (req, res) => {
-//     try {
-//          const error = req.query.error;
-//         res.render("adminLogin",{error:error})
-//     } catch (error) {
-//         console.log(error);
-//     }
-// }
-
-// const loadLogins = (req, res) => {
-//     try {
-//         res.render("adminHome");
-//     } catch (error) {
-//         console.log(error);
-//     }    
-// }
-
-// const loginAdmin = async (req, res) => {
-//     try {
-//         // Log the entire request body to inspect its contents
-//         console.log(req.body);
-
-//         const logemail = req.body.email;
-//         console.log(logemail);
-
-//         if (!logemail) {
-//             return res.status(400).json({ error: "Email is required" });
-//         }
-
-//         // Check admin credentials here
-//         const adminData = await admin.findOne({ email: logemail });
-//         if (adminData) {
-//             if (adminData.password === req.body.password) {
-//                  res.redirect("/admin/adminLogins");
-//             } else {
-//                 // Invalid credentials
-//                 // req.flash("error", "Invalid credentials");
-//                 // return res.render("adminLogin");
-//                 res.redirect("/admin/adminLogin?error=Invalid credentials")
-//             }
-//         } else {
-//             // Admin not found
-//             req.flash("error", "Admin not found");
-//             return res.render("adminLogin");
-//         }
-//     } catch (error) {
-//         console.log(error);
-//         return res.status(500).json({ error: "Internal Server Error" });
-//     }
-// };
 
 const userList = async (req, res) => {
     try {
@@ -76,10 +27,174 @@ const blockUnblockUser = async (req, res) => {
     res.json({ message: message });
 }
 
+const loadDashboard = async(req,res)=>{
+    try {
+      
+      const salesDetails = await orderModel.find();
+  
+     
+      const products = await productModel.find();
+      const categories = await categoryModel.find();
+  
+     
+      const topSellingProducts = await orderModel.aggregate([
+        { $unwind: "$products" },
+        {
+          $group: {
+            _id: "$products.product",
+            totalQuantity: { $sum: "$products.quantity" },
+          },
+        }, 
+        { $sort: { totalQuantity: -1 } }, 
+        { $limit: 10 }, 
+      ]);
+  
+      
+      const productIds = topSellingProducts.map((product) => product._id);
+  
+      
+     
+      const productsData = await productModel.find(
+        { _id: { $in: productIds } },
+        { productName: 1, image: 1 }
+      );
+  
+      
+      const topSellingCategories = await orderModel.aggregate([
+        { $unwind: "$products" }, 
+        {
+          $lookup: {
+            from: "products",
+            localField: "products.product",
+            foreignField: "_id",
+            as: "product",
+          },
+        }, 
+        { $unwind: "$product" },
+        {
+          $lookup: {
+            from: "categories",
+            localField: "product.productCategory",
+            foreignField: "_id",
+            as: "category",
+          },
+        }, 
+        
+        { $unwind: "$category" }, 
+        {
+          $group: {
+            _id: "$category._id",
+            totalQuantity: { $sum: "$products.quantity" },
+          },
+        },
+        { $sort: { totalQuantity: -1 } }, 
+        { $limit: 10 },
+      ]);
+  
+    
+      const topSellingCategoriesData = await categoryModel.find({
+        _id: { $in: topSellingCategories.map((cat) => cat._id) },
+      });
+
+      
+  
+      res.render("dashboard", {
+        salesDetails: salesDetails,
+        products: products,
+        categories: categories,
+        productsData: productsData,
+        topSellingCategories: topSellingCategoriesData,
+        topSellingProducts: topSellingProducts,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+  }
+
+  const showChart = async (req, res) => {
+ 
+    try {
+        console.log("Getting in")
+     
+      if (req.query.msg) {
+        console.log("Getting in 2")
+      
+       
+        const monthlySalesData = await orderModel.aggregate([
+          {
+            $match: { "products.status": "delivered" }, 
+          },
+          {
+            $group: {
+              _id: { $month: "$orderedOn" },
+              totalAmount: { $sum: "$totalAmount" }, 
+            },
+          },
+          {
+            $sort: { _id: 1 },
+          },
+        ]);
+        
+  
+        
+        const dailySalesData = await orderModel.aggregate([
+          {
+            $match: { "products.status": "delivered" }, 
+          },
+          {
+            $group: {
+              _id: { $dayOfMonth: "$orderedOn" }, 
+              totalAmount: { $sum: "$totalAmount" },
+            },
+          },
+          {
+            $sort: { _id: 1 },
+          },
+        ]);
+        console.log("daily",dailySalesData);
+  
+        const orderStatuses = await orderModel.aggregate([
+          {
+            $unwind: "$products", 
+          },
+          {
+            $group: {
+              _id: "$products.status", 
+              count: { $sum: 1 }, 
+            },
+          },
+        ]);
+        console.log("order",orderStatuses);
+  
+       
+        const eachOrderStatusCount = {};
+        orderStatuses.forEach((status) => {
+          eachOrderStatusCount[status._id] = status.count;
+        });
+        
+        console.log("monthlySalesData", monthlySalesData);
+        console.log("dailySalesData", dailySalesData);
+        console.log("eachOrderStatusCount", eachOrderStatusCount);
+  
+        res
+          .status(200)
+          .json({ monthlySalesData, dailySalesData, eachOrderStatusCount });
+      }
+     
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  };
+
+
 
 
 module.exports = {
-    userList, blockUnblockUser
+    userList, blockUnblockUser,
+    loadDashboard,
+    showChart,
 }
 
 
