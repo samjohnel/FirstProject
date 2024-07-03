@@ -1,7 +1,7 @@
 const isLogin = (req, res, next) => {
     try {
         if (req.session.admin) {
-            res.redirect("/admin");
+            res.redirect("/admin/adminhome");
     }
     else {
         next();

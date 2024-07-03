@@ -215,7 +215,7 @@
                                             <a class="nav-link" id="addMoney-detail-tab" data-bs-toggle="tab"
                                                 href="#addMoney" role="tab" aria-controls="addMoney-detail"
                                                 aria-selected="false">
-                                                <i class="fas fa-wallet mr-10"></i>Add Money
+                                                <i class="fi-rs-user mr-10"></i>Add Money
                                             </a>
                                         </li>
                                         <li class="nav-item">
@@ -450,7 +450,8 @@
                                                         </div>
                                                         <div class="form-group col-md-6">
                                                             <label>Current Password (enter before save)
-                                                                <spanclass="required">*</span></label>
+                                                                <spanclass="required">*</span>
+                                                            </label>
                                                             <input required="" class="form-control square"
                                                                 name="password" id="password" type="password">
                                                             <span id="passwordError" class="text-danger"></span>
@@ -1379,7 +1380,7 @@
                 e.preventDefault();
                 var page = $(this).data('page');
                 $.ajax({
-                    url: '/accountView', // Replace with your actual URL
+                    url: '/accountView', 
                     method: 'GET',
                     data: { walletPage: page },
                     success: function (response) {
@@ -1414,104 +1415,104 @@
 
     <script>
         // Ensure the document is ready
-$(document).ready(function() {
-    // Handle the form submission
-    $('#addMoneyForm').on('submit', function(event) {
-        event.preventDefault(); // Prevent the default form submission
+        $(document).ready(function () {
+            // Handle the form submission
+            $('#addMoneyForm').on('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
 
-        // Get the amount entered by the user
-        let amount = $('#amount').val();
-        
-        if (amount && amount > 0) {
-            // Convert amount to paise (Razorpay requires amount in paise)
-            let amountInPaise = amount * 100;
+                // Get the amount entered by the user
+                let amount = $('#amount').val();
 
-            // Create order via AJAX
-            $.ajax({
-                url: `/createWalletOrder`, // Server endpoint to create Razorpay order
-                type: 'POST',
-                dataType: 'json',
-                contentType: 'application/json',
-                data: JSON.stringify({ amount: amountInPaise }),
-                success: function (data) {
-                    if (data.status) {
-                        // Initialize Razorpay payment options
-                        var options = {
-                            "key": "rzp_test_aGNUOMnoTXmBAS", // Your Razorpay key
-                            "amount": amountInPaise, // Amount in paise
-                            "currency": "INR",
-                            "name": "Shan Apparels",
-                            "description": "Add Money to Wallet",
-                            "image": "http://localhost:4004/public/user-assets/imgs/theme/icons/logo.png",
-                            "order_id": data.orderId.id, // Order ID from server
-                            "handler": function (response) {
-                                // Payment was successful
-                                verifyPayment(response, data.orderId.id, amount);
-                            },
-                            "prefill": {
-                                "name": "User Name", // Prefill with user data
-                                "email": "user@example.com", // Prefill with user data
-                                "contact": "9000090000" // Prefill with user data
-                            },
-                            "notes": {
-                                "address": "Your Company Address"
-                            },
-                            "theme": {
-                                "color": "#3399cc"
+                if (amount && amount > 0) {
+                    // Convert amount to paise (Razorpay requires amount in paise)
+                    let amountInPaise = amount * 100;
+
+                    // Create order via AJAX
+                    $.ajax({
+                        url: `/createWalletOrder`, // Server endpoint to create Razorpay order
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ amount: amountInPaise }),
+                        success: function (data) {
+                            if (data.status) {
+                                // Initialize Razorpay payment options
+                                var options = {
+                                    "key": "rzp_test_aGNUOMnoTXmBAS", // Your Razorpay key
+                                    "amount": amountInPaise, // Amount in paise
+                                    "currency": "INR",
+                                    "name": "Shan Apparels",
+                                    "description": "Add Money to Wallet",
+                                    "image": "http://localhost:4004/public/user-assets/imgs/theme/icons/logo.png",
+                                    "order_id": data.orderId.id, // Order ID from server
+                                    "handler": function (response) {
+                                        // Payment was successful
+                                        verifyPayment(response, data.orderId.id, amount);
+                                    },
+                                    "prefill": {
+                                        "name": "User Name", // Prefill with user data
+                                        "email": "user@example.com", // Prefill with user data
+                                        "contact": "9000090000" // Prefill with user data
+                                    },
+                                    "notes": {
+                                        "address": "Your Company Address"
+                                    },
+                                    "theme": {
+                                        "color": "#3399cc"
+                                    }
+                                };
+
+                                var rzp = new Razorpay(options);
+                                rzp.open();
+                                rzp.on("payment.failed", function (response) {
+                                    // Handle payment failure
+                                    alert('Payment failed. Please try again.');
+                                    console.log('Payment failed:', response.error.description);
+                                });
+                            } else {
+                                // Handle server-side order creation failure
+                                alert('Order creation failed. Please try again.');
                             }
-                        };
-
-                        var rzp = new Razorpay(options);
-                        rzp.open();
-                        rzp.on("payment.failed", function (response) {
-                            // Handle payment failure
-                            alert('Payment failed. Please try again.');
-                            console.log('Payment failed:', response.error.description);
-                        });
-                    } else {
-                        // Handle server-side order creation failure
-                        alert('Order creation failed. Please try again.');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    // Handle AJAX errors
-                    console.error('Error:', error);
+                        },
+                        error: function (xhr, status, error) {
+                            // Handle AJAX errors
+                            console.error('Error:', error);
+                        }
+                    });
+                } else {
+                    alert('Please enter a valid amount.');
                 }
             });
-        } else {
-            alert('Please enter a valid amount.');
-        }
-    });
 
-    // Function to verify the payment
-    function verifyPayment(response, orderId, amount) {
-    $.ajax({
-        url: '/verifyWalletPayment', // Server endpoint to verify payment
-        type: 'POST',
-        data: {
-            paymentid: response.razorpay_payment_id,  // Match with the backend
-            signature: response.razorpay_signature,  // Match with the backend
-            orderId: orderId,                        // Provided by your server in the creation step
-            amount: amount                           // Original amount for verification
-        },
-        success: function (data) {
-            if (data.success) {
-                // Payment verified and wallet updated
-                alert('Money successfully added to your wallet.');
-                window.location.href = '/walletSuccessPage'; // Redirect or update UI
-            } else {
-                // Verification failed
-                alert('Payment verification failed. Please contact support.');
+            // Function to verify the payment
+            function verifyPayment(response, orderId, amount) {
+                $.ajax({
+                    url: '/verifyWalletPayment', // Server endpoint to verify payment
+                    type: 'POST',
+                    data: {
+                        paymentid: response.razorpay_payment_id,  // Match with the backend
+                        signature: response.razorpay_signature,  // Match with the backend
+                        orderId: orderId,                        // Provided by your server in the creation step
+                        amount: amount                           // Original amount for verification
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            // Payment verified and wallet updated
+                            alert('Money successfully added to your wallet.');
+                            window.location.href = '/accountView'; 
+                        } else {
+                            // Verification failed
+                            alert('Payment verification failed. Please contact support.');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle AJAX errors
+                        console.error('Error:', error);
+                    }
+                });
             }
-        },
-        error: function (xhr, status, error) {
-            // Handle AJAX errors
-            console.error('Error:', error);
-        }
-    });
-}
 
-});
+        });
 
     </script>
 

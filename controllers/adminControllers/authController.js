@@ -3,10 +3,11 @@ const adminModel = require('../../models/adminModel');
 const adminLoginLoad = (req, res) => {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
     if (req.session.admin) {
-        res.redirect('/admin/adminHome');
-    }
+        res.redirect('/admin/adminhome');
+    }else{
     const message = req.flash('message');
     res.render("adminLogin", { message: message });
+    }
 }
 
 const adminLoginPost = async (req, res) => {
@@ -22,14 +23,22 @@ const adminLoginPost = async (req, res) => {
     if (req.body.password === result.password) {
         // If the password is correct, set the session and redirect to adminHome
         req.session.admin = result._id;
-        return res.render("adminHome");
+         res.redirect("/admin/adminhome");
     } else {
         // If the password is incorrect, render adminLogin with error message
         return res.render('adminLogin', { errormessage: "Wrong password" });
     }
 }
 
-
+const adminHome = (req, res) => {
+    if (req.session.admin) {
+        res.render("adminHome");
+    }
+    else {
+        res.redirect("/admin")
+    }
+}
+ 
 const adminLogout = (req, res) => {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
 
@@ -43,4 +52,4 @@ const adminLogout = (req, res) => {
     }
 }
 
-module.exports = {adminLoginLoad, adminLoginPost, adminLogout};
+module.exports = {adminLoginLoad, adminLoginPost, adminLogout, adminHome};

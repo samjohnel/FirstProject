@@ -233,8 +233,17 @@
 
                                                 </article>
                                             </td>
-
                                             
+                                            <% if (productDetails[0].products.returnReason) { %>
+                                                <td colspan="4">
+                                                    <article class="float-end">
+                                                        <dl class="dlist">
+                                                            <dt>Return Reason:</dt>
+                                                            <dd><b class="h8"><%= productDetails[0].products.returnReason %></b></dd>
+                                                        </dl>
+                                                    </article>
+                                                </td>
+                                            <% } %>
                                             </tr>
                                 </tbody>
                             </table>

@@ -243,8 +243,8 @@ const verifyWalletPayment = async (req, res) => {
         if (!amount || isNaN(amount)) {
           return res.status(400).json({ success: false, message: 'Invalid amount' });
         }
-
-        const amountInINR = parseInt(amount, 10) / 100; // Convert paise to INR
+        
+        const amountInINR = parseInt(amount, 10); // Convert paise to INR
         userDocument.wallet.balance += amountInINR;
 
         const numericTransactionId = getNumericHash(paymentid);

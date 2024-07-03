@@ -13,6 +13,7 @@ const multer = require("../middleware/multer");
 const sharp = require("../middleware/sharp");
 
 router.get("/", adminAuth.isLogin, authContoller.adminLoginLoad);
+router.get("/adminhome", authContoller.adminHome);
 router.post("/", authContoller.adminLoginPost);
 router.get("/logout", adminAuth.isLogout, authContoller.adminLogout)
 router.get("/userList", adminAuth.isLogout, adminController.userList);
