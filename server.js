@@ -17,7 +17,7 @@ const app = express();
 let port = 2002;
 
 mongoose.connect(process.env.DB_URL);
-// mongoose.connect("mongodb://localhost:27017/SHANAPPARELS")
+//  mongoose.connect("mongodb://localhost:27017/SHANAPPARELS")
 mongoose.connection.on("connected", (req, res) => {
     console.log("connected to mongodb");
 })
