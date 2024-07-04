@@ -233,6 +233,8 @@ const verifyCredentials = async (req, res) => {
 
 const userHome = async (req, res) => {
   try {
+      let user = req.session.user ;
+
       // Fetch cart details
       const cartDocument = await cartModel.findOne({ user: req.session.user });
       const cartTotalCount = cartDocument ? cartDocument.products.length : 0;
@@ -267,7 +269,7 @@ const userHome = async (req, res) => {
       });
 
       // Render the homepage view with the updated product details
-      res.render("homepage", { products, cartTotalCount, wishlistTotalCount });
+      res.render("homepage", { products, cartTotalCount, wishlistTotalCount, user });
   } catch (error) {
       console.error(error);
       res.status(500).send("Internal Server Error");
@@ -282,7 +284,7 @@ const logout = (req, res) => {
         if (req.session.user) {
            //req.session.destroy();
            req.session.user = null;
-           res.redirect("/login");
+           res.redirect("/");
         }
         else {
             res.redirect("/userhome");

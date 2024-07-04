@@ -12,6 +12,7 @@ const userAuth= require("../middleware/userAuth");
 router.get("/login", userAuth.islogin ,userController.userLogin);
 router.post("/login", userController.loginPost);
 
+router.get("/", userController.userHome)
 
 router.get("/signUp", userController.getUserSignUp);//This is fine
 router.post("/signUp", userController.registerPost, userController.otpRedirect);

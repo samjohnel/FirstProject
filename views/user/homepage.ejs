@@ -207,13 +207,14 @@
                         </div>
                         <div class="header-action-right">
                             <div class="header-action-2">
-                                
+                                <% if (user) { %>
                                 <div>
                                     <a href="/accountView"><button class="btn">
                                         Account
                                     </button></a>
 
                                 </div>
+                                <% } %>
 
                                 <div class="header-action-icon-2">
                                     <a class="wishlist-icon" href="/wishlist">
@@ -239,19 +240,27 @@
                                 </div>
                                 
                                 
-                                
-
-                                            <div class="header-action-icon-2">
-                                        <a href="/logout">
-                                            <button class="btn  dropdown-button">
-                                                Logout
-                                                <!-- <div class="dropdown-menu">
-                                                    <a href="#">Profile</a>
-                                                    <a href="#">Logout</a>
-                                                </div> -->
-                                            </button>
-                                        </a>   
-                                            </div>
+                                         
+                                <% if (user) { %>
+                                    <!-- User is logged in -->
+                                    <div class="header-action-icon-2">
+                                      <a href="/logout">
+                                        <button class="btn dropdown-button">
+                                          Logout
+                                        </button>
+                                      </a>
+                                    </div>
+                                  <% } else { %>
+                                    <!-- User is not logged in -->
+                                    <div class="header-action-icon-2">
+                                      <a href="/login">
+                                        <button class="btn dropdown-button">
+                                          Login
+                                        </button>
+                                      </a>
+                                    </div>
+                                  <% } %>
+                                  
 
                                         </div>
                                     </div>
