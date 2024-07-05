@@ -403,81 +403,68 @@
                         </div>
                         <input type="text" id="products" value="<%= JSON.stringify(products) %>" hidden>
                         <div class="row product-grid-3">
-                            
+                            <% console.log("This is products from ejs", products); %>
                                 <% for( let i=0; i < products.length; i++ ) { %>
-                                  <div class="col-lg-4 col-md-4  col-sm-6">
-                                    <div class="product-cart-wrap mb-30">
-                                      <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
-                                          <a href="/detailProductPage/<%= products[i]._id %>">
-                                            <img class="default-img" src="/public/uploads/<%= products[i].image[0] %>" alt="" />
-                                            <img class="hover-img" src="/public/uploads/<%= products[i].image[1] %>" alt="" />
-                                          </a>
-                                        </div>
-                                        <div class="product-action-1">
-        
-                                          <a aria-label="Add To Wishlist" class="action-btn hover-up" href="#"><i
-                                              class="fi-rs-heart"></i></a>
-        
-                                        </div>
-                                        <div class="product-badges product-badges-position product-badges-mrg">
-                                        </div>
-                                      </div>
-                                      <div class="product-content-wrap">
-                                        <div class="product-category">
-                                          <a href="#">
-                                            <%= products[i].category[0].categoryName %>
-                                          </a>
-                                        </div>
-                                        <h2>
-                                          <a href="#">
-                                            <%= products[i].productName %>
-                                          </a>
-                                        </h2>
-                                        <div class="rating-result" title="90%">
-                                            <% 
-                                              const highestDiscount = Math.max(products[i].productDiscount, products[i].categoryOffer);
-                                              
-                                              if (highestDiscount > 0) { 
-                                            %>
-                                              <span>
-                                                <%= highestDiscount %>% OFF
-                                              </span>
-                                            <% } %>
+                                    <div class="col-lg-4 col-md-4 col-sm-6">
+                                        <div class="product-cart-wrap mb-30">
+                                          <div class="product-img-action-wrap">
+                                            <div class="product-img product-img-zoom">
+                                              <a href="/detailProductPage/<%= products[i]._id %>">
+                                                <img class="default-img" src="/public/uploads/<%= products[i].image[0] %>" alt="" />
+                                                <img class="hover-img" src="/public/uploads/<%= products[i].image[1] %>" alt="" />
+                                              </a>
+                                            </div>
+                                            <!-- <div class="product-action-1">
+                                              <a aria-label="Add To Wishlist" class="action-btn hover-up" href="#"><i class="fi-rs-heart"></i></a>
+                                            </div> -->
+                                            <div class="product-badges product-badges-position product-badges-mrg"></div>
                                           </div>
-                                          
-                                          
-                                          <div class="product-price">
-                                            <% 
-                                              // Determine the higher discount between the product and the category
-                                              const effectiveDiscount = Math.max(products[i].productDiscount, products[i].categoryOffer);
-                                          
-                                              // Calculate the discounted price based on the effective discount
-                                              const discountedPrice = products[i].productPrice - (products[i].productPrice * effectiveDiscount / 100);
-                                            %>
-                                            
-                                            <% if (effectiveDiscount > 0) { %>
-                                              <span class="text-dark">
-                                                <del>₹ <%= products[i].productPrice.toFixed(2) %></del>
-                                                &nbsp;&nbsp;&nbsp; <!-- Non-breaking spaces for spacing -->
-                                                ₹ <%= discountedPrice.toFixed(2) %>
-                                              </span>
-                                            <% } else { %>
-                                              <span class="text-dark">
-                                                ₹ <%= products[i].productPrice.toFixed(2) %>
-                                              </span>
-                                            <% } %>
-                                          </div>
+                                          <div class="product-content-wrap">
+                                            <div class="product-category">
+                                              <a href="#">
+                                                <%= products[i].productCategory.categoryName %>
+                                              </a>
+                                            </div>
+                                            <h2>
+                                              <a href="#">
+                                                <%= products[i].productName %>
+                                              </a>
+                                            </h2>
+                                            <div class="rating-result" title="90%">
+                                              <% const highestDiscount = Math.max(products[i].productDiscount, products[i].categoryOffer); %>
+                                              <% if (highestDiscount > 0) { %>
+                                                <span>
+                                                  <%= highestDiscount %>% OFF
+                                                </span>
+                                              <% } %>
+                                            </div>
+                                            <div class="product-price">
+                                              <% 
+                                                const effectiveDiscount = Math.max(products[i].productDiscount, products[i].categoryOffer);
+                                                const discountedPrice = products[i].productPrice - (products[i].productPrice * effectiveDiscount / 100);
+                                              %>
+                                              <% if (effectiveDiscount > 0) { %>
+                                                <span class="text-dark">
+                                                  <del>₹ <%= products[i].productPrice.toFixed(2) %></del>
+                                                  &nbsp;&nbsp;&nbsp; <!-- Non-breaking spaces for spacing -->
+                                                  ₹ <%= discountedPrice.toFixed(2) %>
+                                                </span>
+                                              <% } else { %>
+                                                <span class="text-dark">
+                                                  ₹ <%= products[i].productPrice.toFixed(2) %>
+                                                </span>
+                                              <% } %>
+                                            </div>
                                           
                                           
                                           
                                           
                                         <div class="product-action-1 show">
-                                            <button aria-label="Add To Cart" class="action-btn hover-up addToCartButton" data-product-id="<%= products[i]._id %>" 
+                                            <!-- <button aria-label="Add To Cart" class="action-btn hover-up addToCartButton" data-product-id="<%= products[i]._id %>" 
                                                 data-product-name="<%= products[i].productName %>" data-product-price="<%= products[i].productPrice %>"
                                                 data-product-image="/public/uploads/<%= products[i].image[0] %>">
                                                 <i class="fi-rs-shopping-bag-add"></i>
-                                            </button>
+                                            </button> -->
                                         </div>
                                       </div>
                                     </div>
