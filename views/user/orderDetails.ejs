@@ -194,7 +194,7 @@
         <div class="page-header breadcrumb-wrap">
           <div class="container">
             <div class="breadcrumb">
-              <a href="/SnatchIt-Home" rel="nofollow">Home</a>
+              <a href="/userHome" rel="nofollow">Home</a>
               <span></span> Shop
               <span></span> Order Details
             </div>
@@ -792,7 +792,7 @@
           console.log(data)
 
           easyinvoice.createInvoice(data, function (result) {
-            easyinvoice.download('SnatchIT-invoice.pdf', result.pdf);
+            easyinvoice.download('ShanApparels-invoice.pdf', result.pdf);
             console.log("success")
           });
         }

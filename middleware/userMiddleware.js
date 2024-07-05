@@ -2,7 +2,7 @@ const isLogin= (req,res,next)=>{
     try{
         
         if(req.session.user){
-            res.redirect("/SnatchIt-Home");
+            res.redirect("/userHome");
 
     }else{
         next();
@@ -45,7 +45,7 @@ const destroySessionOnBlock = (req, res, next) => {
             console.error("Error destroying session:", err);
           }
           // Redirect or send a response after destroying the session
-          res.redirect("/SnatchIt-Home");
+          res.redirect("/userHome");
         });
       } else {
         // If the user is not blocking themselves, proceed to the next middleware
